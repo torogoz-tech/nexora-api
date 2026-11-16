@@ -1,0 +1,102 @@
+id: keyword_bindings.allowed
+pack: keyword_bindings
+feature: semantic.calls
+classification: supported
+mode: repository
+input: corpus/fixtures/bindings/keyword_bindings.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxkc
+    source: DEF f[p] BEGIN VALUE p; FINISH
+    kind: Function
+    name: f
+    owner: []
+  - type: declaration
+    file: source.nxkc
+    source: p
+    kind: Parameter
+    name: p
+    owner:
+    - f
+  - type: container
+    file: source.nxkc
+    source: VALUE p;
+    kind: Statement
+    name: VALUE
+    owner:
+    - f
+  - type: expression
+    file: source.nxkc
+    source: p
+    kind: identifier
+    operands: []
+    owner:
+    - f
+    - VALUE
+  - type: relation
+    file: source.nxkc
+    source: p
+    kind: REFERENCES
+    target: p
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - f
+    - VALUE
+    target_owner:
+    - f
+    label: read
+  - type: container
+    file: source.nxkc
+    source: VALUE f[1];
+    kind: Statement
+    name: VALUE
+    owner: []
+  - type: expression
+    file: source.nxkc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: '1'
+    kind: literal
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: f[1]
+    kind: application
+    operands:
+    - f
+    - '1'
+    owner:
+    - VALUE
+    operator: '['
+  - type: relation
+    file: source.nxkc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - VALUE
+    target_owner: []
+    label: read
+  - type: relation
+    file: source.nxkc
+    source: f[1]
+    kind: CALLS
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_direct_callable
+    owner:
+    - VALUE
+    target_owner: []
+    label: direct-call

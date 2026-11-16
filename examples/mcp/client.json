@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "nexora": {
+      "command": "/absolute/path/to/Nexora/target/debug/nexora",
+      "args": [
+        "--connections", "/absolute/path/to/Nexora/.nexora/local/connections.json",
+        "--language-dir", "/absolute/path/to/Nexora/languages/javascript",
+        "mcp", "serve",
+        "--root", "/absolute/path/to/repository",
+        "--tenant", "local",
+        "--allow-index"
+      ]
+    }
+  }
+}

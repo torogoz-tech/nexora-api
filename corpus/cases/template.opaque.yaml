@@ -1,0 +1,27 @@
+id: template.opaque
+pack: template
+feature: dependency.opaque
+classification: partial
+mode: repository
+input: corpus/fixtures/template/opaque
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: domain/source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  policy: UNKNOWN
+  coverage:
+  - path: domain/source.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: domain/source.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false
+policy: corpus/policies/boundary.policy.yaml

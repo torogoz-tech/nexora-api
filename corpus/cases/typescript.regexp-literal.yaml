@@ -1,0 +1,19 @@
+id: typescript.regexp-literal
+pack: typescript
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/typescript.regexp-literal
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: pattern
+    source: const pattern = /; const leaked = 1; /;
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: after
+    source: const after = 2;

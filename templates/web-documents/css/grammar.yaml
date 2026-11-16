@@ -1,0 +1,515 @@
+schema_version: 7
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions: &id001
+- conditional_rule
+- descriptor_rule
+- unknown_at_rule
+- at_statement
+- qualified_rule
+contexts:
+  stylesheet:
+    productions: *id001
+    ignored:
+    - type: literal
+      text: ;
+  declarations:
+    productions:
+    - nested_conditional_rule
+    - descriptor_rule
+    - unknown_at_rule
+    - at_statement
+    - custom_declaration
+    - custom_empty_declaration
+    - declaration
+    - empty_declaration
+    - qualified_rule
+    ignored:
+    - type: literal
+      text: ;
+    stop_on_error: true
+  components:
+    productions:
+    - component_function
+    - component_paren
+    - component_bracket
+    - component_brace
+    - component_url
+    - component_atom
+    ignored: []
+    stop_on_error: true
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+productions:
+- name: conditional_rule
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: conditional_at_keyword
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: css_at_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+      context: stylesheet
+- name: nested_conditional_rule
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: conditional_at_keyword
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: css_at_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+      context: declarations
+- name: descriptor_rule
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: descriptor_at_keyword
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: css_at_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+      context: declarations
+- name: unknown_at_rule
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: at_keyword
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: css_at_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+- name: at_statement
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: choice
+          alternatives:
+          - type: token
+            kind: at_keyword
+          - type: token
+            kind: conditional_at_keyword
+          - type: token
+            kind: descriptor_at_keyword
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: ;
+            - text: '{'
+            allow_eof: false
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: css_at_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: qualified_rule
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+        allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: css_rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+    - capture: body
+      context: declarations
+      trim_start: 1
+      trim_end: 1
+- name: custom_declaration
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: custom_property
+      join: ''
+    - type: literal
+      text: ':'
+    - type: capture
+      name: value
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+        allow_eof: true
+      join: ''
+    - &id002
+      type: choice
+      alternatives:
+      - type: literal
+        text: ;
+      - type: end_of_context
+  projection:
+    ast_kind: css_declaration
+    role: Container
+    name_capture: name
+    regions:
+    - capture: value
+      context: components
+- name: custom_empty_declaration
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: custom_property
+      join: ''
+    - type: literal
+      text: ':'
+    - *id002
+  projection:
+    ast_kind: css_empty_declaration
+    role: Container
+    name_capture: name
+    regions: []
+- name: declaration
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: literal
+      text: ':'
+    - type: capture
+      name: value
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+        - text: '{'
+        allow_eof: true
+      join: ''
+    - &id003
+      type: choice
+      alternatives:
+      - type: literal
+        text: ;
+      - type: end_of_context
+  projection:
+    ast_kind: css_declaration
+    role: Container
+    name_capture: name
+    regions:
+    - capture: value
+      context: components
+- name: empty_declaration
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: literal
+      text: ':'
+    - *id003
+  projection:
+    ast_kind: css_empty_declaration
+    role: Container
+    name_capture: name
+    regions: []
+- name: component_function
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: choice
+        alternatives:
+        - type: token
+          kind: identifier
+        - type: token
+          kind: custom_property
+      join: ''
+    - type: gap_without
+      characters: " \t\r\n\f/*"
+    - type: capture
+      name: arguments
+      item:
+        type: balanced
+        open: (
+      join: ''
+  projection:
+    ast_kind: css_function
+    role: Container
+    name_capture: name
+    regions:
+    - capture: arguments
+      context: components
+      trim_start: 1
+      trim_end: 1
+- name: component_paren
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: literal
+        text: (
+      join: ''
+    - type: capture
+      name: contents
+      item:
+        type: until
+        close: )
+      join: ''
+  projection:
+    ast_kind: css_group
+    role: Container
+    name_capture: name
+    regions:
+    - capture: contents
+      context: components
+      trim_end: 1
+- name: component_bracket
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: literal
+        text: '['
+      join: ''
+    - type: capture
+      name: contents
+      item:
+        type: until
+        close: ']'
+      join: ''
+  projection:
+    ast_kind: css_group
+    role: Container
+    name_capture: name
+    regions:
+    - capture: contents
+      context: components
+      trim_end: 1
+- name: component_brace
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: literal
+        text: '{'
+      join: ''
+    - type: capture
+      name: contents
+      item:
+        type: until
+        close: '}'
+      join: ''
+  projection:
+    ast_kind: css_group
+    role: Container
+    name_capture: name
+    regions:
+    - capture: contents
+      context: components
+      trim_end: 1
+- name: component_url
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: token
+      kind: url
+    join: ''
+  projection:
+    ast_kind: css_url
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: component_atom
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: choice
+      alternatives:
+      - type: token
+        kind: identifier
+      - type: token
+        kind: custom_property
+      - type: token
+        kind: dimension
+      - type: token
+        kind: hash
+      - type: token
+        kind: string
+      - type: token
+        kind: punctuation
+      - type: token
+        kind: conditional_at_keyword
+      - type: token
+        kind: descriptor_at_keyword
+      - type: token
+        kind: at_keyword
+      - type: literal
+        text: ;
+    join: ''
+  projection:
+    ast_kind: css_atom
+    role: Container
+    name_capture: name
+    regions: []
+ignored:
+- type: literal
+  text: ;
+recovery:
+- text: ;
+recover_line_break: true

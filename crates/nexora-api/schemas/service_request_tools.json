@@ -1,0 +1,365 @@
+[
+  {
+    "name": "nexora_request_list",
+    "description": "List service requests. Users see only their own; supervisors see all. Technical task and repository data is never included.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type_id": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "search": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "new",
+            "in_progress",
+            "completed"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": []
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_get",
+    "description": "Read an authorized service request, its conversation and attachments.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_types_list",
+    "description": "List request types, independent of task types.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {},
+      "required": []
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_create",
+    "description": "Create a service request. Body must be Markdown. This does not create an IT task or enter a workflow.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "description": "Unique idempotency key"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type_id": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "criticality": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        }
+      },
+      "required": [
+        "request_id",
+        "title",
+        "type_id",
+        "body"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_comment",
+    "description": "Add a Markdown comment to an authorized request.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "idempotency_key",
+        "body"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_attachment_upload",
+    "description": "Attach image, PDF or Office evidence to an authorized request. Insert the returned URL in Markdown to display images.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data_base64": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "idempotency_key",
+        "name",
+        "data_base64"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_attachment_get",
+    "description": "Read authorized request evidence as base64. Request ownership and current credential permissions are checked again.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "attachment_id"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "attachment_id": {
+          "type": "string"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_change",
+    "description": "IT only: update request status or type with revision control. Does not change any linked task.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "expected_revision": {
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "new",
+            "in_progress",
+            "completed"
+          ]
+        },
+        "type_id": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "criticality": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        }
+      },
+      "required": [
+        "request_id",
+        "idempotency_key",
+        "expected_revision",
+        "status",
+        "type_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_link",
+    "description": "IT only: link or unlink an internal task or feature after validating its permissions.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "expected_revision": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "task",
+            "feature"
+          ]
+        },
+        "target_id": {
+          "type": "string"
+        },
+        "remove": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "idempotency_key",
+        "expected_revision",
+        "kind",
+        "target_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_request_products_list",
+    "description": "Lista Productos comerciales disponibles para las solicitudes. No expone proyectos t\u00e9cnicos.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "nexora_request_report",
+    "description": "Service request reports and product distribution. Users only see their own requests; supervisors and IT see all. No technical data included.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "type_id": {
+          "type": "string"
+        },
+        "criticality": {
+          "type": "string"
+        },
+        "requester_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": []
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

@@ -1,0 +1,333 @@
+[
+  {
+    "name": "nexora_task_move",
+    "description": "Move active work to an active backlog in the same project, preserving its pinned workflow and state. Requires task/backlog revisions and tasks:write plus backlogs:write.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "movement": {
+          "$ref": "#/$defs/TaskMove"
+        }
+      },
+      "required": [
+        "project_id",
+        "task_id",
+        "request_id",
+        "movement"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_workflow_migrate",
+    "description": "Explicitly migrate a task to a published assignable workflow using a complete source-state map. Requires tasks:write, tasks:transition and workflows:publish; audits policy change and invalidates old authorizations.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "migration": {
+          "$ref": "#/$defs/TaskWorkflowMigration"
+        }
+      },
+      "required": [
+        "project_id",
+        "task_id",
+        "request_id",
+        "migration"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_take",
+    "description": "Explicitly start a pending task. The task selects its entry workflow before Take; the actor must have that workflow assigned. General tasks start without a workflow. Assignment is only a reservation. Do not choose an arbitrary actor workflow in Take. For implementation work select relevant repository_ids; Take creates and verifies provider branches through a durable run. The response includes repository_branches and start_run_id. Retry unchanged parameters to reconcile an uncertain provider outcome; do not create local placeholder branches.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "request_id",
+        "take"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "take": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expected_revision"
+          ],
+          "properties": {
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "workflow_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Assigned workflow ID. Required for technical leads, PMO, managers and superadministrators. Developers may omit it to use their sole workflow."
+            },
+            "repository_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "uniqueItems": true,
+              "description": "Explicit repositories for implementation work. Nexora creates provider branches from the selected workflow state base, parent task branch or exact tested corrective revision. Required for governed project implementation when repositories or a state base are configured.",
+              "maxItems": 8
+            }
+          }
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "nexora_task_pool_list",
+    "description": "List visible pending, active and completed tasks, including work already taken into a workflow. projectless_tasks_included=false means this credential or project filter excludes tasks without a project: an empty result does not prove the member has no tasks. Respect current credential scope; never broaden it automatically.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "workflow_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "type_code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "search": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "after": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "lifecycle": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "active",
+                "paused",
+                "completed"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_pool_options",
+    "description": "Read safe task creation options: active task types and authorized team assignee names. No administrative account details.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_pause",
+    "description": "Pause active work, retaining its workflow and state . The assignee or a manager/superadministrator with task authority may pause it. Requires current revision and request_id.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "expected_revision"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_resume",
+    "description": "Resume your own paused task in its pinned workflow and state after validating dependencies. Multiple tasks may be active at the same time; work is recorded manually. Requires current revision and request_id.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "expected_revision"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_general_complete",
+    "description": "Complete your active General task with no entry or execution workflow. Blocking prerequisites and unfinished subtasks prevent completion. Workflow tasks must finish through their governed stages and production release. Requires current expected_revision and idempotent request_id.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "expected_revision"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

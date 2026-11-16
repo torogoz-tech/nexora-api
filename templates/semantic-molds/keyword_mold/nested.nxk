@@ -1,0 +1,9 @@
+DEF outer[p] BEGIN
+ LET value;
+ SCOPE BEGIN
+  LET value;
+  USE_LOCAL value;
+  USE_LOCAL p;
+ FINISH
+ USE_LOCAL value;
+FINISH

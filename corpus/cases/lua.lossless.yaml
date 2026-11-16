@@ -1,0 +1,16 @@
+id: lua.lossless
+pack: lua
+feature: lexical.lossless
+classification: supported
+mode: file
+input: corpus/fixtures/lua/lossless/source.lua
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.lua
+    kind: Function
+    name: total
+    source: function total(café) return café end

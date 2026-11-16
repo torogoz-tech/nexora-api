@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "nexora": {
+      "command": "/ruta/absoluta/nexora",
+      "args": [
+        "--connections",
+        "/ruta/absoluta/connections.json",
+        "--language-dir",
+        "/ruta/absoluta/lenguajes",
+        "mcp",
+        "serve",
+        "--root",
+        "/ruta/absoluta/repositorio",
+        "--tenant",
+        "equipo",
+        "--allow-knowledge",
+        "--knowledge-actor",
+        "agente-del-equipo"
+      ]
+    }
+  }
+}

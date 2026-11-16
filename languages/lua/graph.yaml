@@ -1,0 +1,9 @@
+schema_version: 1
+mappings:
+  function: Function
+  module_import: Module
+  method: Method
+reference_relations:
+  module_import:
+  - IMPORTS
+  - DEPENDS_ON

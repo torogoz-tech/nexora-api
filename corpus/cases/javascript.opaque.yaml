@@ -1,0 +1,27 @@
+id: javascript.opaque
+pack: javascript
+feature: dependency.opaque
+classification: partial
+mode: repository
+input: corpus/fixtures/javascript/opaque
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: domain/source.js
+    kind: Function
+    name: total
+    source: function total(value) { return value; }
+  policy: UNKNOWN
+  coverage:
+  - path: domain/source.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: domain/source.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false
+policy: corpus/policies/boundary.policy.yaml

@@ -1,0 +1,52 @@
+id: javascript.forbidden
+pack: javascript
+feature: dependency.forbidden
+classification: supported
+mode: repository
+input: corpus/fixtures/javascript/forbidden
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.js
+    kind: Function
+    name: total
+    source: function total(value) { return value; }
+  - type: declaration
+    file: infrastructure/storage.js
+    kind: Function
+    name: total
+    source: function total(value) { return value; }
+  - type: relation
+    file: domain/source.js
+    kind: IMPORTS
+    target: infrastructure/storage.js
+    resolution: Resolved
+    source: import "../infrastructure/storage.js";
+  - type: relation
+    file: domain/source.js
+    kind: DEPENDS_ON
+    target: infrastructure/storage.js
+    resolution: Resolved
+    source: import "../infrastructure/storage.js";
+  policy: FAIL
+  coverage:
+  - path: domain/source.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: infrastructure/storage.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: infrastructure/storage.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

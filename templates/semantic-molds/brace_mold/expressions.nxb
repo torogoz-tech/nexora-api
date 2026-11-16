@@ -1,0 +1,4 @@
+FUNC outer(p) {
+ VAR result = p + 2 * 3;
+ EVAL result;
+}

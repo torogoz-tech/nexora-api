@@ -1,0 +1,5 @@
+/* stylesheet */
+@charset "UTF-8";
+:root { --accent: #123456; }
+.button:hover, [data-state="open"] { color: var(--accent); background: url("a;b.png"); }
+@media (width >= 600px) { .button { display: flex; } }

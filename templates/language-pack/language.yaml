@@ -1,0 +1,18 @@
+schema_version: 1
+id: template
+version: 0.2.0
+extensions:
+- nxexample
+resolution:
+  literal:
+    mode: raw
+  routes:
+  - accept: ^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$
+    anchor: repository
+    rewrites:
+    - from: .
+      to: /
+    candidates:
+    - template: modules/{module}.{extension}
+      condition: always
+      priority: 0

@@ -1,0 +1,168 @@
+schema_version: 6
+identifier_kind: text
+keywords: []
+tokens:
+- kind: abrupt_comment
+  pattern: <!---?>
+- kind: html_comment
+  pattern: <!--
+  region: html_comment
+- kind: script_javascript
+  pattern: <[sS][cC][rR][iI][pP][tT](?P<attributes>(?:[\t\n\f\r ]+(?:[^\t\n\f\r />"'=<\x00tTsSlL][^\t\n\f\r />"'=<\x00]*|[tT](?:|[^\t\n\f\r
+    />"'=<\x00yY][^\t\n\f\r />"'=<\x00]*|[yY](?:|[^\t\n\f\r />"'=<\x00pP][^\t\n\f\r />"'=<\x00]*|[pP](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r
+    />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*))))|[sS](?:|[^\t\n\f\r />"'=<\x00rR][^\t\n\f\r />"'=<\x00]*|[rR](?:|[^\t\n\f\r
+    />"'=<\x00cC][^\t\n\f\r />"'=<\x00]*|[cC](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))|[lL](?:|[^\t\n\f\r />"'=<\x00aA][^\t\n\f\r
+    />"'=<\x00]*|[aA](?:|[^\t\n\f\r />"'=<\x00nN][^\t\n\f\r />"'=<\x00]*|[nN](?:|[^\t\n\f\r />"'=<\x00gG][^\t\n\f\r />"'=<\x00]*|[gG](?:|[^\t\n\f\r
+    />"'=<\x00uU][^\t\n\f\r />"'=<\x00]*|[uU](?:|[^\t\n\f\r />"'=<\x00aA][^\t\n\f\r />"'=<\x00]*|[aA](?:|[^\t\n\f\r />"'=<\x00gG][^\t\n\f\r
+    />"'=<\x00]*|[gG](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))))))))(?:[\t\n\f\r
+    ]*=[\t\n\f\r ]*(?:(?:"[^"]*"|'[^']*')|[^\t\n\f\r >"'`=<]+))?)*(?:[\t\n\f\r ]+[tT][yY][pP][eE][\t\n\f\r ]*=[\t\n\f\r ]*(?:"(?:[\t\n\f\r
+    ]*(?:[tT][eE][xX][tT]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[tT][eE][xX][tT]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT])[\t\n\f\r
+    ]*|[mM][oO][dD][uU][lL][eE])"|'(?:[\t\n\f\r ]*(?:[tT][eE][xX][tT]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[tT][eE][xX][tT]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT])[\t\n\f\r
+    ]*|[mM][oO][dD][uU][lL][eE])'|(?:[tT][eE][xX][tT]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]|[tT][eE][xX][tT]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT]|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[eE][cC][mM][aA][sS][cC][rR][iI][pP][tT])|[mM][oO][dD][uU][lL][eE])(?:[\t\n\f\r
+    ]+(?:[^\t\n\f\r />"'=<\x00tTsSlL][^\t\n\f\r />"'=<\x00]*|[tT](?:|[^\t\n\f\r />"'=<\x00yY][^\t\n\f\r />"'=<\x00]*|[yY](?:|[^\t\n\f\r
+    />"'=<\x00pP][^\t\n\f\r />"'=<\x00]*|[pP](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r
+    />"'=<\x00]*))))|[sS](?:|[^\t\n\f\r />"'=<\x00rR][^\t\n\f\r />"'=<\x00]*|[rR](?:|[^\t\n\f\r />"'=<\x00cC][^\t\n\f\r />"'=<\x00]*|[cC](?:[^\t\n\f\r
+    />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))|[lL](?:|[^\t\n\f\r />"'=<\x00aA][^\t\n\f\r />"'=<\x00]*|[aA](?:|[^\t\n\f\r />"'=<\x00nN][^\t\n\f\r
+    />"'=<\x00]*|[nN](?:|[^\t\n\f\r />"'=<\x00gG][^\t\n\f\r />"'=<\x00]*|[gG](?:|[^\t\n\f\r />"'=<\x00uU][^\t\n\f\r />"'=<\x00]*|[uU](?:|[^\t\n\f\r
+    />"'=<\x00aA][^\t\n\f\r />"'=<\x00]*|[aA](?:|[^\t\n\f\r />"'=<\x00gG][^\t\n\f\r />"'=<\x00]*|[gG](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r
+    />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))))))))(?:[\t\n\f\r ]*=[\t\n\f\r ]*(?:(?:"[^"]*"|'[^']*')|[^\t\n\f\r
+    >"'`=<]+))?)*)?[\t\n\f\r ]*)>
+  region: script_javascript
+- kind: script_unknown
+  pattern: <[sS][cC][rR][iI][pP][tT](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: script_unknown
+- kind: style_css
+  pattern: <[sS][tT][yY][lL][eE](?P<attributes>(?:[\t\n\f\r ]+(?:[^\t\n\f\r />"'=<\x00tT][^\t\n\f\r />"'=<\x00]*|[tT](?:|[^\t\n\f\r
+    />"'=<\x00yY][^\t\n\f\r />"'=<\x00]*|[yY](?:|[^\t\n\f\r />"'=<\x00pP][^\t\n\f\r />"'=<\x00]*|[pP](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r
+    />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))))(?:[\t\n\f\r ]*=[\t\n\f\r ]*(?:(?:"[^"]*"|'[^']*')|[^\t\n\f\r
+    >"'`=<]+))?)*(?:[\t\n\f\r ]+[tT][yY][pP][eE][\t\n\f\r ]*=[\t\n\f\r ]*(?:"[\t\n\f\r ]*(?:[tT][eE][xX][tT]/[cC][sS][sS])[\t\n\f\r
+    ]*"|'[\t\n\f\r ]*(?:[tT][eE][xX][tT]/[cC][sS][sS])[\t\n\f\r ]*'|(?:[tT][eE][xX][tT]/[cC][sS][sS]))(?:[\t\n\f\r ]+(?:[^\t\n\f\r
+    />"'=<\x00tT][^\t\n\f\r />"'=<\x00]*|[tT](?:|[^\t\n\f\r />"'=<\x00yY][^\t\n\f\r />"'=<\x00]*|[yY](?:|[^\t\n\f\r />"'=<\x00pP][^\t\n\f\r
+    />"'=<\x00]*|[pP](?:|[^\t\n\f\r />"'=<\x00eE][^\t\n\f\r />"'=<\x00]*|[eE](?:[^\t\n\f\r />"'=<\x00][^\t\n\f\r />"'=<\x00]*)))))(?:[\t\n\f\r
+    ]*=[\t\n\f\r ]*(?:(?:"[^"]*"|'[^']*')|[^\t\n\f\r >"'`=<]+))?)*)?[\t\n\f\r ]*)>
+  region: style_css
+- kind: style_unknown
+  pattern: <[sS][tT][yY][lL][eE](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: style_unknown
+- kind: text_textarea
+  pattern: <[tT][eE][xX][tT][aA][rR][eE][aA](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_textarea
+- kind: text_title
+  pattern: <[tT][iI][tT][lL][eE](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_title
+- kind: text_xmp
+  pattern: <[xX][mM][pP](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_xmp
+- kind: text_iframe
+  pattern: <[iI][fF][rR][aA][mM][eE](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_iframe
+- kind: text_noembed
+  pattern: <[nN][oO][eE][mM][bB][eE][dD](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_noembed
+- kind: text_noframes
+  pattern: <[nN][oO][fF][rR][aA][mM][eE][sS](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: text_noframes
+- kind: unsupported_svg
+  pattern: <[sS][vV][gG](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  reject: true
+- kind: unsupported_math
+  pattern: <[mM][aA][tT][hH](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  reject: true
+- kind: plaintext_literal
+  pattern: <[pP][lL][aA][iI][nN][tT][eE][xX][tT](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  region: plaintext
+- kind: unsupported_noscript
+  pattern: <[nN][oO][sS][cC][rR][iI][pP][tT](?P<attributes>(?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?)>
+  reject: true
+- kind: tag
+  pattern: </?[A-Za-z][A-Za-z0-9:-]*
+  region: markup_tag
+- kind: declaration
+  pattern: <![dD][oO][cC][tT][yY][pP][eE]
+  region: declaration
+- kind: bogus_declaration
+  pattern: <[!?]
+  region: bogus_declaration
+- kind: text
+  pattern: '[^<]+'
+- kind: bogus_end_tag
+  pattern: </[^A-Za-z>]
+  region: bogus_declaration
+- kind: raw_less
+  pattern: <
+regions:
+  html_comment:
+    close: -->
+    alternate_closes:
+    - --!>
+  attribute_double:
+    close: '"'
+  attribute_single:
+    close: ''''
+  script_javascript:
+    close: </script
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+    children:
+    - pattern: <!--
+      region: html_comment
+      reject: true
+  script_unknown:
+    close: </script
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+    children:
+    - pattern: <!--
+      region: html_comment
+      reject: true
+  style_css:
+    close: </style
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  style_unknown:
+    close: </style
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_textarea:
+    close: </textarea
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_title:
+    close: </title
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_xmp:
+    close: </xmp
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_iframe:
+    close: </iframe
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_noembed:
+    close: </noembed
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  text_noframes:
+    close: </noframes
+    close_tail: (?:[\t\n\f\r /](?:[^>"']|"[^"]*"|'[^']*')*)?>
+    close_ascii_case_insensitive: true
+  markup_tag:
+    close: '>'
+    children:
+    - pattern: '"'
+      region: attribute_double
+    - pattern: ''''
+      region: attribute_single
+  declaration:
+    close: '>'
+    children:
+    - pattern: '"'
+      region: attribute_double
+    - pattern: ''''
+      region: attribute_single
+  bogus_declaration:
+    close: '>'
+  plaintext:
+    close: ''
+    eof_closes: true

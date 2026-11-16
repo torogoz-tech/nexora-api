@@ -1,0 +1,49 @@
+id: keyword_mold.expressions-partial
+pack: keyword_mold
+feature: semantic.expressions
+classification: partial
+mode: repository
+input: corpus/fixtures/expressions/keyword_mold.expressions-partial
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: container
+    file: source.nxk
+    source: VALUE a ADD;
+    kind: Statement
+    name: VALUE
+  - type: declaration
+    file: source.nxk
+    source: LET sibling;
+    kind: Variable
+    name: sibling
+  - type: container
+    file: source.nxk
+    source: VALUE 2 TIMES 3;
+    kind: Statement
+    name: VALUE
+  - type: expression
+    file: source.nxk
+    source: '2'
+    kind: literal
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxk
+    source: '3'
+    kind: literal
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxk
+    source: 2 TIMES 3
+    kind: infix
+    operator: TIMES
+    operands:
+    - '2'
+    - '3'
+    owner:
+    - VALUE

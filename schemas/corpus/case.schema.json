@@ -1,0 +1,462 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+    },
+    "pack": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+    },
+    "feature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+    },
+    "classification": {
+      "enum": [
+        "supported",
+        "partial",
+        "rejected"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "file",
+        "repository"
+      ]
+    },
+    "input": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "replicas": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 1
+    },
+    "benchmark": {
+      "type": "boolean",
+      "default": false
+    },
+    "policy": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "expected": {
+      "type": "object",
+      "properties": {
+        "analysis": {
+          "enum": [
+            "clean",
+            "diagnostics",
+            "lexical_error"
+          ]
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "declaration"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "kind": {
+                    "enum": [
+                      "Repository",
+                      "File",
+                      "Module",
+                      "Namespace",
+                      "Class",
+                      "Interface",
+                      "Function",
+                      "Method",
+                      "Variable",
+                      "Parameter",
+                      "Symbol",
+                      "Block",
+                      "Expression",
+                      "Statement",
+                      "TypeAlias",
+                      "Enum"
+                    ]
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "owner": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "file",
+                  "source",
+                  "kind",
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "relation"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "kind": {
+                    "enum": [
+                      "IMPORTS",
+                      "DEPENDS_ON",
+                      "EXPORTS",
+                      "REFERENCES",
+                      "CALLS"
+                    ]
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "resolution": {
+                    "enum": [
+                      "Resolved",
+                      "Unresolved",
+                      "Ambiguous"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "owner": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "target_owner": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "resolution_reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "type",
+                  "file",
+                  "source",
+                  "kind",
+                  "target",
+                  "resolution"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "container"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "kind": {
+                    "enum": [
+                      "Repository",
+                      "File",
+                      "Module",
+                      "Namespace",
+                      "Class",
+                      "Interface",
+                      "Function",
+                      "Method",
+                      "Variable",
+                      "Parameter",
+                      "Symbol",
+                      "Block",
+                      "Expression",
+                      "Statement",
+                      "TypeAlias",
+                      "Enum"
+                    ]
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "owner": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "file",
+                  "source",
+                  "kind",
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "const": "expression"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "kind": {
+                    "enum": [
+                      "identifier",
+                      "literal",
+                      "prefix",
+                      "infix",
+                      "postfix",
+                      "assignment",
+                      "group",
+                      "member",
+                      "application",
+                      "index",
+                      "conditional"
+                    ]
+                  },
+                  "operator": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "operands": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "maxItems": 1025,
+                    "minItems": 0
+                  },
+                  "owner": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "maxItems": 256,
+                    "minItems": 0
+                  }
+                },
+                "required": [
+                  "type",
+                  "file",
+                  "source",
+                  "kind",
+                  "operands"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type",
+                  "file",
+                  "mode",
+                  "closed",
+                  "opener",
+                  "content",
+                  "source"
+                ],
+                "properties": {
+                  "type": {
+                    "const": "lexical_region"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "mode": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "closed": {
+                    "type": "boolean"
+                  },
+                  "opener": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "closer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "content": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "owner": {
+                    "type": "array",
+                    "maxItems": 256,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    }
+                  },
+                  "header": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "self_closed": {
+                    "type": "boolean"
+                  },
+                  "captures": {
+                    "type": "object",
+                    "maxProperties": 32,
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 4096
+                    }
+                  },
+                  "lookahead": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                }
+              }
+            ]
+          },
+          "maxItems": 100000
+        },
+        "policy": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "UNKNOWN"
+          ]
+        },
+        "coverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "relation": {
+                "enum": [
+                  "IMPORTS",
+                  "DEPENDS_ON"
+                ]
+              },
+              "domain": {
+                "const": "static-module-references/v1"
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "path",
+              "relation",
+              "domain",
+              "complete"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 20000
+        }
+      },
+      "required": [
+        "analysis"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "pack",
+    "feature",
+    "classification",
+    "mode",
+    "input",
+    "expected"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

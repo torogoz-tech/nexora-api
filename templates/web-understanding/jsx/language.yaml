@@ -1,0 +1,54 @@
+schema_version: 1
+id: jsx
+version: 0.9.0
+extensions:
+- jsx
+resolution:
+  literal:
+    mode: quoted
+    quotes:
+    - ''''
+    - '"'
+    escape: \
+    escapes: {}
+    escaped_quote: true
+    escaped_escape: true
+  routes:
+  - reject:
+    - '?'
+    - '#'
+    accept: ^\.{1,2}/
+    anchor: source_directory
+    rewrites: []
+    candidates:
+    - template: '{module}'
+      condition: always
+      priority: 0
+    - template: '{module}.{extension}'
+      condition: without_extension
+      priority: 1
+    - template: ./{module}/index.{extension}
+      condition: without_extension
+      priority: 1
+composition:
+  schema_version: 4
+  routes:
+    code:
+      language: jsx
+      context: expression
+      scope:
+        visibility: whole_scope
+        parent_lookup: true
+        shadowing: nearest
+  roles:
+    template: carrier
+    code: grammar
+    code_group: guard
+    double_quote: literal
+    single_quote: literal
+    block_comment: literal
+    line_comment: literal
+    element: carrier
+    fragment: carrier
+    attribute_double: literal
+    attribute_single: literal

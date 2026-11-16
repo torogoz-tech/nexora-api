@@ -1,0 +1,46 @@
+schema_version: 1
+identifier_kind: identifier
+keywords:
+- local
+- function
+- end
+- if
+- then
+- else
+- elseif
+- do
+- for
+- while
+- repeat
+- until
+- return
+- 'true'
+- 'false'
+- nil
+- break
+- and
+- or
+- not
+tokens:
+- kind: whitespace
+  pattern: \s+
+  trivia: true
+- kind: block_comment
+  pattern: --\[\[(?s:.*?)\]\]
+  trivia: true
+- kind: line_comment
+  pattern: --(?:[^\[\r\n][^\r\n]*|\[(?:[^\[\r\n][^\r\n]*)?)?
+  trivia: true
+- kind: string
+  pattern: '"(?:[^"\\\r\n]|\\[^\r\n])*"|''(?:[^''\\\r\n]|\\[^\r\n])*'''
+- kind: number
+  pattern: '[0-9]+(?:\.[0-9]+)?'
+- kind: identifier
+  pattern: '[\p{L}_$][\p{L}\p{N}_$]*'
+- kind: operator
+  pattern: \.\.|==|~=|<=|>=|[+*/%=<>:#-]
+- kind: delimiter
+  pattern: '[(){}\[\],;.]'
+- kind: unterminated_comment
+  pattern: --\[\[
+  reject: true

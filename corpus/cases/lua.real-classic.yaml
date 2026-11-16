@@ -1,0 +1,58 @@
+id: lua.real-classic
+pack: lua
+feature: real.source
+classification: partial
+mode: repository
+input: corpus/third-party/classic
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:new
+    source: 'function Object:new()
+
+      end'
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:extend
+    source: "function Object:extend()\n  local cls = {}\n  for k, v in pairs(self)\
+      \ do\n    if k:find(\"__\") == 1 then\n      cls[k] = v\n    end\n  end\n  cls.__index\
+      \ = cls\n  cls.super = self\n  setmetatable(cls, self)\n  return cls\nend"
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:implement
+    source: "function Object:implement(...)\n  for _, cls in pairs({...}) do\n   \
+      \ for k, v in pairs(cls) do\n      if self[k] == nil and type(v) == \"function\"\
+      \ then\n        self[k] = v\n      end\n    end\n  end\nend"
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:is
+    source: "function Object:is(T)\n  local mt = getmetatable(self)\n  while mt do\n\
+      \    if mt == T then\n      return true\n    end\n    mt = getmetatable(mt)\n\
+      \  end\n  return false\nend"
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:__tostring
+    source: "function Object:__tostring()\n  return \"Object\"\nend"
+  - type: declaration
+    file: classic.lua
+    kind: Method
+    name: Object:__call
+    source: "function Object:__call(...)\n  local obj = setmetatable({}, self)\n \
+      \ obj:new(...)\n  return obj\nend"
+  coverage:
+  - path: classic.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: classic.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false

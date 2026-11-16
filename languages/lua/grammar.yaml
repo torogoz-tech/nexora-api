@@ -1,0 +1,177 @@
+schema_version: 2
+max_nesting: 128
+max_steps: 1000000
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: function
+  close: end
+  kind: keyword
+- open: if
+  close: end
+  kind: keyword
+- open: do
+  close: end
+  kind: keyword
+- open: repeat
+  close: until
+  kind: keyword
+ignored:
+- type: literal
+  text: ;
+opaque_references:
+- text: require
+  kind: identifier
+recovery:
+- text: ;
+  kind: delimiter
+- text: end
+  kind: keyword
+recover_line_break: true
+rules:
+  argument:
+    type: choice
+    alternatives:
+    - type: sequence
+      items:
+      - type: literal
+        text: (
+      - type: capture
+        name: source
+        item:
+          type: token
+          kind: string
+        join: ''
+      - type: literal
+        text: )
+    - type: capture
+      name: source
+      item:
+        type: token
+        kind: string
+      join: ''
+  qualified_name:
+    type: sequence
+    items:
+    - type: token
+      kind: identifier
+    - type: repeat
+      item:
+        type: sequence
+        items:
+        - type: literal
+          text: .
+        - type: token
+          kind: identifier
+      min: 0
+      max: 128
+productions:
+- name: qualified_method_declaration
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: function
+      kind: keyword
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: qualified_name
+        - type: literal
+          text: ':'
+        - type: token
+          kind: identifier
+      join: ''
+    - type: balanced
+      open: (
+    - type: until
+      close: end
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: method
+    role: Declaration
+    name_capture: name
+- name: function_declaration
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: function
+      kind: keyword
+    - type: capture
+      name: name
+      item:
+        type: rule
+        name: qualified_name
+      join: ''
+    - type: balanced
+      open: (
+    - type: until
+      close: end
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+- name: module_binding
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: local
+      kind: keyword
+    - type: token
+      kind: identifier
+    - type: literal
+      text: '='
+    - type: literal
+      text: require
+      kind: identifier
+    - type: rule
+      name: argument
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: module_import
+    role: Reference
+    name_capture: source
+- name: module_effect
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: require
+      kind: identifier
+    - type: rule
+      name: argument
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: module_import
+    role: Reference
+    name_capture: source
+recovery_groups:
+- function
+- if
+- do
+- repeat

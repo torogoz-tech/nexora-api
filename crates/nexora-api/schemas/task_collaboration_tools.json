@@ -1,0 +1,1139 @@
+[
+  {
+    "name": "nexora_task_dependency_create",
+    "description": "Create a same-project dependency with both task revisions. Blocking directions are normalized; concurrent cycles are rejected. Project scope is optional; projectless access requires explicit installation/global task authority. Blocking prerequisites become satisfied on task completion; unresolved work cannot be manually resolved. Explicit audited removal releases a prerequisite.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "dependency"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dependency": {
+          "$ref": "#/$defs/TaskDependencyCreate"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_dependency_resolve",
+    "description": "Resolve an active dependency with expected revision and reason; preserve the relation and history. Project scope is optional; projectless access requires explicit installation/global task authority. Blocking prerequisites become satisfied on task completion; unresolved work cannot be manually resolved. Explicit audited removal releases a prerequisite.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependency_id",
+        "request_id",
+        "change"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dependency_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "change": {
+          "$ref": "#/$defs/TaskDependencyChange"
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_dependency_remove",
+    "description": "Remove a dependency logically with expected revision and reason; preserve historical attribution. Project scope is optional; projectless access requires explicit installation/global task authority. Blocking prerequisites become satisfied on task completion; unresolved work cannot be manually resolved. Explicit audited removal releases a prerequisite.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependency_id",
+        "request_id",
+        "change"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dependency_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "change": {
+          "$ref": "#/$defs/TaskDependencyChange"
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_dependencies_list",
+    "description": "List bounded same-project task dependencies, optionally including removed relationships. Project scope is optional; projectless access requires explicit installation/global task authority. Blocking prerequisites become satisfied on task completion; unresolved work cannot be manually resolved. Explicit audited removal releases a prerequisite.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "query": {
+          "$ref": "#/$defs/TaskDependencyQuery"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_comment_add",
+    "description": "Append an attributed task comment as data; use request_id for exact retry.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "request_id",
+        "comment"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "comment": {
+          "$ref": "#/$defs/TaskCommentCreate"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_comments_list",
+    "description": "Read attributed task comments in monotonic sequence with a bounded cursor.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id"
+      ],
+      "properties": {
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_relations_get",
+    "description": "Read authorized parent, subtasks and prerequisites with authoritative blocking and completion counts. Hidden task identifiers are not exposed.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_subtask_create",
+    "description": "Create a pending subtask with its own responsibility and task-selected entry workflow. Decomposition children integrate into the parent branch and finish their current stage. Corrective children require the exact tested repository and full commit SHA, deliver the correction to the parent environment without moving the parent, and integrate back into develop.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "request_id",
+        "subtask"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "subtask": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expected_revision",
+            "definition"
+          ],
+          "properties": {
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "definition": {
+              "$ref": "#/$defs/TaskCreate"
+            },
+            "work_kind": {
+              "type": "string",
+              "enum": [
+                "decomposition",
+                "corrective"
+              ],
+              "default": "decomposition"
+            },
+            "tested_repository_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "tested_commit_sha": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^(?:[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$"
+            }
+          }
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_subtask_link",
+    "description": "Attach an existing task as subtask; same scope, one parent, no wait cycles, both endpoint authority and revisions required.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "child_task_id",
+        "request_id",
+        "change"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "child_task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "change": {
+          "$ref": "#/$defs/TaskSubtaskChange"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_subtask_remove",
+    "description": "Explicitly detach a subtask requirement with audited reason and current endpoint revisions.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "child_task_id",
+        "request_id",
+        "change"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "child_task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "change": {
+          "$ref": "#/$defs/TaskSubtaskChange"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_knowledge_link",
+    "description": "Link an authorized project task to an existing feature or exact requirement version in the same project. Does not create features, approve requirements or change the approved requirement-feature map. Requires task write and document read; requirement links additionally require document write. Use current task and target revisions. Projectless tasks cannot link project knowledge. For task blockers use nexora_task_dependency_create; use dependency.source_task_id as the dependent and dependency.target_task_id as the prerequisite with kind=depends_on.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "request_id",
+        "link"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "link": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target_id",
+            "expected_revision",
+            "expected_target_revision",
+            "reason"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "feature",
+                "requirement"
+              ]
+            },
+            "target_id": {
+              "type": "string"
+            },
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expected_target_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "version_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_project_change",
+    "description": "Explicitly transfer a task to an authorized project or projectless team pool. Requires live read/write authority in both scopes and modification authority. Preserves task identity, evidence, comments, history and independent execution workflow. Refuses project-anchored relationships, backlogs and legacy project workflows; never silently detaches them. Assignee and type must be valid in the destination. Use expected revision and idempotency request ID.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "request_id",
+        "change"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "change": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "project_id",
+            "expected_revision",
+            "reason"
+          ],
+          "properties": {
+            "project_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 128
+            },
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000
+            }
+          }
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_work_logs_list",
+    "description": "List manually recorded work on an authorized task.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_work_log_add",
+    "description": "Record, edit or remove your own manual task work. Date and positive minutes required. Changes/removal require the current work-log expected_revision. All mutations are audited; request_id is idempotent. Task commit references remain task-level.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "YYYY-MM-DD work date"
+            },
+            "minutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1440
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 4000
+            },
+            "expected_revision": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "overtime_request_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Optional own approved overtime request covering the work date. Its approved minutes cannot be exceeded across logs. Omit for regular work."
+            }
+          },
+          "required": [
+            "date",
+            "minutes"
+          ]
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "input"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_work_log_change",
+    "description": "Record, edit or remove your own manual task work. Date and positive minutes required. Changes/removal require the current work-log expected_revision. All mutations are audited; request_id is idempotent. Task commit references remain task-level.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "YYYY-MM-DD work date"
+            },
+            "minutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1440
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 4000
+            },
+            "expected_revision": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "overtime_request_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Optional own approved overtime request covering the work date. Its approved minutes cannot be exceeded across logs. Omit for regular work."
+            }
+          },
+          "required": [
+            "date",
+            "minutes"
+          ]
+        },
+        "work_log_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "input",
+        "work_log_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_work_log_remove",
+    "description": "Record, edit or remove your own manual task work. Date and positive minutes required. Changes/removal require the current work-log expected_revision. All mutations are audited; request_id is idempotent. Task commit references remain task-level.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "YYYY-MM-DD work date"
+            },
+            "minutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1440
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 4000
+            },
+            "expected_revision": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "overtime_request_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Optional own approved overtime request covering the work date. Its approved minutes cannot be exceeded across logs. Omit for regular work."
+            }
+          },
+          "required": [
+            "date",
+            "minutes"
+          ]
+        },
+        "work_log_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "input",
+        "work_log_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_releases_list",
+    "description": "Prepare and inspect an explicit selected-task release with immutable task revisions and repository commit pins. Selection never merges branches or deploys. Technical leads/managers may prepare; only internally verified production provider outcomes can publish and complete the selected tasks. No public deployed assertion is accepted.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_release_get",
+    "description": "Prepare and inspect an explicit selected-task release with immutable task revisions and repository commit pins. Selection never merges branches or deploys. Technical leads/managers may prepare; only internally verified production provider outcomes can publish and complete the selected tasks. No public deployed assertion is accepted.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "release_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "release_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_release_create",
+    "description": "Prepare and inspect an explicit selected-task release with immutable task revisions and repository commit pins. Selection never merges branches or deploys. Technical leads/managers may prepare; only internally verified production provider outcomes can publish and complete the selected tasks. No public deployed assertion is accepted.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "task_id": {
+                    "type": "string"
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "task_id",
+                  "expected_revision"
+                ]
+              }
+            },
+            "repositories": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "repository_id": {
+                    "type": "string"
+                  },
+                  "head_sha": {
+                    "type": "string",
+                    "description": "Optional candidate hint; never treated as composition proof. The server computes the release head from explicit task commits."
+                  }
+                },
+                "required": [
+                  "repository_id"
+                ]
+              }
+            },
+            "version": {
+              "type": "string"
+            },
+            "branch_name": {
+              "type": "string",
+              "description": "Explicit release/... branch for these selected changes."
+            }
+          },
+          "required": [
+            "tasks",
+            "repositories",
+            "version",
+            "branch_name"
+          ]
+        }
+      },
+      "required": [
+        "project_id",
+        "request_id",
+        "input"
+      ]
+    }
+  },
+  {
+    "name": "nexora_release_tasks_add",
+    "description": "Prepare and inspect an explicit selected-task release with immutable task revisions and repository commit pins. Selection never merges branches or deploys. Technical leads/managers may prepare; only internally verified production provider outcomes can publish and complete the selected tasks. No public deployed assertion is accepted.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "release_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "task_id": {
+                    "type": "string"
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "task_id",
+                  "expected_revision"
+                ]
+              }
+            },
+            "repositories": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "repository_id": {
+                    "type": "string"
+                  },
+                  "head_sha": {
+                    "type": "string",
+                    "description": "Optional candidate hint; never treated as composition proof. The server computes the release head from explicit task commits."
+                  }
+                },
+                "required": [
+                  "repository_id"
+                ]
+              }
+            },
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "tasks",
+            "repositories",
+            "expected_revision"
+          ]
+        }
+      },
+      "required": [
+        "project_id",
+        "release_id",
+        "request_id",
+        "input"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_stages_list",
+    "description": "Read immutable workflow stage completion history for an authorized task. Internal stage completion does not mean production publication or global task completion.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_commits_list",
+    "description": "Explicit task-level commit references used for selective release composition. Binding rechecks live task/repository authority and verifies commit ancestry at the provider; merge commits and base commits are rejected. Binding is audited, idempotent and increments the task revision.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_commit_bind",
+    "description": "Explicit task-level commit references used for selective release composition. Binding rechecks live task/repository authority and verifies commit ancestry at the provider; merge commits and base commits are rejected. Binding is audited, idempotent and increments the task revision.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "repository_id": {
+              "type": "string"
+            },
+            "commit_sha": {
+              "type": "string",
+              "description": "Full nonmerge commit SHA; provider must verify membership in the task branch and exclusion from its base."
+            }
+          },
+          "required": [
+            "expected_revision",
+            "repository_id",
+            "commit_sha"
+          ]
+        }
+      },
+      "required": [
+        "task_id",
+        "request_id",
+        "input"
+      ]
+    }
+  },
+  {
+    "name": "nexora_release_compose",
+    "description": "Queue or inspect durable selective release composition. The existing server repository worker applies only explicitly bound task commit patches onto verified main in an isolated bare Git index, creates the release branch without overwriting any existing branch, and records exact SHA/provenance. Conflicts or missing task commits fail without a broad merge. Composition is distinct from preproduction and production approval/deployment.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "release_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "expected_revision"
+          ]
+        }
+      },
+      "required": [
+        "project_id",
+        "release_id",
+        "request_id",
+        "input"
+      ]
+    }
+  },
+  {
+    "name": "nexora_release_composition_get",
+    "description": "Queue or inspect durable selective release composition. The existing server repository worker applies only explicitly bound task commit patches onto verified main in an isolated bare Git index, creates the release branch without overwriting any existing branch, and records exact SHA/provenance. Conflicts or missing task commits fail without a broad merge. Composition is distinct from preproduction and production approval/deployment.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "release_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "release_id"
+      ]
+    }
+  },
+  {
+    "name": "nexora_task_commit_remove",
+    "description": "Remove a task-level commit reference with current task revision. Keeps audited history and invalidates any release pinned to the earlier task revision.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "commit_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "expected_revision": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "expected_revision"
+          ]
+        }
+      },
+      "required": [
+        "task_id",
+        "commit_id",
+        "request_id",
+        "input"
+      ]
+    }
+  }
+]

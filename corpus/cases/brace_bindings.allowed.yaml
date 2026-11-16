@@ -1,0 +1,102 @@
+id: brace_bindings.allowed
+pack: brace_bindings
+feature: semantic.calls
+classification: supported
+mode: repository
+input: corpus/fixtures/bindings/brace_bindings.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxbc
+    source: FUNC f(p) { EVAL p; }
+    kind: Function
+    name: f
+    owner: []
+  - type: declaration
+    file: source.nxbc
+    source: p
+    kind: Parameter
+    name: p
+    owner:
+    - f
+  - type: container
+    file: source.nxbc
+    source: EVAL p;
+    kind: Statement
+    name: EVAL
+    owner:
+    - f
+  - type: expression
+    file: source.nxbc
+    source: p
+    kind: identifier
+    operands: []
+    owner:
+    - f
+    - EVAL
+  - type: relation
+    file: source.nxbc
+    source: p
+    kind: REFERENCES
+    target: p
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - f
+    - EVAL
+    target_owner:
+    - f
+    label: read
+  - type: container
+    file: source.nxbc
+    source: EVAL f(1);
+    kind: Statement
+    name: EVAL
+    owner: []
+  - type: expression
+    file: source.nxbc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxbc
+    source: '1'
+    kind: literal
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxbc
+    source: f(1)
+    kind: application
+    operands:
+    - f
+    - '1'
+    owner:
+    - EVAL
+    operator: (
+  - type: relation
+    file: source.nxbc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - EVAL
+    target_owner: []
+    label: read
+  - type: relation
+    file: source.nxbc
+    source: f(1)
+    kind: CALLS
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_direct_callable
+    owner:
+    - EVAL
+    target_owner: []
+    label: direct-call

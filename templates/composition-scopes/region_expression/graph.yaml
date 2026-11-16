@@ -1,0 +1,32 @@
+schema_version: 9
+mappings:
+  function: Function
+  parameter: Parameter
+  variable: Variable
+  block: Block
+  read: Symbol
+  expression: Expression
+  statement: Statement
+  lexical_region: LexicalRegion
+  attribute: Statement
+reference_relations:
+  read:
+  - REFERENCES
+symbol_references:
+  read:
+    scope: lexical
+    target_kinds:
+    - Function
+    - Parameter
+    - Variable
+expression_bindings:
+  expression:
+    target_kinds:
+    - Function
+    - Variable
+    - Parameter
+    callable_kinds:
+    - Function
+    unwrap_groups: true
+    mutating_unary_operators:
+    - ++

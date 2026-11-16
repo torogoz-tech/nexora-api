@@ -1,0 +1,11 @@
+schema_version: 8
+mappings:
+  css_at_rule: Statement
+  css_rule: Statement
+  css_declaration: Statement
+  css_empty_declaration: Statement
+  css_function: Statement
+  css_group: Statement
+  css_url: Statement
+  css_atom: Statement
+  lexical_region: LexicalRegion

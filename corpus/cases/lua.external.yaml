@@ -1,0 +1,39 @@
+id: lua.external
+pack: lua
+feature: dependency.external
+classification: partial
+mode: repository
+input: corpus/fixtures/lua/external
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: domain/source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  - type: relation
+    file: domain/source.lua
+    kind: IMPORTS
+    target: missing.storage
+    resolution: Unresolved
+    source: require("missing.storage")
+  - type: relation
+    file: domain/source.lua
+    kind: DEPENDS_ON
+    target: missing.storage
+    resolution: Unresolved
+    source: require("missing.storage")
+  policy: UNKNOWN
+  coverage:
+  - path: domain/source.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: domain/source.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false
+policy: corpus/policies/boundary.policy.yaml

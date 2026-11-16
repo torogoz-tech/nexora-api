@@ -1,0 +1,19 @@
+schema_version: 2
+mappings:
+  function: Function
+  module_import: Module
+  method: Method
+  symbol_export: Symbol
+reference_relations:
+  module_import:
+  - IMPORTS
+  - DEPENDS_ON
+  symbol_export:
+  - EXPORTS
+symbol_references:
+  symbol_export:
+    scope: file
+    target_kinds:
+    - Function
+    - Method
+    label: public

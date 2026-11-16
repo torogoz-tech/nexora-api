@@ -1,0 +1,10 @@
+id: template.lexical
+pack: template
+feature: lexical.rejected
+classification: rejected
+mode: file
+input: corpus/fixtures/template/lexical/source.nxexample
+replicas: 1
+benchmark: false
+expected:
+  analysis: lexical_error

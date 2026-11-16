@@ -1,0 +1,6 @@
+VAR outside;
+~[Texto café
+  @(outside + 2)
+  @(render(~[anidado @(item + 3)]~))
+]~
+VAR after;

@@ -1,0 +1,10 @@
+id: javascript.malformed
+pack: javascript
+feature: syntax.malformed
+classification: rejected
+mode: file
+input: corpus/fixtures/javascript/malformed/source.js
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics

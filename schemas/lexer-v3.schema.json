@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/lexer-v3.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "identifier_kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32768,
+      "minItems": 0
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "pattern": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "trivia": {
+            "type": "boolean"
+          },
+          "reject": {
+            "type": "boolean"
+          },
+          "after": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            }
+          },
+          "at_start": {
+            "type": "boolean"
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "kind",
+          "pattern"
+        ]
+      },
+      "maxItems": 128,
+      "minItems": 1
+    },
+    "regions": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "close"
+        ],
+        "properties": {
+          "close": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "alternate_closes": {
+            "type": "array",
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "escape": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4
+          },
+          "children": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "pattern",
+                "region"
+              ],
+              "properties": {
+                "pattern": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "region": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "reject": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "eof_closes": {
+            "type": "boolean"
+          },
+          "ast_kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+    },
+    "max_region_steps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000000
+    },
+    "max_region_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "max_region_nodes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000
+    }
+  },
+  "required": [
+    "schema_version",
+    "identifier_kind",
+    "keywords",
+    "tokens"
+  ]
+}

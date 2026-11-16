@@ -1,0 +1,79 @@
+schema_version: 4
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions:
+- block
+- statement
+contexts: {}
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+productions:
+- name: block
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+      trim_start: 0
+      trim_end: 0
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+- name: statement
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+        - text: '{'
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: rule
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+      trim_start: 0
+      trim_end: 0
+ignored:
+- type: literal
+  text: ;
+recovery:
+- text: ;
+recover_line_break: true

@@ -1,0 +1,126 @@
+[
+  {
+    "name": "nexora_organization_documents_list",
+    "description": "List organization-wide knowledge available to every project. Global read authority required; project-only keys cannot read installation knowledge.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "document",
+            "requirement",
+            "business_rule",
+            "decision",
+            "best_practice",
+            "technical_debt"
+          ]
+        },
+        "search": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "after": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_organization_document_get",
+    "description": "Read an organization knowledge article or an immutable historical revision.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "document_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_organization_document_write",
+    "description": "Create or revise shared organization knowledge. Requires PMO, manager, technical lead or superadmin AND explicit installation-scoped organization-knowledge:write for API keys. Omit document_id to create; existing articles require current expected_revision. Every write preserves an immutable revision.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "document": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "title",
+            "body"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "document",
+                "requirement",
+                "business_rule",
+                "decision",
+                "best_practice",
+                "technical_debt"
+              ]
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "body": {
+              "type": "string",
+              "maxLength": 131072
+            },
+            "expected_revision": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
+          }
+        }
+      },
+      "required": [
+        "request_id",
+        "document"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

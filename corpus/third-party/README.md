@@ -1,0 +1,8 @@
+# Fuentes públicas versionadas
+
+Copias completas y sin modificar de dos archivos reales, con LICENSE original y hashes en [provenance.json](provenance.json). Se obtuvieron desde repositorios públicos; el motor no necesita red para ejecutar el corpus. No representan una auditoría ni indexación completa de esos repositorios.
+
+- [Lodash identity.js](https://github.com/lodash/lodash/blob/d85490ebfb8f49ddc1eab84892aa33a3ef547894/identity.js): función superior simple seguida de exportación de un identificador. Se anota manualmente la declaración `identity`; la exportación simple default se proyecta mediante graph schema 2 y se resuelve a la función. En corpus 0.3.0 este archivo es soportado dentro del subconjunto estructural; no se infiere semántica del cuerpo.
+- [rxi/classic classic.lua](https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/classic.lua): contiene métodos con nombres calificados (`Object:new`, `Object:extend`, `Object:implement`, `Object:is`, `Object:__tostring`, `Object:__call`), asignaciones y expresión de retorno. En corpus 0.3.0 los seis métodos se reconocen con capturas YAML y se conservan tres diagnósticos por asignaciones/retorno no implementados, con cobertura incompleta. No se infieren la clase del receptor ni la semántica de los cuerpos.
+
+classic.lua se conserva `partial`; identity.js pasa a `supported` dentro del subconjunto. Ninguno se usa como escenario sintético de rendimiento. Una mejora futura de los paquetes debe actualizar estas anotaciones mediante revisión explícita. No se agregaron excepciones en Rust para hacerlos pasar. Los avisos de copyright y licencias conservan sus condiciones originales.

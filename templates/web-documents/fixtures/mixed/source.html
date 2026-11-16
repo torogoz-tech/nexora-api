@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <title>Documento mixto</title>
+  <style media="screen">.panel { color: navy; }</style>
+</head>
+<body>
+  <div class="panel">Texto literal: function forged() {}</div>
+  <script type="module" data-note="texto > de atributo">
+    const base = 2;
+    function render(value) { return `${value + base}`; }
+  </script>
+</body>
+</html>

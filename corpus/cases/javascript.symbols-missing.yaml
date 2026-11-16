@@ -1,0 +1,17 @@
+id: javascript.symbols-missing
+pack: javascript
+feature: symbol.exports
+classification: partial
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-missing
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: relation
+    file: source.js
+    kind: EXPORTS
+    target: missing
+    resolution: Unresolved
+    source: export default missing;
+    label: default

@@ -1,0 +1,472 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/policy-v1alpha1.schema.json",
+  "title": "Nexora Policy v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "nexora.dev/v1alpha1"
+    },
+    "kind": {
+      "const": "Policy"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "spec": {
+      "$ref": "#/$defs/spec"
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^(?!\\.{1,2}$)[A-Za-z0-9_.-]+$"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "description": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "package": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^(?!\\.{1,2}$)[A-Za-z0-9_.-]+$"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "version",
+        "description",
+        "severity",
+        "category"
+      ]
+    },
+    "filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "nameMatches": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "fileMatches": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "inherits": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "implements": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": []
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^(?!\\.{1,2}$)[A-Za-z0-9_.-]+$"
+        },
+        "symbol": {
+          "enum": [
+            "Repository",
+            "File",
+            "Module",
+            "Namespace",
+            "Class",
+            "Interface",
+            "Function",
+            "Method",
+            "Variable",
+            "Parameter",
+            "repository",
+            "file",
+            "module",
+            "namespace",
+            "class",
+            "interface",
+            "function",
+            "method",
+            "variable",
+            "parameter",
+            "Symbol",
+            "symbol",
+            "Block",
+            "block",
+            "TypeAlias",
+            "Enum",
+            "LexicalRegion",
+            "SyntaxUnit"
+          ]
+        },
+        "where": {
+          "$ref": "#/$defs/filter"
+        }
+      },
+      "required": []
+    },
+    "relationTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "symbol": {
+          "enum": [
+            "Repository",
+            "File",
+            "Module",
+            "Namespace",
+            "Class",
+            "Interface",
+            "Function",
+            "Method",
+            "Variable",
+            "Parameter",
+            "repository",
+            "file",
+            "module",
+            "namespace",
+            "class",
+            "interface",
+            "function",
+            "method",
+            "variable",
+            "parameter",
+            "Symbol",
+            "symbol",
+            "Block",
+            "block",
+            "TypeAlias",
+            "Enum",
+            "LexicalRegion",
+            "SyntaxUnit"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "inherits": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "implements": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "fileMatches": {
+          "type": "string",
+          "maxLength": 1024
+        }
+      },
+      "required": []
+    },
+    "traversal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "default": 1
+        },
+        "maxVisits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 1000
+        }
+      },
+      "required": []
+    },
+    "attribute": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "enum": [
+            "name",
+            "kind",
+            "file"
+          ]
+        },
+        "operator": {
+          "enum": [
+            "equals",
+            "notEquals",
+            "matches",
+            "exists"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "attribute",
+        "operator"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "exists"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "value"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "value"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "kind"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "operator": {
+                "enum": [
+                  "equals",
+                  "notEquals",
+                  "exists"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relation": {
+          "enum": [
+            "CONTAINS",
+            "DECLARES",
+            "IMPORTS",
+            "CALLS",
+            "REFERENCES",
+            "EXTENDS",
+            "IMPLEMENTS",
+            "DEPENDS_ON",
+            "EXPORTS",
+            "INTERPRETS"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/relationTarget"
+        },
+        "traversal": {
+          "$ref": "#/$defs/traversal"
+        }
+      },
+      "required": [
+        "relation"
+      ]
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          },
+          "minItems": 1,
+          "maxItems": 256
+        },
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          },
+          "minItems": 1,
+          "maxItems": 256
+        },
+        "none": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          },
+          "minItems": 1,
+          "maxItems": 256
+        }
+      },
+      "required": [],
+      "oneOf": [
+        {
+          "required": [
+            "all"
+          ]
+        },
+        {
+          "required": [
+            "any"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ]
+        }
+      ]
+    },
+    "assertion": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/group"
+        },
+        {
+          "$ref": "#/$defs/attribute"
+        },
+        {
+          "$ref": "#/$defs/relation"
+        }
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "organization": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "tenants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "maxItems": 128
+        },
+        "repositories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "maxItems": 128
+        }
+      },
+      "required": []
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 257
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ]
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "assert": {
+          "$ref": "#/$defs/assertion"
+        },
+        "onUnknown": {
+          "enum": [
+            "review",
+            "warn",
+            "fail",
+            "ignore"
+          ],
+          "default": "review"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reference"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "target",
+        "assert"
+      ]
+    }
+  }
+}

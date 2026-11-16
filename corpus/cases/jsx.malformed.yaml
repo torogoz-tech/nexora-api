@@ -1,0 +1,9 @@
+id: jsx.malformed
+pack: jsx
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/jsx.malformed
+expected:
+  analysis: diagnostics
+  facts: []

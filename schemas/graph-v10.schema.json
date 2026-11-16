@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/graph-v10.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 10
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "Repository",
+          "File",
+          "Module",
+          "Namespace",
+          "Class",
+          "Interface",
+          "Function",
+          "Method",
+          "Variable",
+          "Parameter",
+          "Symbol",
+          "Block",
+          "Expression",
+          "Statement",
+          "TypeAlias",
+          "Enum",
+          "LexicalRegion"
+        ]
+      }
+    },
+    "reference_relations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "IMPORTS",
+            "DEPENDS_ON",
+            "EXPORTS",
+            "REFERENCES"
+          ]
+        },
+        "maxItems": 2,
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    "symbol_references": {
+      "type": "object",
+      "maxProperties": 128,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "target_kinds"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "file",
+              "lexical"
+            ]
+          },
+          "target_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "Module",
+                "Namespace",
+                "Class",
+                "Interface",
+                "Function",
+                "Method",
+                "Variable",
+                "Parameter",
+                "Block",
+                "TypeAlias",
+                "Enum"
+              ]
+            }
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+    },
+    "expression_bindings": {
+      "type": "object",
+      "maxProperties": 64,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target_kinds",
+          "callable_kinds"
+        ],
+        "properties": {
+          "target_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "Module",
+                "Namespace",
+                "Class",
+                "Interface",
+                "Function",
+                "Method",
+                "Variable",
+                "Parameter",
+                "TypeAlias",
+                "Enum"
+              ]
+            }
+          },
+          "callable_kinds": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "Module",
+                "Namespace",
+                "Class",
+                "Interface",
+                "Function",
+                "Method",
+                "Variable",
+                "Parameter",
+                "TypeAlias",
+                "Enum"
+              ]
+            }
+          },
+          "unwrap_groups": {
+            "type": "boolean"
+          },
+          "mutating_unary_operators": {
+            "type": "array",
+            "maxItems": 128,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "mappings"
+  ],
+  "description": "Graph10 profiles preserve expression policies and declared mutation operands; composition schema5 opts in to proven direct calls."
+}

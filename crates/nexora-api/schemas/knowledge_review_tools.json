@@ -1,0 +1,92 @@
+[
+  {
+    "name": "nexora_knowledge_review_request",
+    "description": "Solicita aprobación humana de una versión exacta de conocimiento, sin workflows. No aprueba ni publica. Incluye requerimientos y funcionalidades.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "project_document",
+            "organization_document",
+            "contribution",
+            "feature"
+          ]
+        },
+        "resource_id": {
+          "type": "string"
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "request_id",
+        "kind",
+        "resource_id",
+        "expected_revision"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "nexora_knowledge_review_list",
+    "description": "Consulta las revisiones autorizadas de conocimiento, sin depender de workflows.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "resource_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "approved",
+            "rejected",
+            ""
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "nexora_knowledge_review_get",
+    "description": "Consulta el estado y la versión de una revisión de conocimiento.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "review_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "nexora_products_list",
+    "description": "Lista Productos y sus proyectos técnicos autorizados. No concede acceso a proyectos adicionales.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true
+    }
+  }
+]

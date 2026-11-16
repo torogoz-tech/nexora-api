@@ -1,0 +1,36 @@
+schema_version: 4
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions:
+- fragment
+contexts: {}
+groups: []
+productions:
+- name: fragment
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: choice
+      alternatives:
+      - type: token
+        kind: tag
+      - type: token
+        kind: declaration
+      - type: token
+        kind: text
+      - type: token
+        kind: raw_less
+    join: ''
+  projection:
+    ast_kind: fragment
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+      trim_start: 0
+      trim_end: 0

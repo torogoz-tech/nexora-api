@@ -1,0 +1,9 @@
+id: css.malformed
+pack: css
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/css.malformed
+expected:
+  analysis: diagnostics
+  facts: []

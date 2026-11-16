@@ -1,0 +1,78 @@
+id: keyword_mold.nested
+pack: keyword_mold
+feature: semantic.scopes
+classification: supported
+mode: repository
+input: corpus/fixtures/scopes/keyword_mold.nested
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxk
+    kind: Function
+    name: outer
+    source: "DEF outer[p] BEGIN\n LET value;\n SCOPE BEGIN\n  LET value;\n  USE_LOCAL\
+      \ value;\n  USE_LOCAL p;\n FINISH\n USE_LOCAL value;\nFINISH"
+  - type: declaration
+    file: source.nxk
+    kind: Parameter
+    name: p
+    source: p
+    owner:
+    - outer
+  - type: declaration
+    file: source.nxk
+    kind: Variable
+    name: value
+    source: LET value;
+    owner:
+    - outer
+  - type: container
+    file: source.nxk
+    kind: Block
+    name: SCOPE
+    owner:
+    - outer
+    source: "SCOPE BEGIN\n  LET value;\n  USE_LOCAL value;\n  USE_LOCAL p;\n FINISH"
+  - type: declaration
+    file: source.nxk
+    kind: Variable
+    name: value
+    source: LET value;
+    owner:
+    - outer
+    - SCOPE
+  - type: relation
+    file: source.nxk
+    kind: REFERENCES
+    target: value
+    resolution: Resolved
+    source: USE_LOCAL value;
+    owner:
+    - outer
+    - SCOPE
+    target_owner:
+    - outer
+    - SCOPE
+  - type: relation
+    file: source.nxk
+    kind: REFERENCES
+    target: p
+    resolution: Resolved
+    source: USE_LOCAL p;
+    owner:
+    - outer
+    - SCOPE
+    target_owner:
+    - outer
+  - type: relation
+    file: source.nxk
+    kind: REFERENCES
+    target: value
+    resolution: Resolved
+    source: USE_LOCAL value;
+    owner:
+    - outer
+    target_owner:
+    - outer

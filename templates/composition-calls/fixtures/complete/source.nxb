@@ -1,0 +1,5 @@
+FUNC run() {}
+VAR host;
+FUNC render(p) { EVAL ~[text @(run()) @(p + host)]~; }
+<Box count={host + 1} title="café" action={run()}/>
+READ host;

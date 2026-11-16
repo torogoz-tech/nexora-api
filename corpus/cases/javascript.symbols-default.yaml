@@ -1,0 +1,22 @@
+id: javascript.symbols-default
+pack: javascript
+feature: symbol.exports
+classification: supported
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-default
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total() {}
+  - type: relation
+    file: source.js
+    kind: EXPORTS
+    target: total
+    resolution: Resolved
+    source: export default total;
+    label: default

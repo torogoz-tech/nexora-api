@@ -1,0 +1,1203 @@
+{
+  "TaskPriority": {
+    "type": "string",
+    "enum": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ]
+  },
+  "TaskTypeCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "code": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[A-Za-z0-9_-]+$"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "color": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Optional RGB display color. Omit on change to preserve; null clears to client default."
+      },
+      "purpose": {
+        "type": "string",
+        "enum": [
+          "product_design",
+          "implementation",
+          "general"
+        ]
+      }
+    },
+    "required": [
+      "code",
+      "name"
+    ]
+  },
+  "BacklogCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "workflow_version_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "color": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Optional RGB display color. Omit on change to preserve; null clears to client default."
+      }
+    },
+    "required": [
+      "name",
+      "workflow_version_id"
+    ]
+  },
+  "BacklogChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "name": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "workflow_version_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "archived": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "color": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Optional RGB display color. Omit on change to preserve; null clears to client default."
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ]
+  },
+  "BacklogReorder": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "task_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "before_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "after_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "expected_revision",
+      "task_id"
+    ]
+  },
+  "TaskCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "context": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 8000
+      },
+      "type_code": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "backlog_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "workflow_version_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "priority": {
+        "$ref": "#/$defs/TaskPriority"
+      },
+      "assignee_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "origin": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "origin_reference": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "fields": {
+        "type": "object",
+        "maxProperties": 64,
+        "propertyNames": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_]+$"
+        },
+        "additionalProperties": true
+      },
+      "acceptance_criteria": {
+        "type": "array",
+        "maxItems": 100,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "description": "Informational acceptance criteria in Markdown; no completion guard. On changes omit to preserve, [] to clear."
+      },
+      "entry_workflow_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "primary_requirement_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "primary_feature_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      }
+    },
+    "required": [
+      "title",
+      "type_code",
+      "origin"
+    ],
+    "description": "A backlog or explicit published workflow version is required. New tasks derive their state from the selected graph. No implicit workflow or role default."
+  },
+  "TaskBlockChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "blocked": {
+        "type": "boolean"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "blocker_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "blocked"
+    ]
+  },
+  "TaskChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "title": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "context": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 8000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type_code": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "priority": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskPriority"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "assignee_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "clear_assignee": {
+        "type": "boolean"
+      },
+      "block": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskBlockChange"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "fields": {
+        "anyOf": [
+          {
+            "type": "object",
+            "maxProperties": 64,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": true
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "archived": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "assignment_state_id": {
+        "type": "null",
+        "deprecated": true,
+        "description": "Reservation does not choose state or workflow; explicit take is required."
+      },
+      "assignment_workflow_version_id": {
+        "type": "null",
+        "deprecated": true,
+        "description": "Reservation does not choose state or workflow; explicit take is required."
+      },
+      "acceptance_criteria": {
+        "type": "array",
+        "maxItems": 100,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "description": "Informational acceptance criteria in Markdown; no completion guard. On changes omit to preserve, [] to clear."
+      },
+      "entry_workflow_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "primary_requirement_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "primary_feature_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "clear_entry_workflow": {
+        "type": "boolean"
+      },
+      "clear_primary_knowledge": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ],
+    "description": "At least one content change required. assignee_id and clear_assignee are mutually exclusive. Workflow and state are changed through explicit operations, not arbitrary patches."
+  },
+  "TaskTransitionRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "resolution": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "clear_resolution": {
+        "type": "boolean"
+      },
+      "approval_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "branches": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository_id",
+            "branch_name",
+            "expected_head_sha"
+          ],
+          "properties": {
+            "repository_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "branch_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "expected_head_sha": {
+              "type": "string",
+              "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
+            }
+          }
+        },
+        "maxItems": 8
+      },
+      "release_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 128,
+        "description": "Selected authorized release for a publish_release final pipeline; included in human approval and request fingerprint."
+      },
+      "release_revision": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 1,
+        "description": "Expected revision of the selected release."
+      }
+    },
+    "required": [
+      "expected_revision"
+    ]
+  },
+  "TaskListQuery": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "backlog_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "assignee_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type_code": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "priority": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskPriority"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "state_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "workflow_version_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "after": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 50
+      },
+      "include_archived": {
+        "type": "boolean"
+      }
+    },
+    "required": []
+  },
+  "TaskDependencyKind": {
+    "type": "string",
+    "enum": [
+      "blocks",
+      "depends_on",
+      "related_to"
+    ]
+  },
+  "TaskDependencyStatus": {
+    "type": "string",
+    "enum": [
+      "active",
+      "resolved"
+    ]
+  },
+  "TaskDependencyCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "source_task_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "target_task_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "kind": {
+        "$ref": "#/$defs/TaskDependencyKind"
+      },
+      "source_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "target_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "source_task_id",
+      "target_task_id",
+      "kind",
+      "source_revision",
+      "target_revision",
+      "reason"
+    ]
+  },
+  "TaskDependencyChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ]
+  },
+  "TaskDependencyQuery": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "after": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 50
+      },
+      "include_removed": {
+        "type": "boolean",
+        "default": false
+      },
+      "kind": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskDependencyKind"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "status": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskDependencyStatus"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": []
+  },
+  "TaskCommentCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "body": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 8000
+      }
+    },
+    "required": [
+      "body"
+    ],
+    "description": "Attributed plain contribution, stored as data. The server sets actor, credential, sequence and date; it does not execute content."
+  },
+  "TaskTemplateCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "code": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[A-Za-z0-9_.-]+$"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "required": [
+      "code",
+      "name"
+    ]
+  },
+  "TaskTemplateChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "name": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "archived": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ]
+  },
+  "TaskTemplateFields": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "context": {
+        "type": "string",
+        "maxLength": 8000
+      },
+      "type_code": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "priority": {
+        "$ref": "#/$defs/TaskPriority"
+      },
+      "fields": {
+        "type": "object",
+        "maxProperties": 64,
+        "propertyNames": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_]+$"
+        },
+        "additionalProperties": true
+      }
+    },
+    "required": [
+      "type_code"
+    ],
+    "description": "Typed task defaults; server validates UTF-8/storage budgets after jsonb normalization. Data is never executed."
+  },
+  "TaskTemplatePublish": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "definition": {
+        "$ref": "#/$defs/TaskTemplateFields"
+      },
+      "valid_from": {
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "valid_until": {
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "definition",
+      "reason"
+    ]
+  },
+  "TaskTemplateApply": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "template_version_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "title": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "context": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 8000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type_code": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "priority": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/TaskPriority"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "fields": {
+        "anyOf": [
+          {
+            "type": "object",
+            "maxProperties": 64,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9_]+$"
+            },
+            "additionalProperties": true
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "backlog_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "workflow_version_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "assignee_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "origin": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "origin_reference": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "template_version_id",
+      "origin"
+    ],
+    "description": "Select an explicit applicable version and a backlog or workflow version. Provided overrides replace each default; fields replaces the entire custom map. Existing tasks are never rewritten."
+  },
+  "TaskSubtaskChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "expected_revision",
+      "child_revision",
+      "reason"
+    ],
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "child_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    }
+  }
+}

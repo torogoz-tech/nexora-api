@@ -1,0 +1,9 @@
+FUNC outer(p) {
+ VAR value;
+ BLOCK {
+  VAR value;
+  READ value;
+  READ p;
+ }
+ READ value;
+}

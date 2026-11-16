@@ -1,0 +1,28 @@
+schema_version: 1
+id: lua
+version: 0.2.0
+extensions:
+- lua
+resolution:
+  literal:
+    mode: quoted
+    quotes:
+    - ''''
+    - '"'
+    escape: \
+    escapes: {}
+    escaped_quote: true
+    escaped_escape: true
+  routes:
+  - accept: ^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$
+    anchor: repository
+    rewrites:
+    - from: .
+      to: /
+    candidates:
+    - template: '{module}.{extension}'
+      condition: always
+      priority: 0
+    - template: '{module}/init.{extension}'
+      condition: always
+      priority: 0

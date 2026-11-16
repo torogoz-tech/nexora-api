@@ -1,0 +1,31 @@
+id: typescript.composition-partial
+pack: typescript
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/typescript.composition-partial
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: before
+    source: const before = 1;
+  - type: lexical_region
+    file: source.ts
+    mode: template
+    closed: false
+    opener: '`'
+    content: hello ${x
+    source: '`hello ${x'
+    owner: []
+  - type: lexical_region
+    file: source.ts
+    mode: code
+    closed: false
+    opener: ${
+    content: x
+    source: ${x
+    owner:
+    - template

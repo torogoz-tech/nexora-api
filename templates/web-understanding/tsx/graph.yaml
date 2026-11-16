@@ -1,0 +1,30 @@
+schema_version: 10
+mappings:
+  function: Function
+  variable: Variable
+  class: Class
+  interface: Interface
+  enum: Enum
+  type_alias: TypeAlias
+  statement: Statement
+  module_import: Module
+  lexical_region: LexicalRegion
+  expression: Expression
+  block: Block
+  parameter: Parameter
+  signature: Statement
+reference_relations:
+  module_import:
+  - IMPORTS
+  - DEPENDS_ON
+expression_bindings:
+  expression:
+    target_kinds:
+    - Function
+    - Variable
+    - Parameter
+    callable_kinds: []
+    unwrap_groups: true
+    mutating_unary_operators:
+    - ++
+    - --

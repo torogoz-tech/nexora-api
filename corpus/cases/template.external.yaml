@@ -1,0 +1,39 @@
+id: template.external
+pack: template
+feature: dependency.external
+classification: partial
+mode: repository
+input: corpus/fixtures/template/external
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: domain/source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  - type: relation
+    file: domain/source.nxexample
+    kind: IMPORTS
+    target: missing.storage
+    resolution: Unresolved
+    source: USE missing.storage;
+  - type: relation
+    file: domain/source.nxexample
+    kind: DEPENDS_ON
+    target: missing.storage
+    resolution: Unresolved
+    source: USE missing.storage;
+  policy: UNKNOWN
+  coverage:
+  - path: domain/source.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: domain/source.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false
+policy: corpus/policies/boundary.policy.yaml

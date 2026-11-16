@@ -1,0 +1,15 @@
+id: javascript.symbols-unsupported-alias
+pack: javascript
+feature: symbol.exports
+classification: partial
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-unsupported-alias
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total() {}

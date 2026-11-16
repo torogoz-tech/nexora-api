@@ -1,0 +1,16 @@
+id: template.lossless
+pack: template
+feature: lexical.lossless
+classification: supported
+mode: file
+input: corpus/fixtures/template/lossless/source.nxexample
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [café] BEGIN café FINISH

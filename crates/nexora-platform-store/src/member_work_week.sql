@@ -1,0 +1,5 @@
+WITH settings AS (SELECT timezone FROM labor_calendar_settings WHERE singleton),
+week AS (SELECT date_trunc('week',COALESCE($2::text::date,(clock_timestamp() AT TIME ZONE timezone)::date)::timestamp)::date AS starts_on FROM settings),
+days AS (SELECT (starts_on+i)::date AS day,timezone FROM week,settings,generate_series(0,6) i),
+measured AS (SELECT d.day,d.timezone,COALESCE(sum(w.minutes),0)::bigint*60 AS seconds, COALESCE(sum(w.minutes) FILTER(WHERE w.overtime_request_id IS NOT NULL),0)::bigint*60 AS overtime,COALESCE(sum(w.minutes) FILTER(WHERE w.task_id IS NULL AND w.overtime_request_id IS NULL),0)::bigint*60 AS activity FROM days d LEFT JOIN task_work_logs w ON w.date=d.day AND w.actor_id=$1 AND w.removed_at IS NULL GROUP BY d.day,d.timezone)
+SELECT jsonb_build_object('timezone',min(timezone),'source','manual_work_logs','days',jsonb_agg(jsonb_build_object('date',day,'active_seconds',seconds,'regular_seconds',seconds-overtime,'overtime_seconds',overtime,'unapproved_seconds',0,'activity_seconds',activity,'task_seconds',seconds-overtime-activity,'availability',member_daily_availability($1,day)) ORDER BY day)) FROM measured

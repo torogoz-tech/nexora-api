@@ -1,0 +1,11 @@
+-- Remove the implicit subject heading only from the old bundled layout.
+-- Organization-authored layouts remain untouched; explicitly using {{subject}} is supported.
+UPDATE installation_email_template SET html=NULL, revision=revision+1
+WHERE html IS NULL OR html=$nexora_layout$<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;padding:32px 16px;background:#f3f4f6;font-family:Arial,sans-serif;color:#18181b">
+<table role="presentation" style="width:100%;max-width:600px;margin:0 auto;border-spacing:0"><tr><td style="padding:24px 0;font-size:22px;font-weight:bold">{{organization_name}}</td></tr>
+<tr><td style="background:#ffffff;border:1px solid #e4e4e7;border-radius:16px;padding:32px"><h1 style="margin:0 0 24px;font-size:22px;line-height:1.4">{{subject}}</h1><div style="font-size:15px;line-height:1.8">{{body}}</div></td></tr>
+<tr><td style="padding:24px 0;font-size:12px;color:#71717a">{{organization_name}} · Nexora</td></tr></table>
+</body></html>
+$nexora_layout$;

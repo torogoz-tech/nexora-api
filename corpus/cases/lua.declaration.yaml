@@ -1,0 +1,16 @@
+id: lua.declaration
+pack: lua
+feature: declaration
+classification: supported
+mode: file
+input: corpus/fixtures/lua/basic/source.lua
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end

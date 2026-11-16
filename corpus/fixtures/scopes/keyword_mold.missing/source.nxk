@@ -1,0 +1,1 @@
+DEF outer[] BEGIN USE_LOCAL missing; FINISH

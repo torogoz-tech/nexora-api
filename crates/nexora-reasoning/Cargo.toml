@@ -1,0 +1,18 @@
+[package]
+name = "nexora-reasoning"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+base64 = "0.22"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+sha2.workspace = true
+clap.workspace = true
+nexora-mcp.workspace = true
+ureq = { version = "3", features = ["json"] }
+zeroize = "1"
+
+nexora-platform = { path = "../nexora-platform" }

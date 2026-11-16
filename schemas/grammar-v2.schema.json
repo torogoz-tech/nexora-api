@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/grammar-v2.schema.json",
+  "title": "Nexora declarative grammar v2",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "max_nesting": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "max_steps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000000
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "open": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "close": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "open",
+          "close"
+        ]
+      },
+      "maxItems": 64,
+      "minItems": 0
+    },
+    "ignored": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pattern"
+      },
+      "maxItems": 32,
+      "minItems": 0
+    },
+    "rules": {
+      "type": "object",
+      "maxProperties": 128,
+      "additionalProperties": {
+        "$ref": "#/$defs/pattern"
+      }
+    },
+    "opaque_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "maxItems": 64,
+      "minItems": 0
+    },
+    "recovery": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "maxItems": 64,
+      "minItems": 0
+    },
+    "recover_line_break": {
+      "type": "boolean"
+    },
+    "recovery_groups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "maxItems": 64,
+      "minItems": 0
+    },
+    "productions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "pattern": {
+            "$ref": "#/$defs/pattern"
+          },
+          "projection": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ast_kind": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "role": {
+                "enum": [
+                  "Declaration",
+                  "Reference"
+                ]
+              },
+              "name_capture": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            },
+            "required": [
+              "ast_kind",
+              "role",
+              "name_capture"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "pattern",
+          "projection"
+        ]
+      },
+      "maxItems": 128,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "max_nesting",
+    "max_steps",
+    "productions"
+  ],
+  "$defs": {
+    "pattern": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "literal"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "token"
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "type",
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "sequence"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/pattern"
+              },
+              "maxItems": 256,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "type",
+            "items"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "choice"
+            },
+            "alternatives": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/pattern"
+              },
+              "maxItems": 128,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "type",
+            "alternatives"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "repeat"
+            },
+            "item": {
+              "$ref": "#/$defs/pattern"
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          "required": [
+            "type",
+            "item",
+            "min",
+            "max"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "optional"
+            },
+            "item": {
+              "$ref": "#/$defs/pattern"
+            }
+          },
+          "required": [
+            "type",
+            "item"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "capture"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "item": {
+              "$ref": "#/$defs/pattern"
+            },
+            "join": {
+              "type": "string",
+              "maxLength": 16
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "item"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "rule"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "type",
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "balanced"
+            },
+            "open": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "type",
+            "open"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "until"
+            },
+            "close": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "type",
+            "close"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "line_end"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        }
+      ]
+    }
+  }
+}

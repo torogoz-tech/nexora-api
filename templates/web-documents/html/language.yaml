@@ -1,0 +1,36 @@
+schema_version: 1
+id: html
+version: 0.3.0
+extensions:
+- html
+- htm
+composition:
+  schema_version: 3
+  routes:
+    script_javascript:
+      language: javascript
+      context: script
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+    style_css:
+      language: css
+      context: stylesheet
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+  roles:
+    script_javascript: grammar
+    style_css: grammar
+    html_comment: literal
+    attribute_double: literal
+    attribute_single: literal
+    text_textarea: literal
+    text_title: literal
+    text_xmp: literal
+    text_iframe: literal
+    text_noembed: literal
+    text_noframes: literal
+    plaintext: literal

@@ -1,0 +1,9 @@
+id: tsx.malformed
+pack: tsx
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/tsx.malformed
+expected:
+  analysis: diagnostics
+  facts: []

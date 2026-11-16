@@ -1,0 +1,45 @@
+id: jsx.dynamic-recovery
+pack: jsx
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/jsx.dynamic-recovery
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.jsx
+    kind: Variable
+    name: View
+    source: const View = <Outer><Inner>text</Outer>;
+  - type: declaration
+    file: source.jsx
+    kind: Variable
+    name: after
+    source: const after = 2;
+  - type: lexical_region
+    file: source.jsx
+    mode: element
+    closed: true
+    source: <Outer><Inner>text</Outer>
+    opener: <Outer>
+    content: <Inner>text
+    owner:
+    - View
+    closer: </Outer>
+    captures:
+      tag: Outer
+    header: <Outer>
+  - type: lexical_region
+    file: source.jsx
+    mode: element
+    closed: false
+    source: <Inner>text
+    opener: <Inner>
+    content: text
+    owner:
+    - View
+    - element
+    captures:
+      tag: Inner
+    header: <Inner>

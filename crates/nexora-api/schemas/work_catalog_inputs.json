@@ -1,0 +1,67 @@
+{
+  "TaskTypeChange": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "name": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "archived": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "color": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Optional RGB display color. Omit on change to preserve; null clears to client default."
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ]
+  }
+}

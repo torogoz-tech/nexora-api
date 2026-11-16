@@ -1,0 +1,16 @@
+id: javascript.lossless
+pack: javascript
+feature: lexical.lossless
+classification: supported
+mode: file
+input: corpus/fixtures/javascript/lossless/source.js
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total(café) { return café; }

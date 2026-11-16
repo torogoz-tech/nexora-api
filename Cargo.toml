@@ -1,0 +1,35 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml_ng = "0.10"
+thiserror = "2"
+regex = "1"
+regex-syntax = "0.8"
+sha2 = "0.10"
+clap = { version = "4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+nexora-core = { path = "crates/nexora-core" }
+nexora-language = { path = "crates/nexora-language" }
+nexora-lexer = { path = "crates/nexora-lexer" }
+nexora-parser = { path = "crates/nexora-parser" }
+nexora-ast = { path = "crates/nexora-ast" }
+nexora-symbols = { path = "crates/nexora-symbols" }
+nexora-graph = { path = "crates/nexora-graph" }
+nexora-storage = { path = "crates/nexora-storage" }
+nexora-indexer = { path = "crates/nexora-indexer" }
+nexora-retrieval = { path = "crates/nexora-retrieval" }
+nexora-mcp = { path = "crates/nexora-mcp" }
+nexora-governance = { path = "crates/nexora-governance" }
+nexora-corpus = { path = "crates/nexora-corpus" }
+
+nexora-runtime = { path = "crates/nexora-runtime" }

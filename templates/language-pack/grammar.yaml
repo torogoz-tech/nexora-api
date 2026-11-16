@@ -1,0 +1,145 @@
+schema_version: 2
+max_nesting: 128
+max_steps: 1000000
+groups:
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: BEGIN
+  close: FINISH
+  kind: keyword
+ignored:
+- type: literal
+  text: ;
+rules:
+  qualified:
+    type: sequence
+    items:
+    - type: token
+      kind: identifier
+    - type: repeat
+      item:
+        type: sequence
+        items:
+        - type: literal
+          text: .
+        - type: token
+          kind: identifier
+      min: 0
+      max: 128
+  symbol_name:
+    type: sequence
+    items:
+    - type: token
+      kind: identifier
+    - type: repeat
+      item:
+        type: sequence
+        items:
+        - type: literal
+          text: .
+        - type: token
+          kind: identifier
+      min: 0
+      max: 128
+recovery:
+- text: ;
+recovery_groups:
+- BEGIN
+recover_line_break: true
+opaque_references:
+- text: USE
+  kind: keyword
+- text: PUBLISH
+  kind: keyword
+productions:
+- name: declaration
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: DEF
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: balanced
+      open: '['
+    - type: balanced
+      open: BEGIN
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+- name: reference
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: USE
+    - type: capture
+      name: source
+      item:
+        type: rule
+        name: qualified
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: module_import
+    role: Reference
+    name_capture: source
+- name: qualified_method
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: METHOD
+      kind: keyword
+    - type: capture
+      name: name
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: identifier
+        - type: repeat
+          item:
+            type: sequence
+            items:
+            - type: literal
+              text: .
+            - type: token
+              kind: identifier
+          min: 1
+          max: 128
+      join: ''
+    - type: balanced
+      open: '['
+    - type: balanced
+      open: BEGIN
+  projection:
+    ast_kind: method
+    role: Declaration
+    name_capture: name
+- name: symbol_publication
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: PUBLISH
+      kind: keyword
+    - type: capture
+      name: name
+      item:
+        type: rule
+        name: symbol_name
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: symbol_export
+    role: Reference
+    name_capture: name

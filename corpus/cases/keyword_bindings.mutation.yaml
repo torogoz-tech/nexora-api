@@ -1,0 +1,100 @@
+id: keyword_bindings.mutation
+pack: keyword_bindings
+feature: semantic.calls
+classification: partial
+mode: repository
+input: corpus/fixtures/bindings/keyword_bindings.mutation
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxkc
+    source: DEF f[] BEGIN FINISH
+    kind: Function
+    name: f
+    owner: []
+  - type: container
+    file: source.nxkc
+    source: VALUE f[];
+    kind: Statement
+    name: VALUE
+    owner: []
+  - type: expression
+    file: source.nxkc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: f[]
+    kind: application
+    operands:
+    - f
+    owner:
+    - VALUE
+    operator: '['
+  - type: relation
+    file: source.nxkc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - VALUE
+    target_owner: []
+    label: read
+  - type: relation
+    file: source.nxkc
+    source: f[]
+    kind: CALLS
+    target: '['
+    resolution: Unresolved
+    resolution_reason: binding_is_mutated
+    owner:
+    - VALUE
+    target_owner: []
+    label: direct-call
+  - type: container
+    file: source.nxkc
+    source: VALUE f BECOMES 1;
+    kind: Statement
+    name: VALUE
+    owner: []
+  - type: expression
+    file: source.nxkc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: '1'
+    kind: literal
+    operands: []
+    owner:
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: f BECOMES 1
+    kind: assignment
+    operands:
+    - f
+    - '1'
+    owner:
+    - VALUE
+    operator: BECOMES
+  - type: relation
+    file: source.nxkc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - VALUE
+    target_owner: []
+    label: write

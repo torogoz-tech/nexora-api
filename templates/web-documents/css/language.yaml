@@ -1,0 +1,10 @@
+schema_version: 1
+id: css
+version: 0.3.0
+extensions:
+- css
+composition:
+  schema_version: 3
+  roles:
+    double_quote: literal
+    single_quote: literal

@@ -1,0 +1,10 @@
+id: javascript.lexical
+pack: javascript
+feature: lexical.rejected
+classification: rejected
+mode: file
+input: corpus/fixtures/javascript/lexical/source.js
+replicas: 1
+benchmark: false
+expected:
+  analysis: lexical_error

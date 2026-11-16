@@ -1,0 +1,52 @@
+id: lua.allowed
+pack: lua
+feature: dependency.allowed
+classification: supported
+mode: repository
+input: corpus/fixtures/lua/allowed
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  - type: declaration
+    file: shared/storage.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  - type: relation
+    file: domain/source.lua
+    kind: IMPORTS
+    target: shared/storage.lua
+    resolution: Resolved
+    source: require("shared.storage")
+  - type: relation
+    file: domain/source.lua
+    kind: DEPENDS_ON
+    target: shared/storage.lua
+    resolution: Resolved
+    source: require("shared.storage")
+  policy: PASS
+  coverage:
+  - path: domain/source.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: shared/storage.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: shared/storage.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

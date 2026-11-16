@@ -1,0 +1,16 @@
+[package]
+name = "nexora-retrieval"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+nexora-core.workspace = true
+nexora-graph.workspace = true
+nexora-storage.workspace = true
+sha2.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+nexora-indexer.workspace = true
+nexora-language.workspace = true

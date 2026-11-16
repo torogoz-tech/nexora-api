@@ -1,0 +1,24 @@
+apiVersion: nexora.dev/v1alpha1
+kind: Policy
+metadata:
+  id: EXAMPLE-DOMAIN-BOUNDARY
+  name: Domain must not statically import infrastructure
+  version: 1.0.0
+  description: Optional architecture rule for local static module dependencies from domain/ to infrastructure/; unresolved or dynamic references require review.
+  severity: high
+  category: architecture
+spec:
+  target:
+    language: javascript
+    symbol: file
+    where:
+      fileMatches: '^domain/'
+  assert:
+    none:
+      - relation: DEPENDS_ON
+        target:
+          symbol: file
+          fileMatches: '^infrastructure/'
+        traversal:
+          maxDepth: 1
+  onUnknown: fail

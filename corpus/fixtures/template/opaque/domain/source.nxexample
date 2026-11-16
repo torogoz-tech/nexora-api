@@ -1,0 +1,2 @@
+USE [name];
+DEF total [value] BEGIN value FINISH

@@ -1,0 +1,55 @@
+schema_version: 5
+identifier_kind: identifier
+keywords: []
+tokens:
+- kind: whitespace
+  pattern: '[ \t\r\n\f]+'
+  trivia: true
+- kind: comment
+  pattern: /\*(?:[^*]|\*+[^*/])*\*+/
+  trivia: true
+- kind: url
+  pattern: (?:[uU]|\\(?:[uU]|0{0,4}(?:75|55)(?:\r\n|[ \t\r\n\f])?))(?:[rR]|\\(?:[rR]|0{0,4}(?:72|52)(?:\r\n|[ \t\r\n\f])?))(?:[lL]|\\(?:[lL]|0{0,4}(?:6[cC]|4[cC])(?:\r\n|[
+    \t\r\n\f])?))\(
+  region: url
+- kind: string
+  pattern: '"(?:[^"\\\r\n\f]|\\(?:\r\n|[\r\n\f]|[^\r\n\f]))*"|''(?:[^''\\\r\n\f]|\\(?:\r\n|[\r\n\f]|[^\r\n\f]))*'''
+- kind: conditional_at_keyword
+  pattern: '@(?i-u:media|supports|layer|container|keyframes|-webkit-keyframes)'
+- kind: descriptor_at_keyword
+  pattern: '@(?i-u:font-face|property|counter-style|page)'
+- kind: at_keyword
+  pattern: '@(?:--|-?(?:[A-Za-z_]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[ \t\r\n\f])?|[^0-9A-Fa-f\r\n\f])))(?:[A-Za-z0-9_-]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[
+    \t\r\n\f])?|[^0-9A-Fa-f\r\n\f]))*'
+- kind: custom_property
+  pattern: --(?:[A-Za-z0-9_-]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[ \t\r\n\f])?|[^0-9A-Fa-f\r\n\f]))+
+- kind: dimension
+  pattern: '[+-]?(?:[0-9]*\.[0-9]+|[0-9]+)(?:[eE][+-]?[0-9]+)?(?:%|(?:--|-?(?:[A-Za-z_]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[
+    \t\r\n\f])?|[^0-9A-Fa-f\r\n\f])))(?:[A-Za-z0-9_-]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[ \t\r\n\f])?|[^0-9A-Fa-f\r\n\f]))*)?'
+- kind: hash
+  pattern: '#(?:[A-Za-z0-9_-]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[ \t\r\n\f])?|[^0-9A-Fa-f\r\n\f]))+'
+- kind: identifier
+  pattern: (?:--|-?(?:[A-Za-z_]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[ \t\r\n\f])?|[^0-9A-Fa-f\r\n\f])))(?:[A-Za-z0-9_-]|[^\x00-\x7F]|\\(?:[0-9A-Fa-f]{1,6}(?:\r\n|[
+    \t\r\n\f])?|[^0-9A-Fa-f\r\n\f]))*
+- kind: delimiter
+  pattern: '[{}()\[\];]'
+- kind: unterminated_comment
+  pattern: /\*
+  reject: true
+- kind: punctuation
+  pattern: '[^\s]'
+regions:
+  url:
+    close: )
+    escape: \
+    children:
+    - pattern: '"'
+      region: double_quote
+    - pattern: ''''
+      region: single_quote
+  double_quote:
+    close: '"'
+    escape: \
+  single_quote:
+    close: ''''
+    escape: \

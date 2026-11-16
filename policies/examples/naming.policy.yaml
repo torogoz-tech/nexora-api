@@ -1,0 +1,18 @@
+apiVersion: nexora.dev/v1alpha1
+kind: Policy
+metadata:
+  id: EXAMPLE-CLASS-NAMES
+  name: Example class naming convention
+  version: 1.0.0
+  description: Demonstrates an optional organization convention using source-backed class declarations.
+  severity: low
+  category: maintainability
+spec:
+  target:
+    language: javascript
+    symbol: class
+  assert:
+    attribute: name
+    operator: matches
+    value: '^[A-Z][A-Za-z0-9]*$'
+  onUnknown: review

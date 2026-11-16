@@ -1,0 +1,27 @@
+id: keyword_mold.partial
+pack: keyword_mold
+feature: semantic.scopes
+classification: partial
+mode: repository
+input: corpus/fixtures/scopes/keyword_mold.partial
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxk
+    kind: Function
+    name: outer
+    source: DEF outer[] BEGIN BAD; LET inside; FINISH
+  - type: declaration
+    file: source.nxk
+    kind: Variable
+    name: inside
+    source: LET inside;
+    owner:
+    - outer
+  - type: declaration
+    file: source.nxk
+    kind: Variable
+    name: outside
+    source: LET outside;

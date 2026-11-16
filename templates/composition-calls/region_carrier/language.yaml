@@ -1,0 +1,34 @@
+schema_version: 1
+id: region_carrier
+version: 0.6.0
+extensions:
+- nxb
+composition:
+  schema_version: 5
+  routes:
+    code:
+      language: region_expression
+      context: expression
+      scope: &id001
+        visibility: whole_scope
+        parent_lookup: true
+        shadowing: nearest
+    attribute_code:
+      language: region_expression
+      context: expression
+      scope: *id001
+  roles:
+    template: carrier
+    code: grammar
+    paren: guard
+    quote: literal
+    element: carrier
+    attribute_code: grammar
+  header_roles:
+    element: grammar
+  header_routes:
+    element:
+      language: region_expression
+      context: attributes
+      scope: *id001
+  direct_calls: true

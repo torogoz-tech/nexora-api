@@ -1,0 +1,36 @@
+schema_version: 1
+identifier_kind: identifier
+keywords:
+- class
+- interface
+- enum
+- record
+- import
+- package
+- return
+- throw
+- if
+- for
+- while
+- switch
+- catch
+- when
+- new
+- else
+tokens:
+- kind: whitespace
+  pattern: \s+
+  trivia: true
+- kind: comment
+  pattern: //[^\r\n]*|/\*(?:[^*]|\*+[^*/])*\*+/
+  trivia: true
+- kind: string
+  pattern: (?:(?s:r?""".*?"""|r?'''.*?'''))|(?:r?"(?:[^"\\\r\n]|\\[^\r\n])*"|r?'(?:[^'\\\r\n]|\\[^\r\n])*')
+- kind: identifier
+  pattern: '`[^`\r\n]+`|[\p{L}_$][\p{L}\p{N}_$]*'
+- kind: number
+  pattern: '[0-9]+(?:\.[0-9]+)?'
+- kind: operator
+  pattern: =>|->|\?\.|::|[^\s\p{L}\p{N}_$(){}\[\],;\x22\x27]
+- kind: delimiter
+  pattern: '[(){}\[\],;]'

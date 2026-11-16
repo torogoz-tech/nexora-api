@@ -1,0 +1,225 @@
+{
+  "TaskTransitionRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "resolution": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "clear_resolution": {
+        "type": "boolean"
+      },
+      "approval_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "branches": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository_id",
+            "branch_name",
+            "expected_head_sha"
+          ],
+          "properties": {
+            "repository_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "branch_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "expected_head_sha": {
+              "type": "string",
+              "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
+            }
+          }
+        },
+        "maxItems": 8
+      }
+    },
+    "required": [
+      "expected_revision"
+    ]
+  },
+  "DocumentTransitionRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_state_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "approval_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "maxLength": 128
+      }
+    },
+    "required": [
+      "expected_state_revision",
+      "reason"
+    ]
+  },
+  "ApprovalRequestTarget": {
+    "oneOf": [
+      {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "task"
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "transition_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "parameters": {
+            "$ref": "#/$defs/TaskTransitionRequest"
+          }
+        },
+        "required": [
+          "kind",
+          "task_id",
+          "transition_id",
+          "parameters"
+        ]
+      }
+    ]
+  },
+  "ApprovalRequestCreate": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "target": {
+        "$ref": "#/$defs/ApprovalRequestTarget"
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "expires_in_seconds": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 86400
+      }
+    },
+    "required": [
+      "target",
+      "reason",
+      "expires_in_seconds"
+    ]
+  },
+  "ApprovalRequestCancel": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "reason"
+    ]
+  },
+  "ApprovalRequestDecide": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "decision": {
+        "enum": [
+          "approved",
+          "rejected"
+        ]
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      },
+      "approval_expires_in_seconds": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 86400
+      }
+    },
+    "required": [
+      "expected_revision",
+      "decision",
+      "reason",
+      "approval_expires_in_seconds"
+    ]
+  },
+  "ApprovalRequestStatus": {
+    "type": "string",
+    "enum": [
+      "pending",
+      "approved",
+      "rejected",
+      "cancelled"
+    ]
+  }
+}

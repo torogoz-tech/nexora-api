@@ -1,0 +1,5 @@
+schema_version: 1
+id: dart
+version: 0.1.1
+extensions:
+- dart

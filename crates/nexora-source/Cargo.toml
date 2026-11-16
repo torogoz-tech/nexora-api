@@ -1,0 +1,17 @@
+[package]
+name = "nexora-source"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+url = "2"
+zeroize = "1"
+base64 = "0.22"
+
+[target.'cfg(any(target_os = "linux", target_os = "macos"))'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
+serde_json.workspace = true

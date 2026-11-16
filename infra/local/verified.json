@@ -1,0 +1,114 @@
+{
+  "checked_at": "2026-11-02T15:37:58-06:00",
+  "scope": "Local infrastructure only; Rust adapters, engine cache policy and MCP not implemented by this delivery",
+  "services": {
+    "postgres": {
+      "image": "postgres:16.4",
+      "image_id": "sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412",
+      "repository_digests": [
+        "postgres@sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412"
+      ],
+      "platform": "linux/arm64",
+      "health": "healthy",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "15432"
+          }
+        ]
+      },
+      "memory_limit_bytes": 268435456,
+      "data_volumes": [
+        "nexora-local_postgres_data"
+      ]
+    },
+    "dragonfly": {
+      "image": "ghcr.io/dragonflydb/dragonfly:v2.0.2",
+      "image_id": "sha256:061f00b201b58e12f974e4e96c761a881ee1c05e9d8ee967466a604b7299753b",
+      "repository_digests": [
+        "ghcr.io/dragonflydb/dragonfly@sha256:061f00b201b58e12f974e4e96c761a881ee1c05e9d8ee967466a604b7299753b"
+      ],
+      "platform": "linux/arm64",
+      "health": "healthy",
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "16379"
+          }
+        ]
+      },
+      "memory_limit_bytes": 402653184,
+      "data_volumes": [
+        "nexora-local_dragonfly_data"
+      ]
+    },
+    "neo4j": {
+      "image": "neo4j:5.26.32",
+      "image_id": "sha256:249a1ec6e3c52d82101a5ed33d6ed2b5ed5b0017b21a28c0bfebc335e87fb177",
+      "repository_digests": [
+        "neo4j@sha256:249a1ec6e3c52d82101a5ed33d6ed2b5ed5b0017b21a28c0bfebc335e87fb177"
+      ],
+      "platform": "linux/arm64",
+      "health": "healthy",
+      "ports": {
+        "7474/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "17474"
+          }
+        ],
+        "7687/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "17687"
+          }
+        ]
+      },
+      "memory_limit_bytes": 805306368,
+      "data_volumes": [
+        "nexora-local_neo4j_data",
+        "nexora-local_neo4j_logs"
+      ]
+    }
+  },
+  "passed_checks": [
+    "compose_validation",
+    "loopback_bindings",
+    "credential_preparation_idempotency",
+    "postgres_authenticated_read_write",
+    "dragonfly_authenticated_read_write",
+    "neo4j_authenticated_nodes_and_relationship",
+    "dragonfly_key_expiration",
+    "dragonfly_save_checkpoint",
+    "all_containers_recreated_with_new_identities",
+    "data_survived_in_all_three_services",
+    "probe_records_removed",
+    "actual_redis_server_errors_fail_verification"
+  ],
+  "verification_command": "python3 infra/local/verify.py --recreate",
+  "verification_exit_code": 0,
+  "persistence_limit": "Dragonfly recovery verified from explicit SAVE checkpoint, not zero-loss crash durability",
+  "resource_limit": "Shared Docker VM: 3 CPUs and approximately 4 GiB; cold starts are not a query performance benchmark",
+  "browser_connection_fix": {
+    "checked_at": "2026-11-02T15:47:30-06:00",
+    "cause": "HTTP discovery advertised internal Bolt port7687 instead of published host port17687",
+    "advertised_endpoints": {
+      "bolt_direct": "bolt://127.0.0.1:17687",
+      "bolt_routing": "neo4j://127.0.0.1:17687"
+    },
+    "verification": "uv run infra/local/verify_bolt.py; python3 infra/local/verify.py",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "checks": [
+      "host_endpoint_discovery",
+      "direct_bolt_query",
+      "routing_bolt_query",
+      "system_database_discovery",
+      "all_service_authenticated_operations"
+    ]
+  }
+}

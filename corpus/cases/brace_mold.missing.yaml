@@ -1,0 +1,23 @@
+id: brace_mold.missing
+pack: brace_mold
+feature: semantic.scopes
+classification: partial
+mode: repository
+input: corpus/fixtures/scopes/brace_mold.missing
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxb
+    kind: Function
+    name: outer
+    source: FUNC outer() { READ missing; }
+  - type: relation
+    file: source.nxb
+    kind: REFERENCES
+    target: missing
+    resolution: Unresolved
+    source: READ missing;
+    owner:
+    - outer

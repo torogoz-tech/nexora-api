@@ -1,0 +1,14 @@
+id: css.allowed
+pack: css
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/css.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: container
+    file: source.css
+    source: '.button { color: red; }'
+    name: .button
+    kind: Statement

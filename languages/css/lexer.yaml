@@ -1,0 +1,18 @@
+schema_version: 1
+identifier_kind: word
+keywords: []
+tokens:
+- kind: whitespace
+  pattern: \s+
+  trivia: true
+- kind: comment
+  pattern: /\*(?:[^*]|\*+[^*/])*\*+/
+  trivia: true
+- kind: string
+  pattern: '"(?:[^"\\\r\n]|\\[^\r\n])*"|''(?:[^''\\\r\n]|\\[^\r\n])*'''
+- kind: word
+  pattern: '[^\s{}()\[\];"\''/*]+'
+- kind: delimiter
+  pattern: '[{}()\[\];]'
+- kind: punctuation
+  pattern: '[/\*]'

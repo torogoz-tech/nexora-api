@@ -1,0 +1,15 @@
+schema_version: 1
+identifier_kind: text
+keywords: []
+tokens:
+- kind: comment
+  pattern: <!--[\s\S]*?-->
+  trivia: true
+- kind: tag
+  pattern: </?[A-Za-z][A-Za-z0-9:-]*(?:[^<>"']|"[^"]*"|'[^']*')*>
+- kind: declaration
+  pattern: <![^>]*>
+- kind: text
+  pattern: '[^<]+'
+- kind: raw_less
+  pattern: <

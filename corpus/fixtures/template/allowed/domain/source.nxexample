@@ -1,0 +1,2 @@
+USE shared.storage;
+DEF total [value] BEGIN value FINISH

@@ -1,0 +1,24 @@
+id: html.allowed
+pack: html
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/html.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: container
+    file: source.html
+    source: <button>
+    name: <button>
+    kind: Statement
+  - type: container
+    file: source.html
+    source: OK
+    name: OK
+    kind: Statement
+  - type: container
+    file: source.html
+    source: </button>
+    name: </button>
+    kind: Statement

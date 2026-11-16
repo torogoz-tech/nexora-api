@@ -1,0 +1,19 @@
+schema_version: 4
+mappings:
+  function: Function
+  parameter: Parameter
+  variable: Variable
+  block: Block
+  read: Symbol
+  expression: Expression
+  statement: Statement
+reference_relations:
+  read:
+  - REFERENCES
+symbol_references:
+  read:
+    scope: lexical
+    target_kinds:
+    - Function
+    - Parameter
+    - Variable

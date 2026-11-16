@@ -1,0 +1,16 @@
+id: template.file-100
+pack: template
+feature: scaling.file
+classification: supported
+mode: file
+input: corpus/fixtures/template/basic/source.nxexample
+replicas: 100
+benchmark: true
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH

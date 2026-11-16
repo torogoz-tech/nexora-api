@@ -1,0 +1,20 @@
+id: lua.symbols-qualified
+pack: lua
+feature: symbol.qualified
+classification: supported
+mode: repository
+input: corpus/fixtures/symbols/lua.symbols-qualified
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.lua
+    kind: Method
+    name: Object:new
+    source: function Object:new() end
+  - type: declaration
+    file: source.lua
+    kind: Function
+    name: package.tools.run
+    source: function package.tools.run() end

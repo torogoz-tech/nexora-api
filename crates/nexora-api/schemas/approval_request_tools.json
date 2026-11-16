@@ -1,0 +1,143 @@
+[
+  {
+    "name": "nexora_approval_request_create",
+    "description": "Request human approval of a task workflow transition. For requirements, features and other knowledge use nexora_knowledge_review_request; knowledge never requires a workflow.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definition": {
+          "$ref": "#/$defs/ApprovalRequestCreate"
+        }
+      },
+      "required": [
+        "project_id",
+        "request_id",
+        "definition"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_approval_request_cancel",
+    "description": "Withdraw a pending request owned by this actor. Retains operation and decision history.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "approval_request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "cancellation": {
+          "$ref": "#/$defs/ApprovalRequestCancel"
+        }
+      },
+      "required": [
+        "project_id",
+        "approval_request_id",
+        "request_id",
+        "cancellation"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_approval_request_get",
+    "description": "Read an authorized approval request and its historical decision. Approval itself requires a human login session through the API.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "approval_request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "project_id",
+        "approval_request_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_approval_requests_list",
+    "description": "List authorized approval-request metadata in bounded ID order, optionally filtered by decision status.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "status": {
+          "$ref": "#/$defs/ApprovalRequestStatus"
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

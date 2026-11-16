@@ -1,0 +1,52 @@
+id: template.forbidden
+pack: template
+feature: dependency.forbidden
+classification: supported
+mode: repository
+input: corpus/fixtures/template/forbidden
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  - type: declaration
+    file: modules/infrastructure/storage.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  - type: relation
+    file: domain/source.nxexample
+    kind: IMPORTS
+    target: modules/infrastructure/storage.nxexample
+    resolution: Resolved
+    source: USE infrastructure.storage;
+  - type: relation
+    file: domain/source.nxexample
+    kind: DEPENDS_ON
+    target: modules/infrastructure/storage.nxexample
+    resolution: Resolved
+    source: USE infrastructure.storage;
+  policy: FAIL
+  coverage:
+  - path: domain/source.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: modules/infrastructure/storage.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: modules/infrastructure/storage.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

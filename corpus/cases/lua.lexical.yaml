@@ -1,0 +1,10 @@
+id: lua.lexical
+pack: lua
+feature: lexical.rejected
+classification: rejected
+mode: file
+input: corpus/fixtures/lua/lexical/source.lua
+replicas: 1
+benchmark: false
+expected:
+  analysis: lexical_error

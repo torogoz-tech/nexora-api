@@ -1,0 +1,1 @@
+FUNC f(p) { EVAL p; } EVAL f(1);

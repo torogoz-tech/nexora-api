@@ -1,0 +1,40 @@
+id: typescript.composition-simple
+pack: typescript
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/typescript.composition-simple
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: t
+    source: const t = `hello ${x} end`;
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: after
+    source: const after = 2;
+  - type: lexical_region
+    file: source.ts
+    mode: template
+    closed: true
+    opener: '`'
+    content: hello ${x} end
+    source: '`hello ${x} end`'
+    owner:
+    - t
+    closer: '`'
+  - type: lexical_region
+    file: source.ts
+    mode: code
+    closed: true
+    opener: ${
+    content: x
+    source: ${x}
+    owner:
+    - t
+    - template
+    closer: '}'

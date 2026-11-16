@@ -1,0 +1,23 @@
+id: keyword_mold.recursive-name
+pack: keyword_mold
+feature: semantic.scopes
+classification: supported
+mode: repository
+input: corpus/fixtures/scopes/keyword_mold.recursive-name
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxk
+    kind: Function
+    name: outer
+    source: DEF outer[] BEGIN USE_LOCAL outer; FINISH
+  - type: relation
+    file: source.nxk
+    kind: REFERENCES
+    target: outer
+    resolution: Resolved
+    source: USE_LOCAL outer;
+    owner:
+    - outer

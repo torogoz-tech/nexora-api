@@ -1,0 +1,4 @@
+DEF outer [p] BEGIN
+ LET result BECOMES p ADD 2 TIMES 3;
+ VALUE result;
+FINISH

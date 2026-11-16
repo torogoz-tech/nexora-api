@@ -1,0 +1,52 @@
+id: template.allowed
+pack: template
+feature: dependency.allowed
+classification: supported
+mode: repository
+input: corpus/fixtures/template/allowed
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  - type: declaration
+    file: modules/shared/storage.nxexample
+    kind: Function
+    name: total
+    source: DEF total [value] BEGIN value FINISH
+  - type: relation
+    file: domain/source.nxexample
+    kind: IMPORTS
+    target: modules/shared/storage.nxexample
+    resolution: Resolved
+    source: USE shared.storage;
+  - type: relation
+    file: domain/source.nxexample
+    kind: DEPENDS_ON
+    target: modules/shared/storage.nxexample
+    resolution: Resolved
+    source: USE shared.storage;
+  policy: PASS
+  coverage:
+  - path: domain/source.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: modules/shared/storage.nxexample
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: modules/shared/storage.nxexample
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

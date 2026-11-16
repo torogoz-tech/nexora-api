@@ -1,0 +1,17 @@
+schema_version: 1
+identifier_kind: identifier
+keywords:
+- DEF
+- BEGIN
+- FINISH
+- USE
+- METHOD
+- PUBLISH
+tokens:
+- kind: whitespace
+  pattern: \s+
+  trivia: true
+- kind: identifier
+  pattern: '[\p{L}_][\p{L}\p{N}_]*'
+- kind: delimiter
+  pattern: '[\[\].;]'

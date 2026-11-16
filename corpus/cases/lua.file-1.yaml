@@ -1,0 +1,16 @@
+id: lua.file-1
+pack: lua
+feature: scaling.file
+classification: supported
+mode: file
+input: corpus/fixtures/lua/basic/source.lua
+replicas: 1
+benchmark: true
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end

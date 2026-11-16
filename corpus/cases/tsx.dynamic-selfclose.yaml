@@ -1,0 +1,47 @@
+id: tsx.dynamic-selfclose
+pack: tsx
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/tsx.dynamic-selfclose
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.tsx
+    kind: Variable
+    name: View
+    source: const View = <Outer><Inner /></Outer>;
+  - type: declaration
+    file: source.tsx
+    kind: Variable
+    name: after
+    source: const after = 2;
+  - type: lexical_region
+    file: source.tsx
+    mode: element
+    closed: true
+    source: <Outer><Inner /></Outer>
+    opener: <Outer>
+    content: <Inner />
+    owner:
+    - View
+    closer: </Outer>
+    captures:
+      tag: Outer
+    header: <Outer>
+  - type: lexical_region
+    file: source.tsx
+    mode: element
+    closed: true
+    source: <Inner />
+    opener: '<Inner '
+    content: ''
+    owner:
+    - View
+    - element
+    closer: />
+    captures:
+      tag: Inner
+    header: <Inner />
+    self_closed: true

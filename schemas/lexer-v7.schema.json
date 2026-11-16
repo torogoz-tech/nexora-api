@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/lexer-v7.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 7
+    },
+    "identifier_kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32768,
+      "minItems": 0
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "pattern": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "trivia": {
+            "type": "boolean"
+          },
+          "reject": {
+            "type": "boolean"
+          },
+          "after": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            }
+          },
+          "at_start": {
+            "type": "boolean"
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "reject_on_context_mismatch": {
+            "type": "boolean"
+          },
+          "follow_exclude": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "kind",
+          "pattern"
+        ]
+      },
+      "maxItems": 128,
+      "minItems": 1
+    },
+    "regions": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "close"
+        ],
+        "properties": {
+          "close": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 128
+          },
+          "alternate_closes": {
+            "type": "array",
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "escape": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4
+          },
+          "children": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "pattern",
+                "region"
+              ],
+              "properties": {
+                "pattern": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "region": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "reject": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "eof_closes": {
+            "type": "boolean"
+          },
+          "ast_kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "close_capture": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "close_tail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          },
+          "opening_follow": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          },
+          "close_ascii_case_insensitive": {
+            "type": "boolean"
+          },
+          "recovery_prefixes": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "header": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "end"
+                ],
+                "properties": {
+                  "end": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "terminal": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "escape": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 4
+                  },
+                  "children": {
+                    "type": "array",
+                    "maxItems": 32,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "pattern",
+                        "region"
+                      ],
+                      "properties": {
+                        "pattern": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 4096
+                        },
+                        "region": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        },
+                        "reject": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "recovery_barrier": {
+            "type": "boolean"
+          },
+          "token_rules": {
+            "type": "array",
+            "maxItems": 128,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "token_kind": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "trivia": {
+            "type": "boolean"
+          },
+          "literal_escapes": {
+            "type": "array",
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "Body-only literal escapes. Longest complete match consumes exactly its text before prefix escapes, closers and children. Runtime length limit is 128 UTF-8 bytes."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "close": {
+                  "const": ""
+                }
+              },
+              "required": [
+                "close"
+              ]
+            },
+            "then": {
+              "properties": {
+                "eof_closes": {
+                  "const": true
+                },
+                "alternate_closes": {
+                  "maxItems": 0
+                },
+                "close_capture": {
+                  "type": "null"
+                },
+                "close_tail": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "eof_closes"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "max_region_steps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000000
+    },
+    "max_region_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "max_region_nodes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000
+    },
+    "keyword_after_exclusions": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "identifier_kind",
+    "keywords",
+    "tokens"
+  ]
+}

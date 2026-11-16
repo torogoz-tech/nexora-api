@@ -1,0 +1,577 @@
+schema_version: 7
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions: &id001
+- conditional_tail
+- directive
+- file_namespace
+- empty_file_namespace
+- block_namespace
+- record_struct
+- record_class
+- class
+- interface
+- enum
+- struct
+- opaque_statement
+- empty_statement
+contexts:
+  declarations:
+    productions: *id001
+    ignored: []
+    stop_on_error: true
+  members_opaque:
+    productions:
+    - opaque_source
+    ignored: []
+    stop_on_error: true
+  body_opaque:
+    productions:
+    - opaque_source
+    ignored: []
+    stop_on_error: true
+  expression_opaque:
+    productions:
+    - opaque_source
+    ignored: []
+    stop_on_error: true
+  control_header_opaque:
+    productions:
+    - opaque_source
+    ignored: []
+    stop_on_error: true
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+productions:
+- name: conditional_tail
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: token
+      kind: conditional_directive
+    join: ''
+  projection:
+    ast_kind: conditional_tail
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: directive
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: token
+      kind: directive
+    join: ''
+  projection:
+    ast_kind: directive
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: file_namespace
+  pattern:
+    type: sequence
+    items:
+    - &id002
+      type: sequence
+      items:
+      - type: literal
+        text: namespace
+      - type: capture
+        name: name
+        item:
+          type: rule
+          name: qualified_name
+        join: ''
+    - type: literal
+      text: ;
+    - type: capture
+      name: body
+      item:
+        type: scan_until
+        stop: []
+        allow_eof: true
+      join: ''
+  projection:
+    ast_kind: namespace
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: declarations
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: empty_file_namespace
+  pattern:
+    type: sequence
+    items:
+    - *id002
+    - type: literal
+      text: ;
+    - type: end_of_context
+  projection:
+    ast_kind: namespace
+    role: Declaration
+    name_capture: name
+    regions: []
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: block_namespace
+  pattern:
+    type: sequence
+    items:
+    - *id002
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: namespace
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: declarations
+      trim_start: 1
+      trim_end: 1
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: record_struct
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: sequence
+          items:
+          - type: literal
+            text: record
+          - type: literal
+            text: struct
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: choice
+        alternatives:
+        - type: balanced
+          open: '{'
+        - type: literal
+          text: ;
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: record_struct
+    role: Container
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+- name: record_class
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: sequence
+          items:
+          - type: literal
+            text: record
+          - type: optional
+            item:
+              type: literal
+              text: class
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: choice
+        alternatives:
+        - type: balanced
+          open: '{'
+        - type: literal
+          text: ;
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: record_class
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: class
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: literal
+          text: class
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: class
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: interface
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: literal
+          text: interface
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: interface
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: enum
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: literal
+          text: enum
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: enum
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+    scope:
+      visibility: whole_scope
+      parent_lookup: false
+      shadowing: nearest
+- name: struct
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: header
+      item:
+        type: sequence
+        items:
+        - type: rule
+          name: prefix
+        - type: literal
+          text: struct
+        - type: capture
+          name: name
+          item:
+            type: token
+            kind: identifier
+          join: ''
+        - type: optional
+          item:
+            type: scan_until
+            stop:
+            - text: '{'
+            - text: ;
+            allow_eof: false
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+    - type: optional
+      item:
+        type: literal
+        text: ;
+  projection:
+    ast_kind: struct
+    role: Container
+    name_capture: name
+    regions:
+    - capture: header
+    - capture: body
+      trim_start: 1
+      trim_end: 1
+- name: opaque_statement
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: sequence
+      items:
+      - type: scan_until
+        stop:
+        - text: ;
+        allow_eof: true
+      - type: optional
+        item:
+          type: literal
+          text: ;
+    join: ''
+  projection:
+    ast_kind: opaque_statement
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: empty_statement
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: literal
+      text: ;
+    join: ''
+  projection:
+    ast_kind: opaque_statement
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+- name: opaque_source
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: scan_until
+      stop: []
+      allow_eof: true
+    join: ''
+  projection:
+    ast_kind: opaque_source
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+ignored: []
+recovery:
+- text: ;
+recover_line_break: true
+rules:
+  prefix:
+    type: repeat
+    min: 0
+    max: 32
+    item:
+      type: choice
+      alternatives:
+      - type: literal
+        text: public
+      - type: literal
+        text: private
+      - type: literal
+        text: protected
+      - type: literal
+        text: internal
+      - type: literal
+        text: static
+      - type: literal
+        text: abstract
+      - type: literal
+        text: sealed
+      - type: literal
+        text: partial
+      - type: literal
+        text: readonly
+      - type: literal
+        text: ref
+      - type: literal
+        text: file
+      - type: literal
+        text: unsafe
+      - type: literal
+        text: new
+      - type: balanced
+        open: '['
+  qualified_name:
+    type: sequence
+    items:
+    - type: token
+      kind: identifier
+    - type: repeat
+      min: 0
+      max: 64
+      item:
+        type: sequence
+        items:
+        - type: literal
+          text: .
+        - type: token
+          kind: identifier

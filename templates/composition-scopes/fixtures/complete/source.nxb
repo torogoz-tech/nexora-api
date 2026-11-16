@@ -1,0 +1,4 @@
+VAR host;
+FUNC demo(p) { EVAL ~[text @(p + host)]~; }
+<Box count={host + 1} title="café"/>
+READ host;

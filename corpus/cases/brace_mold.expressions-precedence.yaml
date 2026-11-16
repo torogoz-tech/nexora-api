@@ -1,0 +1,56 @@
+id: brace_mold.expressions-precedence
+pack: brace_mold
+feature: semantic.expressions
+classification: supported
+mode: repository
+input: corpus/fixtures/expressions/brace_mold.expressions-precedence
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxb
+    source: VAR result = a + 2 * 3;
+    kind: Variable
+    name: result
+  - type: expression
+    file: source.nxb
+    source: a
+    kind: identifier
+    operands: []
+    owner:
+    - result
+  - type: expression
+    file: source.nxb
+    source: '2'
+    kind: literal
+    operands: []
+    owner:
+    - result
+  - type: expression
+    file: source.nxb
+    source: '3'
+    kind: literal
+    operands: []
+    owner:
+    - result
+  - type: expression
+    file: source.nxb
+    source: 2 * 3
+    kind: infix
+    operator: '*'
+    operands:
+    - '2'
+    - '3'
+    owner:
+    - result
+  - type: expression
+    file: source.nxb
+    source: a + 2 * 3
+    kind: infix
+    operator: +
+    operands:
+    - a
+    - 2 * 3
+    owner:
+    - result

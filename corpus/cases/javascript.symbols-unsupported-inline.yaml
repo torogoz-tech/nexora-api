@@ -1,0 +1,10 @@
+id: javascript.symbols-unsupported-inline
+pack: javascript
+feature: symbol.exports
+classification: partial
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-unsupported-inline
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts: []

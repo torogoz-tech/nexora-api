@@ -1,0 +1,24 @@
+id: html.opaque
+pack: html
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/html.opaque
+expected:
+  analysis: clean
+  facts:
+  - type: container
+    file: source.html
+    source: <a>
+    name: <a>
+    kind: Statement
+  - type: container
+    file: source.html
+    source: <b>
+    name: <b>
+    kind: Statement
+  - type: container
+    file: source.html
+    source: </a>
+    name: </a>
+    kind: Statement

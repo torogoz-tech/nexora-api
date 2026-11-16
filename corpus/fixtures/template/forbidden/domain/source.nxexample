@@ -1,0 +1,2 @@
+USE infrastructure.storage;
+DEF total [value] BEGIN value FINISH

@@ -1,0 +1,1 @@
+DEF outer[] BEGIN BAD; LET inside; FINISH LET outside;

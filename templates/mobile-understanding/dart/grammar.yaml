@@ -1,0 +1,628 @@
+schema_version: 4
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions: &id001
+- arrow_function
+- classSimple
+- mixinSimple
+- enumSimple
+- extensionSimple
+- functionSimple
+- module_import
+- class
+- mixin
+- enum
+- extension
+- function
+- constructor
+- opaque_block
+- opaque_parameters
+- opaque_collection
+- unmodeled_token
+contexts:
+  members:
+    productions: *id001
+    ignored: []
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+- open: '['
+  close: ']'
+  kind: delimiter
+- open: <
+  close: '>'
+  kind: operator
+rules: {}
+ignored: []
+recovery:
+- text: ;
+recover_line_break: true
+productions:
+- name: arrow_function
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: return_type
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: identifier
+        - type: optional
+          item:
+            type: balanced
+            open: <
+        - type: optional
+          item:
+            type: literal
+            text: '?'
+        - type: repeat
+          item:
+            type: sequence
+            items:
+            - type: literal
+              text: '['
+            - type: literal
+              text: ']'
+          min: 0
+          max: 8
+      join: ''
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region2
+      item:
+        type: balanced
+        open: (
+      join: ''
+    - type: literal
+      text: =>
+    - type: capture
+      name: expression
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: return_type
+    - capture: region2
+    - capture: expression
+- name: classSimple
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: class
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: class
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: mixinSimple
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: mixin
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: mixin
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: enumSimple
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: enum
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: enum
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: extensionSimple
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: extension
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: extension
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: functionSimple
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: return_type
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: identifier
+        - type: optional
+          item:
+            type: balanced
+            open: <
+        - type: optional
+          item:
+            type: literal
+            text: '?'
+        - type: repeat
+          item:
+            type: sequence
+            items:
+            - type: literal
+              text: '['
+            - type: literal
+              text: ']'
+          min: 0
+          max: 8
+      join: ''
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region2
+      item:
+        type: balanced
+        open: (
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: body
+    - capture: return_type
+    - capture: region2
+- name: module_import
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: import
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: string
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: module_import
+    role: Declaration
+    name_capture: name
+    regions: []
+- name: class
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: class
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region1
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: class
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region1
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: mixin
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: mixin
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region1
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: mixin
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region1
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: enum
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: enum
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region1
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: enum
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region1
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: extension
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: extension
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region1
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: extension
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region1
+    - capture: body
+      context: members
+      trim_start: 1
+      trim_end: 1
+- name: function
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: return_type
+      item:
+        type: sequence
+        items:
+        - type: token
+          kind: identifier
+        - type: optional
+          item:
+            type: balanced
+            open: <
+        - type: optional
+          item:
+            type: literal
+            text: '?'
+        - type: repeat
+          item:
+            type: sequence
+            items:
+            - type: literal
+              text: '['
+            - type: literal
+              text: ']'
+          min: 0
+          max: 8
+      join: ''
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region2
+      item:
+        type: balanced
+        open: (
+      join: ''
+    - type: capture
+      name: region3
+      item:
+        type: scan_until
+        stop:
+        - text: '{'
+        - text: ;
+        - text: =>
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region3
+    - capture: body
+    - capture: return_type
+    - capture: region2
+- name: constructor
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: region1
+      item:
+        type: balanced
+        open: (
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: constructor
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: region1
+    - capture: body
+- name: opaque_block
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: balanced
+      open: '{'
+    join: ''
+  projection:
+    ast_kind: opaque_block
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: name
+- name: opaque_parameters
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: balanced
+      open: (
+    join: ''
+  projection:
+    ast_kind: opaque_parameters
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: name
+- name: opaque_collection
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: balanced
+      open: '['
+    join: ''
+  projection:
+    ast_kind: opaque_collection
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: name
+- name: unmodeled_token
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: choice
+      alternatives:
+      - type: token
+        kind: identifier
+      - type: token
+        kind: number
+      - type: token
+        kind: string
+      - type: token
+        kind: operator
+      - type: token
+        kind: delimiter
+      - type: literal
+        text: class
+      - type: literal
+        text: mixin
+      - type: literal
+        text: enum
+      - type: literal
+        text: extension
+      - type: literal
+        text: import
+      - type: literal
+        text: package
+      - type: literal
+        text: return
+      - type: literal
+        text: throw
+      - type: literal
+        text: if
+      - type: literal
+        text: for
+      - type: literal
+        text: while
+      - type: literal
+        text: switch
+      - type: literal
+        text: catch
+      - type: literal
+        text: when
+      - type: literal
+        text: new
+      - type: literal
+        text: else
+    join: ''
+  projection:
+    ast_kind: unmodeled_token
+    role: Container
+    name_capture: name
+    regions: []

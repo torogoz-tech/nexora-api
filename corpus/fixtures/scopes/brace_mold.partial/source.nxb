@@ -1,0 +1,1 @@
+FUNC outer() { BAD; VAR inside; } VAR outside;

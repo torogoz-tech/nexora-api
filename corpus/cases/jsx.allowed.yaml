@@ -1,0 +1,39 @@
+id: jsx.allowed
+pack: jsx
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/jsx.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.jsx
+    source: export function Button(props) { return (<button>{props.label}</button>);
+      }
+    name: Button
+    kind: Function
+  - type: lexical_region
+    file: source.jsx
+    mode: element
+    closed: true
+    source: <button>{props.label}</button>
+    opener: <button>
+    content: '{props.label}'
+    owner:
+    - Button
+    closer: </button>
+    captures:
+      tag: button
+    header: <button>
+  - type: lexical_region
+    file: source.jsx
+    mode: code
+    closed: true
+    source: '{props.label}'
+    opener: '{'
+    content: props.label
+    owner:
+    - Button
+    - element
+    closer: '}'

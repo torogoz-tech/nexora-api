@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/lexer-v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "identifier_kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32768,
+      "minItems": 0
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "pattern": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "trivia": {
+            "type": "boolean"
+          },
+          "reject": {
+            "type": "boolean"
+          },
+          "after": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "kind": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            }
+          },
+          "at_start": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "pattern"
+        ]
+      },
+      "maxItems": 128,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "identifier_kind",
+    "keywords",
+    "tokens"
+  ]
+}

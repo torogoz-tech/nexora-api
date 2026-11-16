@@ -1,0 +1,27 @@
+id: brace_mold.partial
+pack: brace_mold
+feature: semantic.scopes
+classification: partial
+mode: repository
+input: corpus/fixtures/scopes/brace_mold.partial
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxb
+    kind: Function
+    name: outer
+    source: FUNC outer() { BAD; VAR inside; }
+  - type: declaration
+    file: source.nxb
+    kind: Variable
+    name: inside
+    source: VAR inside;
+    owner:
+    - outer
+  - type: declaration
+    file: source.nxb
+    kind: Variable
+    name: outside
+    source: VAR outside;

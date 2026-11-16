@@ -1,0 +1,15 @@
+[package]
+name = "nexora-parser"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+nexora-core.workspace = true
+nexora-language.workspace = true
+nexora-lexer.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_yaml_ng.workspace = true
+serde_json.workspace = true

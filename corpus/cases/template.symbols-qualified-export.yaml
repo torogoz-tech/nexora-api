@@ -1,0 +1,22 @@
+id: template.symbols-qualified-export
+pack: template
+feature: symbol.exports
+classification: supported
+mode: repository
+input: corpus/fixtures/symbols/template.symbols-qualified-export
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxexample
+    kind: Method
+    name: Receiver.run
+    source: METHOD Receiver.run [] BEGIN FINISH
+  - type: relation
+    file: source.nxexample
+    kind: EXPORTS
+    target: Receiver.run
+    resolution: Resolved
+    source: PUBLISH Receiver.run;
+    label: public

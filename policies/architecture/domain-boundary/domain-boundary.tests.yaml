@@ -1,0 +1,39 @@
+apiVersion: nexora.dev/v1alpha1
+kind: PolicyTestSuite
+cases:
+  - name: pass module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/pass
+    expected: PASS
+  - name: fail module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/fail
+    expected: FAIL
+  - name: external module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/external
+    expected: UNKNOWN
+  - name: missing module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/missing
+    expected: UNKNOWN
+  - name: ambiguous module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/ambiguous
+    expected: UNKNOWN
+  - name: dynamic module dependencies
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/dynamic
+    expected: UNKNOWN
+  - name: proven violation dominates incomplete imports
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/mixed
+    expected: FAIL
+  - name: exhaustive absence of imports
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/no-imports
+    expected: PASS
+  - name: opaque loader alias requires review
+    policy: EXAMPLE-DOMAIN-BOUNDARY
+    source: fixtures/aliased-loader
+    expected: UNKNOWN

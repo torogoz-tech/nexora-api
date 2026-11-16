@@ -1,0 +1,52 @@
+id: javascript.allowed
+pack: javascript
+feature: dependency.allowed
+classification: supported
+mode: repository
+input: corpus/fixtures/javascript/allowed
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.js
+    kind: Function
+    name: total
+    source: function total(value) { return value; }
+  - type: declaration
+    file: shared/storage.js
+    kind: Function
+    name: total
+    source: function total(value) { return value; }
+  - type: relation
+    file: domain/source.js
+    kind: IMPORTS
+    target: shared/storage.js
+    resolution: Resolved
+    source: import "../shared/storage.js";
+  - type: relation
+    file: domain/source.js
+    kind: DEPENDS_ON
+    target: shared/storage.js
+    resolution: Resolved
+    source: import "../shared/storage.js";
+  policy: PASS
+  coverage:
+  - path: domain/source.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: shared/storage.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: shared/storage.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

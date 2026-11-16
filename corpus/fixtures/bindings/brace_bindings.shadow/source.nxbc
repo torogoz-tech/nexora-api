@@ -1,0 +1,1 @@
+FUNC f() { } FUNC outer(f) { EVAL f(); }

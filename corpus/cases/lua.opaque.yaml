@@ -1,0 +1,27 @@
+id: lua.opaque
+pack: lua
+feature: dependency.opaque
+classification: partial
+mode: repository
+input: corpus/fixtures/lua/opaque
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: domain/source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  policy: UNKNOWN
+  coverage:
+  - path: domain/source.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: false
+  - path: domain/source.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: false
+policy: corpus/policies/boundary.policy.yaml

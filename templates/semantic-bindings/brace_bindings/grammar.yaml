@@ -1,0 +1,280 @@
+schema_version: 4
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions:
+- function
+- initialized_variable
+- variable
+- read
+- expression_statement
+contexts:
+  parameters:
+    productions:
+    - parameter
+    ignored:
+    - type: literal
+      text: ','
+  body:
+    productions:
+    - initialized_variable
+    - variable
+    - block
+    - function
+    - read
+    - expression_statement
+    ignored: []
+  expression:
+    expression:
+      ast_kind: expression
+      identifiers:
+      - identifier
+      literals:
+      - number
+      - string
+      grouping:
+      - open: (
+        close: )
+        kind: delimiter
+      prefix:
+      - token:
+          text: '-'
+        precedence: 50
+      infix:
+      - token:
+          text: +
+        precedence: 30
+        associativity: left
+        kind: infix
+      - token:
+          text: '*'
+        precedence: 40
+        associativity: left
+        kind: infix
+      - token:
+          text: ^
+        precedence: 60
+        associativity: right
+        kind: infix
+      - token:
+          text: '='
+        precedence: 10
+        associativity: right
+        kind: assignment
+      - token:
+          text: ==
+        precedence: 20
+        associativity: non_associative
+        kind: infix
+      postfix:
+      - token:
+          text: ++
+        precedence: 70
+      member:
+      - token:
+          text: .
+        precedence: 90
+      application:
+      - open: (
+        close: )
+        kind: delimiter
+        separator:
+          text: ','
+          kind: delimiter
+        precedence: 80
+      assignment_targets:
+      - identifier
+      - member
+groups:
+- open: (
+  close: )
+  kind: delimiter
+- open: '{'
+  close: '}'
+  kind: delimiter
+rules: {}
+ignored: []
+recovery:
+- text: ;
+  kind: delimiter
+recover_line_break: true
+productions:
+- name: function
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: FUNC
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: capture
+      name: parameters
+      item:
+        type: balanced
+        open: (
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: function
+    role: Declaration
+    name_capture: name
+    scope:
+      visibility: after_declaration
+      parent_lookup: true
+      shadowing: nearest
+    regions:
+    - capture: parameters
+      context: parameters
+      trim_start: 1
+      trim_end: 1
+    - capture: body
+      context: body
+      trim_start: 1
+      trim_end: 1
+- name: parameter
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: token
+      kind: identifier
+    join: ''
+  projection:
+    ast_kind: parameter
+    role: Declaration
+    name_capture: name
+- name: variable
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: VAR
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: variable
+    role: Declaration
+    name_capture: name
+- name: block
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: literal
+        text: BLOCK
+      join: ''
+    - type: capture
+      name: body
+      item:
+        type: balanced
+        open: '{'
+      join: ''
+  projection:
+    ast_kind: block
+    role: Container
+    name_capture: name
+    scope:
+      visibility: after_declaration
+      parent_lookup: true
+      shadowing: nearest
+    regions:
+    - capture: body
+      context: body
+      trim_start: 1
+      trim_end: 1
+- name: read
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: READ
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: read
+    role: Reference
+    name_capture: name
+- name: initialized_variable
+  pattern:
+    type: sequence
+    items:
+    - type: literal
+      text: VAR
+    - type: capture
+      name: name
+      item:
+        type: token
+        kind: identifier
+      join: ''
+    - type: literal
+      text: '='
+    - type: capture
+      name: value
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+          kind: delimiter
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: variable
+    role: Declaration
+    name_capture: name
+    regions:
+    - capture: value
+      context: expression
+- name: expression_statement
+  pattern:
+    type: sequence
+    items:
+    - type: capture
+      name: name
+      item:
+        type: literal
+        text: EVAL
+      join: ''
+    - type: capture
+      name: value
+      item:
+        type: scan_until
+        stop:
+        - text: ;
+          kind: delimiter
+      join: ''
+    - type: literal
+      text: ;
+  projection:
+    ast_kind: statement
+    role: Container
+    name_capture: name
+    regions:
+    - capture: value
+      context: expression

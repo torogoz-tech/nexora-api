@@ -1,0 +1,111 @@
+[
+  {
+    "name": "nexora_analysis_profiles_list",
+    "description": "List installed immutable analysis profile versions. Available from Developer with analysis-profiles:read and explicit global key scope. Read the applicable repository profile/issue report first.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": []
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_analysis_profile_get",
+    "description": "Read a complete installed portable model for the development AI to improve. No secrets or server files. Requires analysis-profiles:read and global key scope.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_analysis_profile_install",
+    "description": "Validate and compile then install an immutable model version, available from Developer with analysis-profiles:contribute and global key scope. No human approval. Existing key/version cannot be overwritten. Automatic repositories choose latest compatible version on their NEXT synchronization; active snapshots and manual assignments remain pinned. Structural validation does not prove semantic coverage: test original failed examples and regressions locally first. 256KiB MCP limit.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "package": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "request_id",
+        "package"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_repository_analysis_issues",
+    "description": "Read a bounded page of failed/uncovered files, exact reasons and model version identifiers from the last authorized repository snapshot. Use repository code/evidence tools or local checkout at the reported commit to inspect original code, then extend and validate models. Never silently change business source to satisfy a parser.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "repository_id": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "project_id",
+        "repository_id"
+      ]
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

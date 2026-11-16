@@ -1,0 +1,99 @@
+id: brace_mold.expressions-application
+pack: brace_mold
+feature: semantic.expressions
+classification: supported
+mode: repository
+input: corpus/fixtures/expressions/brace_mold.expressions-application
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: container
+    file: source.nxb
+    source: EVAL (a + b) * obj.run(2);
+    kind: Statement
+    name: EVAL
+  - type: expression
+    file: source.nxb
+    source: a
+    kind: identifier
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: b
+    kind: identifier
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: a + b
+    kind: infix
+    operator: +
+    operands:
+    - a
+    - b
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: (a + b)
+    kind: group
+    operator: (
+    operands:
+    - a + b
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: obj
+    kind: identifier
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: run
+    kind: identifier
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: obj.run
+    kind: member
+    operator: .
+    operands:
+    - obj
+    - run
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: '2'
+    kind: literal
+    operands: []
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: obj.run(2)
+    kind: application
+    operator: (
+    operands:
+    - obj.run
+    - '2'
+    owner:
+    - EVAL
+  - type: expression
+    file: source.nxb
+    source: (a + b) * obj.run(2)
+    kind: infix
+    operator: '*'
+    operands:
+    - (a + b)
+    - obj.run(2)
+    owner:
+    - EVAL

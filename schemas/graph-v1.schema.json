@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/graph-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "Repository",
+          "File",
+          "Module",
+          "Namespace",
+          "Class",
+          "Interface",
+          "Function",
+          "Method",
+          "Variable",
+          "Parameter"
+        ]
+      }
+    },
+    "reference_relations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "IMPORTS",
+            "DEPENDS_ON"
+          ]
+        },
+        "maxItems": 2,
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "mappings"
+  ]
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "repository": "https://github.com/lodash/lodash",
+    "commit": "d85490ebfb8f49ddc1eab84892aa33a3ef547894",
+    "path": "identity.js",
+    "url": "https://github.com/lodash/lodash/blob/d85490ebfb8f49ddc1eab84892aa33a3ef547894/identity.js",
+    "sha256": "152c43149691b31cb9bcdf1be4ba07a3963babbd096bcf6313182d3f2597f023",
+    "license_url": "https://github.com/lodash/lodash/blob/d85490ebfb8f49ddc1eab84892aa33a3ef547894/LICENSE",
+    "license_sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+    "local": "corpus/third-party/lodash-identity/identity.js",
+    "modified": false
+  },
+  {
+    "repository": "https://github.com/rxi/classic",
+    "commit": "e5610756c98ac2f8facd7ab90c94e1a097ecd2c6",
+    "path": "classic.lua",
+    "url": "https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/classic.lua",
+    "sha256": "52827561440f22ff3f34f926b2f4bdc1b74cbbaafa3b3b8252b530b12387d48b",
+    "license_url": "https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/LICENSE",
+    "license_sha256": "9337ea0466e26005b2e86ea144aa0dd279442c5751d41d097712e11138a545a7",
+    "local": "corpus/third-party/classic/classic.lua",
+    "modified": false
+  }
+]

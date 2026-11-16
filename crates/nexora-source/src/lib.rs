@@ -1,0 +1,41 @@
+//! Bounded source acquisition and materialization; never executes repository contents.
+mod git_transfer_limits;
+pub use git_transfer_limits::*;
+mod git_fetch_policy;
+pub use git_fetch_policy::*;
+mod git_fetch_credentials;
+pub use git_fetch_credentials::*;
+mod fetched_git_source;
+pub use fetched_git_source::*;
+mod git_disk_budget;
+mod git_fetcher;
+pub use git_fetcher::*;
+mod source_materialization;
+mod source_private_directory;
+pub use source_materialization::*;
+mod git_materializer;
+pub use git_materializer::*;
+mod git_blob_batch;
+pub use git_blob_batch::*;
+mod git_batch_decoder;
+pub use git_batch_decoder::*;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+mod bounded_git_process;
+mod git_object_reader;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+mod owned_process_group;
+pub use git_object_reader::*;
+mod source_error;
+pub use source_error::*;
+mod source_limits;
+pub use source_limits::*;
+mod git_object_format;
+pub use git_object_format::*;
+mod git_entry_kind;
+pub use git_entry_kind::*;
+mod git_tree_entry;
+pub use git_tree_entry::*;
+mod git_tree_decoder;
+pub use git_tree_decoder::*;
+mod git_release_composer;
+pub use git_release_composer::GitReleaseComposer;

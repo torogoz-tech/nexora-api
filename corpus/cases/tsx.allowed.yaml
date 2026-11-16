@@ -1,0 +1,39 @@
+id: tsx.allowed
+pack: tsx
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/tsx.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.tsx
+    source: 'export function Button(props: Props) { return (<button>{props.label}</button>);
+      }'
+    name: Button
+    kind: Function
+  - type: lexical_region
+    file: source.tsx
+    mode: element
+    closed: true
+    source: <button>{props.label}</button>
+    opener: <button>
+    content: '{props.label}'
+    owner:
+    - Button
+    closer: </button>
+    captures:
+      tag: button
+    header: <button>
+  - type: lexical_region
+    file: source.tsx
+    mode: code
+    closed: true
+    source: '{props.label}'
+    opener: '{'
+    content: props.label
+    owner:
+    - Button
+    - element
+    closer: '}'

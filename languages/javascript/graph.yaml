@@ -1,0 +1,27 @@
+schema_version: 2
+mappings:
+  function: Function
+  class: Class
+  module_import: Module
+  symbol_export_default: Symbol
+  symbol_export_named: Symbol
+reference_relations:
+  module_import:
+  - IMPORTS
+  - DEPENDS_ON
+  symbol_export_default:
+  - EXPORTS
+  symbol_export_named:
+  - EXPORTS
+symbol_references:
+  symbol_export_default:
+    scope: file
+    target_kinds:
+    - Function
+    - Class
+    label: default
+  symbol_export_named:
+    scope: file
+    target_kinds:
+    - Function
+    - Class

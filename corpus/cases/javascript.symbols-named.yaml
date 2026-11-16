@@ -1,0 +1,21 @@
+id: javascript.symbols-named
+pack: javascript
+feature: symbol.exports
+classification: supported
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-named
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total() {}
+  - type: relation
+    file: source.js
+    kind: EXPORTS
+    target: total
+    resolution: Resolved
+    source: export { total };

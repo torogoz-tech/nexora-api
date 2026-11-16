@@ -1,0 +1,60 @@
+id: typescript.composition-nested
+pack: typescript
+feature: composition.boundaries
+classification: partial
+mode: repository
+input: corpus/fixtures/composition/typescript.composition-nested
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.ts
+    kind: Variable
+    name: t
+    source: const t = `outer ${`inner ${x}`}`;
+  - type: lexical_region
+    file: source.ts
+    mode: template
+    closed: true
+    opener: '`'
+    content: outer ${`inner ${x}`}
+    source: '`outer ${`inner ${x}`}`'
+    owner:
+    - t
+    closer: '`'
+  - type: lexical_region
+    file: source.ts
+    mode: code
+    closed: true
+    opener: ${
+    content: '`inner ${x}`'
+    source: ${`inner ${x}`}
+    owner:
+    - t
+    - template
+    closer: '}'
+  - type: lexical_region
+    file: source.ts
+    mode: template
+    closed: true
+    opener: '`'
+    content: inner ${x}
+    source: '`inner ${x}`'
+    owner:
+    - t
+    - template
+    - code
+    closer: '`'
+  - type: lexical_region
+    file: source.ts
+    mode: code
+    closed: true
+    opener: ${
+    content: x
+    source: ${x}
+    owner:
+    - t
+    - template
+    - code
+    - template
+    closer: '}'

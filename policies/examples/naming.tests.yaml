@@ -1,0 +1,15 @@
+apiVersion: nexora.dev/v1alpha1
+kind: PolicyTestSuite
+cases:
+  - name: source-backed naming passes
+    policy: EXAMPLE-CLASS-NAMES
+    source: fixtures/naming/pass
+    expected: PASS
+  - name: source-backed naming fails
+    policy: EXAMPLE-CLASS-NAMES
+    source: fixtures/naming/fail
+    expected: FAIL
+  - name: unsupported export requires review
+    policy: EXAMPLE-CLASS-NAMES
+    source: fixtures/naming/unknown
+    expected: UNKNOWN

@@ -1,0 +1,15 @@
+id: keyword_mold.empty
+pack: keyword_mold
+feature: semantic.scopes
+classification: supported
+mode: repository
+input: corpus/fixtures/scopes/keyword_mold.empty
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxk
+    kind: Function
+    name: empty
+    source: DEF empty[] BEGIN FINISH

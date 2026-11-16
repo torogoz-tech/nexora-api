@@ -1,0 +1,90 @@
+schema_version: 4
+identifier_kind: identifier
+keywords:
+- FUNC
+- VAR
+- BLOCK
+- READ
+- EVAL
+tokens:
+- kind: element
+  pattern: <(?P<tag>[A-Za-z][A-Za-z0-9.]*)
+  region: element
+- kind: attribute_expression
+  pattern: \{
+  region: attribute_code
+  after:
+  - text: '='
+  at_start: false
+- kind: template
+  pattern: ~\[
+  region: template
+- kind: whitespace
+  pattern: \s+
+  trivia: true
+- kind: comment
+  pattern: //[^\r\n]*
+  trivia: true
+- kind: identifier
+  pattern: '[\p{L}_][\p{L}\p{N}_]*'
+- kind: number
+  pattern: '[0-9]+(?:\.[0-9]+)?'
+- kind: string
+  pattern: '"(?:[^"\\\r\n]|\\[^\r\n])*"'
+- kind: operator
+  pattern: \+\+|==|[+*^=.!-]
+- kind: delimiter
+  pattern: '[(){}\[\],;]'
+regions:
+  template:
+    close: ']~'
+    children:
+    - pattern: '@\('
+      region: code
+  code:
+    close: )
+    children:
+    - pattern: \(
+      region: paren
+    - pattern: ~\[
+      region: template
+    - pattern: '"'
+      region: quote
+  paren:
+    close: )
+    children:
+    - pattern: \(
+      region: paren
+    - pattern: ~\[
+      region: template
+    - pattern: '"'
+      region: quote
+  quote:
+    close: '"'
+    escape: \
+  element:
+    close: </
+    close_capture: tag
+    close_tail: \s*>
+    opening_follow: (?:[\s/>]|$)
+    header:
+      end: '>'
+      terminal: />
+      children:
+      - pattern: \{
+        region: attribute_code
+      - pattern: '"'
+        region: quote
+    children:
+    - pattern: <(?P<tag>[A-Za-z][A-Za-z0-9.]*)
+      region: element
+    - pattern: </
+      region: element
+      reject: true
+  attribute_code:
+    close: '}'
+    children:
+    - pattern: \(
+      region: paren
+    - pattern: '"'
+      region: quote

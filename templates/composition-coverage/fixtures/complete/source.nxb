@@ -1,0 +1,3 @@
+VAR host;
+~[Texto @(1 + ~[anidado @((2 + 3))]~) @("text")]~
+READ host;

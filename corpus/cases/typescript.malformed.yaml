@@ -1,0 +1,9 @@
+id: typescript.malformed
+pack: typescript
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/typescript.malformed
+expected:
+  analysis: diagnostics
+  facts: []

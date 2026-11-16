@@ -1,0 +1,33 @@
+apiVersion: nexora.dev/v1alpha1
+kind: PolicyTestSuite
+cases:
+- name: javascript pass
+  language: javascript
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/javascript/pass
+  expected: PASS
+- name: javascript fail
+  language: javascript
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/javascript/fail
+  expected: FAIL
+- name: javascript unknown
+  language: javascript
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/javascript/unknown
+  expected: UNKNOWN
+- name: lua pass
+  language: lua
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/lua/pass
+  expected: PASS
+- name: lua fail
+  language: lua
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/lua/fail
+  expected: FAIL
+- name: lua unknown
+  language: lua
+  policy: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  source: fixtures/lua/unknown
+  expected: UNKNOWN

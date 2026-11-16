@@ -1,0 +1,15 @@
+schema_version: 1
+id: region_carrier
+version: 0.2.0
+extensions:
+- nxb
+composition:
+  schema_version: 1
+  routes:
+    code:
+      language: region_expression
+      context: expression
+      scope:
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest

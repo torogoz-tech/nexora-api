@@ -1,0 +1,10 @@
+id: lua.malformed
+pack: lua
+feature: syntax.malformed
+classification: rejected
+mode: file
+input: corpus/fixtures/lua/malformed/source.lua
+replicas: 1
+benchmark: false
+expected:
+  analysis: diagnostics

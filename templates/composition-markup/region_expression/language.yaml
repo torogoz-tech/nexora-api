@@ -1,0 +1,33 @@
+schema_version: 1
+id: region_expression
+version: 0.4.0
+extensions:
+- nxbc
+composition:
+  schema_version: 3
+  routes:
+    code:
+      language: region_expression
+      context: expression
+      scope: &id001
+        visibility: whole_scope
+        parent_lookup: false
+        shadowing: nearest
+    attribute_code:
+      language: region_expression
+      context: expression
+      scope: *id001
+  roles:
+    template: carrier
+    code: grammar
+    paren: guard
+    quote: literal
+    element: carrier
+    attribute_code: grammar
+  header_roles:
+    element: grammar
+  header_routes:
+    element:
+      language: region_expression
+      context: attributes
+      scope: *id001

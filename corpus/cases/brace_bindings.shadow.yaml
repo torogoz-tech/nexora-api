@@ -1,0 +1,78 @@
+id: brace_bindings.shadow
+pack: brace_bindings
+feature: semantic.calls
+classification: partial
+mode: repository
+input: corpus/fixtures/bindings/brace_bindings.shadow
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxbc
+    source: FUNC f() { }
+    kind: Function
+    name: f
+    owner: []
+  - type: declaration
+    file: source.nxbc
+    source: FUNC outer(f) { EVAL f(); }
+    kind: Function
+    name: outer
+    owner: []
+  - type: declaration
+    file: source.nxbc
+    source: f
+    kind: Parameter
+    name: f
+    owner:
+    - outer
+  - type: container
+    file: source.nxbc
+    source: EVAL f();
+    kind: Statement
+    name: EVAL
+    owner:
+    - outer
+  - type: expression
+    file: source.nxbc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - outer
+    - EVAL
+  - type: expression
+    file: source.nxbc
+    source: f()
+    kind: application
+    operands:
+    - f
+    owner:
+    - outer
+    - EVAL
+    operator: (
+  - type: relation
+    file: source.nxbc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - outer
+    - EVAL
+    target_owner:
+    - outer
+    label: read
+  - type: relation
+    file: source.nxbc
+    source: f()
+    kind: CALLS
+    target: (
+    resolution: Unresolved
+    resolution_reason: binding_not_directly_callable
+    owner:
+    - outer
+    - EVAL
+    target_owner: []
+    label: direct-call

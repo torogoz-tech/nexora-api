@@ -1,0 +1,3 @@
+VAR host;
+~[Texto @(1 + 2)]~
+VAR after;

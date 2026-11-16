@@ -1,0 +1,14 @@
+schema_version: 6
+mappings:
+  class: Class
+  interface: Interface
+  enum: Enum
+  record: Class
+  function: Function
+  constructor: Method
+  module_import: Module
+  opaque_block: Block
+  opaque_parameters: Block
+  opaque_collection: Block
+  unmodeled_token: Statement
+reference_relations: {}

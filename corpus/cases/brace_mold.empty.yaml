@@ -1,0 +1,15 @@
+id: brace_mold.empty
+pack: brace_mold
+feature: semantic.scopes
+classification: supported
+mode: repository
+input: corpus/fixtures/scopes/brace_mold.empty
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxb
+    kind: Function
+    name: empty
+    source: FUNC empty() { }

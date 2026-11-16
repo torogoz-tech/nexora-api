@@ -1,0 +1,82 @@
+{
+  "TaskMove": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "backlog_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "expected_source_backlog_revision": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 1
+      },
+      "expected_target_backlog_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "backlog_id",
+      "expected_target_backlog_revision",
+      "reason"
+    ]
+  },
+  "TaskWorkflowMigration": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "workflow_version_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "state_mapping": {
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 64,
+        "propertyNames": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        }
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "expected_revision",
+      "workflow_version_id",
+      "state_mapping",
+      "reason"
+    ]
+  }
+}

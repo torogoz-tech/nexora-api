@@ -1,0 +1,5 @@
+schema_version: 1
+id: keyword_mold
+version: 0.2.0
+extensions:
+- nxk

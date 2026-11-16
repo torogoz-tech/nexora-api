@@ -1,0 +1,14 @@
+schema_version: 10
+mappings:
+  namespace: Namespace
+  class: Class
+  interface: Interface
+  enum: Enum
+  record_class: Class
+  record_struct: Statement
+  struct: Statement
+  directive: Statement
+  conditional_tail: Statement
+  opaque_statement: Statement
+  lexical_region: LexicalRegion
+  opaque_source: Statement

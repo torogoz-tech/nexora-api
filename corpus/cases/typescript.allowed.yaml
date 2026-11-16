@@ -1,0 +1,29 @@
+id: typescript.allowed
+pack: typescript
+feature: profile.structure
+classification: partial
+mode: repository
+input: corpus/fixtures/web-profiles/typescript.allowed
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.ts
+    source: 'export interface Item { id: number; }'
+    name: Item
+    kind: Interface
+  - type: declaration
+    file: source.ts
+    source: export type ItemId = string;
+    name: ItemId
+    kind: TypeAlias
+  - type: declaration
+    file: source.ts
+    source: export enum Status { Ready }
+    name: Status
+    kind: Enum
+  - type: declaration
+    file: source.ts
+    source: 'export function getItem(id: ItemId): Item { return read(id); }'
+    name: getItem
+    kind: Function

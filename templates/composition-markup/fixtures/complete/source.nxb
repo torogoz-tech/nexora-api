@@ -1,0 +1,4 @@
+FUNC render(p) { READ p; BLOCK { VAR local; READ local; } }
+VAR host;
+<Box count={(1 + 2)} title="café"><Leaf count={(3 * 4)} title="nested"/></Box>
+READ host;

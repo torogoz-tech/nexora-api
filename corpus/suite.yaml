@@ -1,0 +1,164 @@
+schema_version: 1
+id: nexora-conformance
+version: 0.9.0
+packs:
+- id: javascript
+  path: languages/javascript
+- id: lua
+  path: languages/lua
+- id: template
+  path: templates/language-pack
+- id: brace_mold
+  path: templates/semantic-molds/brace_mold
+- id: keyword_mold
+  path: templates/semantic-molds/keyword_mold
+- id: brace_bindings
+  path: templates/semantic-bindings/brace_bindings
+- id: keyword_bindings
+  path: templates/semantic-bindings/keyword_bindings
+- id: typescript
+  path: languages/typescript
+- id: tsx
+  path: languages/tsx
+- id: jsx
+  path: languages/jsx
+- id: html
+  path: languages/html
+- id: css
+  path: languages/css
+features:
+- id: declaration
+  description: declaration
+- id: lexical.lossless
+  description: lexical lossless
+- id: syntax.malformed
+  description: syntax malformed
+- id: lexical.rejected
+  description: lexical rejected
+- id: dependency.allowed
+  description: dependency allowed
+- id: dependency.forbidden
+  description: dependency forbidden
+- id: dependency.external
+  description: dependency external
+- id: dependency.opaque
+  description: dependency opaque
+- id: scaling.file
+  description: scaling file
+- id: scaling.repository
+  description: scaling repository
+- id: semantic.types
+  description: semantic types
+- id: real.source
+  description: Unmodified pinned public source; partial language support is explicit
+- id: symbol.exports
+  description: Declared file-scoped symbol links with explicit uncertainty
+- id: symbol.qualified
+  description: Qualified declaration names and kinds projected from grammar data
+- id: semantic.scopes
+  description: Structured regions, explicit scope ownership and lexical lookup
+- id: semantic.expressions
+  description: Structured expression forms with ordered operands and declarative precedence;
+    no call or type inference
+- id: semantic.calls
+  description: Lexical expression bindings and unique direct call targets; explicit
+    ambiguity and mutation uncertainty
+- id: profile.structure
+  description: Initial typed/markup structural extraction with explicitly opaque interiors
+- id: composition.boundaries
+  description: Nested lexical modes, exact boundaries and explicit opaque/partial
+    regions
+cases:
+- corpus/cases/javascript.declaration.yaml
+- corpus/cases/javascript.lossless.yaml
+- corpus/cases/javascript.malformed.yaml
+- corpus/cases/javascript.lexical.yaml
+- corpus/cases/javascript.allowed.yaml
+- corpus/cases/javascript.forbidden.yaml
+- corpus/cases/javascript.external.yaml
+- corpus/cases/javascript.opaque.yaml
+- corpus/cases/javascript.file-1.yaml
+- corpus/cases/javascript.file-100.yaml
+- corpus/cases/javascript.file-1000.yaml
+- corpus/cases/javascript.repository-1.yaml
+- corpus/cases/javascript.repository-10.yaml
+- corpus/cases/javascript.repository-100.yaml
+- corpus/cases/lua.declaration.yaml
+- corpus/cases/lua.lossless.yaml
+- corpus/cases/lua.malformed.yaml
+- corpus/cases/lua.lexical.yaml
+- corpus/cases/lua.allowed.yaml
+- corpus/cases/lua.forbidden.yaml
+- corpus/cases/lua.external.yaml
+- corpus/cases/lua.opaque.yaml
+- corpus/cases/lua.file-1.yaml
+- corpus/cases/lua.file-100.yaml
+- corpus/cases/lua.file-1000.yaml
+- corpus/cases/lua.repository-1.yaml
+- corpus/cases/lua.repository-10.yaml
+- corpus/cases/lua.repository-100.yaml
+- corpus/cases/template.declaration.yaml
+- corpus/cases/template.lossless.yaml
+- corpus/cases/template.malformed.yaml
+- corpus/cases/template.lexical.yaml
+- corpus/cases/template.allowed.yaml
+- corpus/cases/template.forbidden.yaml
+- corpus/cases/template.external.yaml
+- corpus/cases/template.opaque.yaml
+- corpus/cases/template.file-1.yaml
+- corpus/cases/template.file-100.yaml
+- corpus/cases/template.file-1000.yaml
+- corpus/cases/template.repository-1.yaml
+- corpus/cases/template.repository-10.yaml
+- corpus/cases/template.repository-100.yaml
+- corpus/cases/javascript.real-lodash-identity.yaml
+- corpus/cases/lua.real-classic.yaml
+- corpus/cases/javascript.symbols-default.yaml
+- corpus/cases/javascript.symbols-named.yaml
+- corpus/cases/javascript.symbols-missing.yaml
+- corpus/cases/javascript.symbols-ambiguous.yaml
+- corpus/cases/javascript.symbols-unsupported-alias.yaml
+- corpus/cases/javascript.symbols-unsupported-inline.yaml
+- corpus/cases/lua.symbols-qualified.yaml
+- corpus/cases/template.symbols-qualified-export.yaml
+- corpus/cases/brace_mold.nested.yaml
+- corpus/cases/brace_mold.empty.yaml
+- corpus/cases/brace_mold.partial.yaml
+- corpus/cases/brace_mold.missing.yaml
+- corpus/cases/brace_mold.recursive-name.yaml
+- corpus/cases/keyword_mold.nested.yaml
+- corpus/cases/keyword_mold.empty.yaml
+- corpus/cases/keyword_mold.partial.yaml
+- corpus/cases/keyword_mold.missing.yaml
+- corpus/cases/keyword_mold.recursive-name.yaml
+- corpus/cases/brace_mold.expressions-precedence.yaml
+- corpus/cases/brace_mold.expressions-application.yaml
+- corpus/cases/brace_mold.expressions-partial.yaml
+- corpus/cases/keyword_mold.expressions-precedence.yaml
+- corpus/cases/keyword_mold.expressions-application.yaml
+- corpus/cases/keyword_mold.expressions-partial.yaml
+- corpus/cases/brace_bindings.allowed.yaml
+- corpus/cases/brace_bindings.shadow.yaml
+- corpus/cases/brace_bindings.mutation.yaml
+- corpus/cases/keyword_bindings.allowed.yaml
+- corpus/cases/keyword_bindings.shadow.yaml
+- corpus/cases/keyword_bindings.mutation.yaml
+- corpus/cases/typescript.allowed.yaml
+- corpus/cases/typescript.malformed.yaml
+- corpus/cases/tsx.allowed.yaml
+- corpus/cases/tsx.malformed.yaml
+- corpus/cases/jsx.allowed.yaml
+- corpus/cases/jsx.malformed.yaml
+- corpus/cases/html.allowed.yaml
+- corpus/cases/html.opaque.yaml
+- corpus/cases/css.allowed.yaml
+- corpus/cases/css.malformed.yaml
+- corpus/cases/typescript.composition-simple.yaml
+- corpus/cases/typescript.composition-nested.yaml
+- corpus/cases/typescript.composition-partial.yaml
+- corpus/cases/tsx.dynamic-selfclose.yaml
+- corpus/cases/tsx.dynamic-recovery.yaml
+- corpus/cases/jsx.dynamic-selfclose.yaml
+- corpus/cases/jsx.dynamic-recovery.yaml
+- corpus/cases/typescript.regexp-literal.yaml
+- corpus/cases/typescript.ambiguous-slash.yaml

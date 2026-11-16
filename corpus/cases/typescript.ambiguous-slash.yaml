@@ -1,0 +1,9 @@
+id: typescript.ambiguous-slash
+pack: typescript
+feature: composition.boundaries
+classification: rejected
+mode: file
+input: corpus/fixtures/composition/typescript.ambiguous-slash/source.ts
+expected:
+  analysis: lexical_error
+  facts: []

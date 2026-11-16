@@ -1,0 +1,78 @@
+id: brace_mold.nested
+pack: brace_mold
+feature: semantic.scopes
+classification: supported
+mode: repository
+input: corpus/fixtures/scopes/brace_mold.nested
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: source.nxb
+    kind: Function
+    name: outer
+    source: "FUNC outer(p) {\n VAR value;\n BLOCK {\n  VAR value;\n  READ value;\n\
+      \  READ p;\n }\n READ value;\n}"
+  - type: declaration
+    file: source.nxb
+    kind: Parameter
+    name: p
+    source: p
+    owner:
+    - outer
+  - type: declaration
+    file: source.nxb
+    kind: Variable
+    name: value
+    source: VAR value;
+    owner:
+    - outer
+  - type: container
+    file: source.nxb
+    kind: Block
+    name: BLOCK
+    owner:
+    - outer
+    source: "BLOCK {\n  VAR value;\n  READ value;\n  READ p;\n }"
+  - type: declaration
+    file: source.nxb
+    kind: Variable
+    name: value
+    source: VAR value;
+    owner:
+    - outer
+    - BLOCK
+  - type: relation
+    file: source.nxb
+    kind: REFERENCES
+    target: value
+    resolution: Resolved
+    source: READ value;
+    owner:
+    - outer
+    - BLOCK
+    target_owner:
+    - outer
+    - BLOCK
+  - type: relation
+    file: source.nxb
+    kind: REFERENCES
+    target: p
+    resolution: Resolved
+    source: READ p;
+    owner:
+    - outer
+    - BLOCK
+    target_owner:
+    - outer
+  - type: relation
+    file: source.nxb
+    kind: REFERENCES
+    target: value
+    resolution: Resolved
+    source: READ value;
+    owner:
+    - outer
+    target_owner:
+    - outer

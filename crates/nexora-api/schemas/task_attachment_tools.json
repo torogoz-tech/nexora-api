@@ -1,0 +1,95 @@
+[
+  {
+    "name": "nexora_task_image_upload",
+    "description": "Upload a PNG, JPEG or WebP image (base64, up to 4 MiB). Stored immediately on this authorized task, normalized to PNG. Returns a Markdown snippet: insert it into task context with nexora_task_change, preserving existing content and revision. Never use local file paths in task Markdown.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "name",
+        "data_base64",
+        "request_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data_base64": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_attachment_upload",
+    "description": "Upload a document (base64, up to 20 MiB) to an authorized task. Original file is stored and listed in task attachments and Knowledge Documents, respecting task/project scope.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "name",
+        "data_base64",
+        "request_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "data_base64": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "nexora_task_attachments_list",
+    "description": "List stored task document attachments; follow next_after for pagination. These are uploaded files, distinct from document-version links.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "after": {
+          "type": "string"
+        }
+      }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  }
+]

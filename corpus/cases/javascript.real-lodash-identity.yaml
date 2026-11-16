@@ -1,0 +1,31 @@
+id: javascript.real-lodash-identity
+pack: javascript
+feature: real.source
+classification: supported
+mode: repository
+input: corpus/third-party/lodash-identity
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: identity.js
+    kind: Function
+    name: identity
+    source: "function identity(value) {\n  return value;\n}"
+  - type: relation
+    file: identity.js
+    kind: EXPORTS
+    target: identity
+    resolution: Resolved
+    source: export default identity;
+    label: default
+  coverage:
+  - path: identity.js
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: identity.js
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true

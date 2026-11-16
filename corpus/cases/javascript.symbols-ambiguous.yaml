@@ -1,0 +1,27 @@
+id: javascript.symbols-ambiguous
+pack: javascript
+feature: symbol.exports
+classification: partial
+mode: repository
+input: corpus/fixtures/symbols/javascript.symbols-ambiguous
+benchmark: false
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total() {}
+  - type: declaration
+    file: source.js
+    kind: Function
+    name: total
+    source: function total() {}
+  - type: relation
+    file: source.js
+    kind: EXPORTS
+    target: total
+    resolution: Ambiguous
+    source: export default total;
+    label: default

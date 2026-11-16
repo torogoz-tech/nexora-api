@@ -1,0 +1,6 @@
+schema_version: 1
+id: html
+version: 0.1.0
+extensions:
+- html
+- htm

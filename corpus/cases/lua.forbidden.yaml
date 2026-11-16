@@ -1,0 +1,52 @@
+id: lua.forbidden
+pack: lua
+feature: dependency.forbidden
+classification: supported
+mode: repository
+input: corpus/fixtures/lua/forbidden
+replicas: 1
+benchmark: false
+expected:
+  analysis: clean
+  facts:
+  - type: declaration
+    file: domain/source.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  - type: declaration
+    file: infrastructure/storage.lua
+    kind: Function
+    name: total
+    source: function total(value) return value end
+  - type: relation
+    file: domain/source.lua
+    kind: IMPORTS
+    target: infrastructure/storage.lua
+    resolution: Resolved
+    source: require("infrastructure.storage")
+  - type: relation
+    file: domain/source.lua
+    kind: DEPENDS_ON
+    target: infrastructure/storage.lua
+    resolution: Resolved
+    source: require("infrastructure.storage")
+  policy: FAIL
+  coverage:
+  - path: domain/source.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: domain/source.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+  - path: infrastructure/storage.lua
+    relation: IMPORTS
+    domain: static-module-references/v1
+    complete: true
+  - path: infrastructure/storage.lua
+    relation: DEPENDS_ON
+    domain: static-module-references/v1
+    complete: true
+policy: corpus/policies/boundary.policy.yaml

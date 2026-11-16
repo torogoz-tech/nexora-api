@@ -1,0 +1,66 @@
+schema_version: 6
+max_nesting: 128
+max_steps: 1000000
+file_scope:
+  visibility: whole_scope
+  parent_lookup: false
+  shadowing: nearest
+root_productions:
+- fragment
+contexts: {}
+groups: []
+productions:
+- name: fragment
+  pattern:
+    type: capture
+    name: name
+    item:
+      type: choice
+      alternatives:
+      - type: token
+        kind: abrupt_comment
+      - type: token
+        kind: html_comment
+      - type: token
+        kind: script_javascript
+      - type: token
+        kind: script_unknown
+      - type: token
+        kind: style_css
+      - type: token
+        kind: style_unknown
+      - type: token
+        kind: text_textarea
+      - type: token
+        kind: text_title
+      - type: token
+        kind: text_xmp
+      - type: token
+        kind: text_iframe
+      - type: token
+        kind: text_noembed
+      - type: token
+        kind: text_noframes
+      - type: token
+        kind: plaintext_literal
+      - type: token
+        kind: tag
+      - type: token
+        kind: declaration
+      - type: token
+        kind: bogus_declaration
+      - type: token
+        kind: text
+      - type: token
+        kind: bogus_end_tag
+      - type: token
+        kind: raw_less
+    join: ''
+  projection:
+    ast_kind: fragment
+    role: Container
+    name_capture: name
+    regions:
+    - capture: name
+      trim_start: 0
+      trim_end: 0

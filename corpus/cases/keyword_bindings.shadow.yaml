@@ -1,0 +1,78 @@
+id: keyword_bindings.shadow
+pack: keyword_bindings
+feature: semantic.calls
+classification: partial
+mode: repository
+input: corpus/fixtures/bindings/keyword_bindings.shadow
+expected:
+  analysis: diagnostics
+  facts:
+  - type: declaration
+    file: source.nxkc
+    source: DEF f[] BEGIN FINISH
+    kind: Function
+    name: f
+    owner: []
+  - type: declaration
+    file: source.nxkc
+    source: DEF outer[f] BEGIN VALUE f[]; FINISH
+    kind: Function
+    name: outer
+    owner: []
+  - type: declaration
+    file: source.nxkc
+    source: f
+    kind: Parameter
+    name: f
+    owner:
+    - outer
+  - type: container
+    file: source.nxkc
+    source: VALUE f[];
+    kind: Statement
+    name: VALUE
+    owner:
+    - outer
+  - type: expression
+    file: source.nxkc
+    source: f
+    kind: identifier
+    operands: []
+    owner:
+    - outer
+    - VALUE
+  - type: expression
+    file: source.nxkc
+    source: f[]
+    kind: application
+    operands:
+    - f
+    owner:
+    - outer
+    - VALUE
+    operator: '['
+  - type: relation
+    file: source.nxkc
+    source: f
+    kind: REFERENCES
+    target: f
+    resolution: Resolved
+    resolution_reason: unique_lexical_binding
+    owner:
+    - outer
+    - VALUE
+    target_owner:
+    - outer
+    label: read
+  - type: relation
+    file: source.nxkc
+    source: f[]
+    kind: CALLS
+    target: '['
+    resolution: Unresolved
+    resolution_reason: binding_not_directly_callable
+    owner:
+    - outer
+    - VALUE
+    target_owner: []
+    label: direct-call

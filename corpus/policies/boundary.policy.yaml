@@ -1,0 +1,24 @@
+apiVersion: nexora.dev/v1alpha1
+kind: Policy
+metadata:
+  id: EXAMPLE-LANGUAGE-NEUTRAL-BOUNDARY
+  name: Domain does not depend on infrastructure
+  version: 1.0.0
+  description: Optional language-neutral rule evaluated on canonical file dependency
+    evidence.
+  severity: high
+  category: architecture
+spec:
+  target:
+    symbol: file
+    where:
+      fileMatches: ^domain/
+  assert:
+    none:
+    - relation: DEPENDS_ON
+      target:
+        symbol: file
+        fileMatches: ^(?:modules/)?infrastructure/
+      traversal:
+        maxDepth: 1
+  onUnknown: fail

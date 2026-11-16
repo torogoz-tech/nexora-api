@@ -1,0 +1,20 @@
+[package]
+name = "nexora-indexer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+regex.workspace = true
+nexora-core.workspace = true
+nexora-language.workspace = true
+nexora-lexer.workspace = true
+nexora-parser.workspace = true
+nexora-ast.workspace = true
+nexora-symbols.workspace = true
+nexora-graph.workspace = true
+nexora-storage.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tracing.workspace = true

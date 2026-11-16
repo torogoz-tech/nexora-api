@@ -1,0 +1,1 @@
+DEF f[p] BEGIN VALUE p; FINISH VALUE f[1];

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexora.dev/schemas/graph-v4.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 4
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "Repository",
+          "File",
+          "Module",
+          "Namespace",
+          "Class",
+          "Interface",
+          "Function",
+          "Method",
+          "Variable",
+          "Parameter",
+          "Symbol",
+          "Block",
+          "Expression",
+          "Statement"
+        ]
+      }
+    },
+    "reference_relations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "IMPORTS",
+            "DEPENDS_ON",
+            "EXPORTS",
+            "REFERENCES"
+          ]
+        },
+        "maxItems": 2,
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    "symbol_references": {
+      "type": "object",
+      "maxProperties": 128,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "target_kinds"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "file",
+              "lexical"
+            ]
+          },
+          "target_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "Module",
+                "Namespace",
+                "Class",
+                "Interface",
+                "Function",
+                "Method",
+                "Variable",
+                "Parameter",
+                "Block"
+              ]
+            }
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "mappings"
+  ]
+}

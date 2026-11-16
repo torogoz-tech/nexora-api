@@ -1,0 +1,2 @@
+METHOD Receiver.run [] BEGIN FINISH
+PUBLISH Receiver.run;
