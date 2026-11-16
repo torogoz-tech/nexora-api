@@ -1,6 +1,6 @@
-# Build and Test
+# Build and test
 
-The supported baseline is:
+Use the locked toolchain and workspace lockfile.
 
 ```bash
 cargo check --workspace --locked
@@ -9,4 +9,12 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 ```
 
-Some integration tests require local PostgreSQL or provider fixtures and are explicitly marked when an environment is required. Do not treat ignored environment-dependent tests as proof of an external provider integration.
+For a local CLI run:
+
+```bash
+cargo run -p nexora-cli -- --version
+cargo run -p nexora-cli -- languages list
+cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
+```
+
+Some integration tests require PostgreSQL, Dragonfly, Neo4j, or provider fixtures and are marked explicitly. An ignored environment-dependent test is not evidence that an external provider or deployment works. Record the environment and command with benchmark or integration results.

@@ -1,9 +1,17 @@
-# API Overview
+# API and engine overview
 
-The API repository is the executable part of Nexora. It has three operating modes:
+This repository is the executable center of Nexora. It has three operating modes.
 
-1. Offline CLI analysis for local, deterministic inspection.
-2. Persistent indexing and retrieval for a self-hosted installation.
-3. Authenticated API and MCP access for authorized users, agents, and integrations.
+## Offline CLI
 
-The server is the authority for authorization, tenant/repository scope, snapshot publication, and governance decisions. Client-provided paths, actor identities, and provider secrets are never trusted as ownership claims.
+The CLI can validate profiles, analyze a file, index a directory in memory, inspect snapshots, traverse graph data, run corpus checks, and evaluate governance inputs without PostgreSQL, Neo4j, Dragonfly, or an external AI service.
+
+## Persistent runtime
+
+The runtime can publish immutable snapshots to PostgreSQL, project relationships to Neo4j, and reuse per-file analysis through Dragonfly. It makes publication state and recovery explicit; it does not silently fall back from persistent mode to an unrelated in-memory result.
+
+## Authenticated platform
+
+The API owns actors, projects, repositories, permissions, Git connections, documents, knowledge, tasks, workflows, approvals, releases, and platform MCP. Client-provided identity and paths are inputs to validation, not proof of ownership.
+
+The web application is a separate client. The local MCP stdio server is another boundary. Public documentation must keep those three modes distinct.
