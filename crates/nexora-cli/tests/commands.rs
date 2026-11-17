@@ -8,7 +8,10 @@ fn command() -> Command {
 fn version_validation_and_demo_are_real() {
     let output = command().arg("--version").output().unwrap();
     assert!(output.status.success());
-    assert!(String::from_utf8_lossy(&output.stdout).contains("0.2.0"));
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout).trim(),
+        format!("nexora {}", env!("CARGO_PKG_VERSION"))
+    );
     assert!(
         command()
             .args(["languages", "validate", "languages/javascript"])
