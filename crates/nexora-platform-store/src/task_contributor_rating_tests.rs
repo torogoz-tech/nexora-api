@@ -4,6 +4,7 @@ use serde_json::{Value, json};
 #[path = "../tests/support/work_item_fixture.rs"]
 mod work_item_fixture;
 #[test]
+#[ignore = "requires PostgreSQL; durable private rating claims use the integration fixture"]
 fn durable_claims_never_repeat_tokens_and_only_current_developers_receive_private_points() {
     let mut f = work_item_fixture::WorkItemFixture::new();
     let task = f.task("Private rating fixture");
