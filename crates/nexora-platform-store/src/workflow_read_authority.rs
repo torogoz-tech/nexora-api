@@ -22,7 +22,7 @@ impl WorkflowReadAuthority {
             Err(error) => return Err(error),
         }
         if ctx.method() == AuthMethod::ApiKey {
-            let row=tx.query_opt("SELECT scope FROM api_keys WHERE id=$1 AND actor_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE",&[&ctx.credential_id(),&ctx.actor_id()]).map_err(PlatformStore::database_error)?.ok_or(PlatformError::Unauthorized)?;
+            let row=tx.query_opt("SELECT scope FROM api_keys WHERE id=$1 AND actor_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>clock_timestamp()) FOR SHARE",&[&ctx.credential_id(),&ctx.actor_id()]).map_err(PlatformStore::database_error)?.ok_or(PlatformError::Unauthorized)?;
             let scope: KeyScope = PlatformStore::decode(row.get::<_, Value>(0))?;
             if !scope.capabilities.contains(&Capability::WorkflowsRead) {
                 return Err(PlatformError::Forbidden);

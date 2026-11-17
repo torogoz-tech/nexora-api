@@ -12,5 +12,6 @@ pub struct PersonalMcpKeyCreate {
     /// Legacy field; personal keys inherit live global grants automatically.
     #[serde(default)]
     pub include_global: bool,
+    /// `0` creates a key without an expiration date.
     pub expires_in_seconds: i64,
 }
