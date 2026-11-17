@@ -50,17 +50,19 @@ cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
 
 ## Release boundary
 
-This repository is version `0.2.0`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
+This repository is version `0.2.1`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
 
 ## Container build
 
-The API image is assembled from a precompiled release artifact. The runtime container receives the `0.2.0` release binary and does not compile Rust in the runtime image.
+The API image is assembled from a precompiled release artifact. The runtime container receives the `0.2.1` release binary and does not compile Rust in the runtime image.
+
+CI compiles on Ubuntu 24.04 and the runtime uses Ubuntu 24.04 to keep the GNU C library compatible. Git and its HTTPS transport are included for the repository worker. CI tests the assembled image on pushes and pull requests; only main publishes to GHCR. The API and worker run as separate containers using the same image.
 
 For a local build, compile the binary and provide its directory as the named BuildKit context:
 
 ```bash
 cargo build --release --locked -p nexora-api
-docker build --build-context api-artifact=target/release -t nexora-api:0.2.0 .
+docker build --build-context api-artifact=target/release -t nexora-api:0.2.1 .
 ```
 
 ## License
