@@ -54,7 +54,7 @@ This repository is version `0.2.0`, under the ecosystem policy documented in the
 
 ## Container build
 
-The API image is assembled from a precompiled release artifact. The CI workflow runs the release compilation once, stores the `nexora-api` binary as the `0.2.0` workflow artifact, and the image job builds the runtime container from that artifact without compiling Rust again. On pushes to `main`, the image is published as `ghcr.io/torogoz-tech/nexora-api:0.2.0` using the repository's `NUGET_TOKEN` secret.
+The API image is assembled from a precompiled release artifact. The runtime container receives the `0.2.0` release binary and does not compile Rust in the runtime image.
 
 For a local build, compile the binary and provide its directory as the named BuildKit context:
 

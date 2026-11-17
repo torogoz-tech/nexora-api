@@ -25766,11 +25766,6 @@
               }
             ]
           },
-          "reason": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4000
-          },
           "color": {
             "anyOf": [
               {
@@ -32488,14 +32483,10 @@
           },
           "icon": {
             "$ref": "#/components/schemas/TaskTypeIcon"
-          },
-          "purpose": {
-            "$ref": "#/components/schemas/TaskPurpose"
           }
         },
         "required": [
-          "expected_revision",
-          "reason"
+          "expected_revision"
         ]
       },
       "InstallationLanguage": {
