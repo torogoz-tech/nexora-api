@@ -7,6 +7,14 @@ use nexora_platform::*;
 use serde_json::{Value, json};
 use zeroize::Zeroizing;
 impl PlatformStore {
+    pub fn member_requests(&mut self, ctx: &AuthContext) -> Result<Value, PlatformError> {
+        let mut tx = self.client.transaction().map_err(Self::database_error)?;
+        PlatformAuthority::require(&mut tx, ctx, Capability::ActorsManage, None)?;
+        let mut requests = tx.query("SELECT jsonb_build_object('id',a.id,'kind','identity','email',COALESCE(i.contact_email,u.username),'name',a.name,'created_at',a.created_at,'role',NULL) FROM actors a JOIN users u ON u.actor_id=a.id JOIN user_security s ON s.actor_id=a.id LEFT JOIN oidc_identities i ON i.actor_id=a.id WHERE a.kind='human' AND a.active AND s.pending_role AND NOT EXISTS(SELECT 1 FROM actor_roles r WHERE r.actor_id=a.id) ORDER BY a.created_at DESC,a.id", &[]).map_err(Self::database_error)?.into_iter().map(|row| row.get(0)).collect::<Vec<Value>>();
+        requests.extend(tx.query("SELECT jsonb_build_object('id',id,'kind','invitation','email',email,'name',name,'created_at',created_at,'expires_at',expires_at,'status',status) FROM member_invitations WHERE status='pending' AND expires_at>clock_timestamp() ORDER BY created_at DESC,id", &[]).map_err(Self::database_error)?.into_iter().map(|row| row.get(0)));
+        tx.commit().map_err(Self::database_error)?;
+        Ok(json!({"items": requests}))
+    }
     pub fn member_invitations(
         &mut self,
         ctx: &AuthContext,
@@ -238,6 +246,11 @@ impl PlatformStore {
         tx.execute(
             "INSERT INTO notification_recipients(actor_id,email) VALUES($1,$2)",
             &[&actor.id, &email],
+        )
+        .map_err(Self::database_error)?;
+        tx.execute(
+            "INSERT INTO user_security(actor_id,pending_role) VALUES($1,true)",
+            &[&actor.id],
         )
         .map_err(Self::database_error)?;
         tx.execute("UPDATE member_invitations SET status='accepted',accepted_by=$2,accepted_at=clock_timestamp(),token_secret=NULL,revision=revision+1 WHERE id=$1",&[&id,&actor.id]).map_err(Self::database_error)?;

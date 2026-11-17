@@ -22,29 +22,25 @@ fn ceremony_origin(headers: &HeaderMap) -> Result<(String, String), ApiError> {
 pub(crate) struct PasskeyHandlers;
 
 impl PasskeyHandlers {
-    pub async fn authenticate_start(
+    pub async fn gate_start(
         State(state): State<ApiState>,
         headers: HeaderMap,
-        Json(input): Json<Value>,
     ) -> Result<Json<Value>, ApiError> {
+        let token = BrowserSession::token(&headers)?;
         let (rp_id, origin) = ceremony_origin(&headers)?;
-        let username = input
-            .get("username")
-            .and_then(Value::as_str)
-            .ok_or(ApiError(PlatformError::Unauthorized))?
-            .to_owned();
         state
-            .run(move |store| store.start_passkey_authentication(&username, &rp_id, &origin))
+            .run(move |store| store.start_passkey_gate_authentication(&token, &rp_id, &origin))
             .await
             .map(Json)
     }
 
-    pub async fn authenticate_finish(
+    pub async fn gate_finish(
         State(state): State<ApiState>,
         headers: HeaderMap,
         Path(ceremony_id): Path<String>,
         Json(input): Json<Value>,
     ) -> Result<axum::response::Response, ApiError> {
+        let token = BrowserSession::token(&headers)?;
         let (rp_id, origin) = ceremony_origin(&headers)?;
         let response =
             input
@@ -55,7 +51,13 @@ impl PasskeyHandlers {
                 )))?;
         let session = state
             .run(move |store| {
-                store.finish_passkey_authentication(&ceremony_id, response, &rp_id, &origin)
+                store.finish_passkey_gate_authentication(
+                    &token,
+                    &ceremony_id,
+                    response,
+                    &rp_id,
+                    &origin,
+                )
             })
             .await?;
         BrowserSession::issued(session, &headers)

@@ -10,6 +10,12 @@ use nexora_platform::*;
 use serde_json::{Value, json};
 pub(crate) struct MemberEmailHandlers;
 impl MemberEmailHandlers {
+    pub async fn requests(
+        State(state): State<ApiState>,
+        Extension(ctx): Extension<AuthContext>,
+    ) -> Result<Json<Value>, ApiError> {
+        state.run(move |s| s.member_requests(&ctx)).await.map(Json)
+    }
     pub async fn team_members(
         State(state): State<ApiState>,
         Extension(ctx): Extension<AuthContext>,
