@@ -26,7 +26,7 @@ fn primary_links_and_entry_workflow_are_explicit_creation_fields() {
 fn catalog_type_purpose_cannot_be_redefined_by_metadata_change() {
     assert!(
         serde_json::from_value::<CatalogTaskTypeChange>(
-            json!({"expected_revision":1,"purpose":"implementation","reason":"Rename"})
+            json!({"expected_revision":1,"purpose":"implementation"})
         )
         .is_err()
     );

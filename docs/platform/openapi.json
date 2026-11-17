@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Nexora platform API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Rust self-hosted platform: local/corporate OIDC identity and individual actor keys; separate GitHub/GitLab consent; projects and registered code/knowledge reads through REST/MCP; versioned configurable workflows without roles; tasks/backlogs, dependencies/comments/templates, exact optional human approvals and approval requests; explicit task movement/workflow migration; structured versioned requirements/business rules/documents with pinned source evidence, traceability and deterministic exports/context packages. Local snapshots retain original runtime identity through operator attestation. Real external-provider consent is not implied by local fixture tests. Developer machines use remote MCP configuration and skills with their existing Git; the operational CLI stays server-side. Task branch preparation/reporting is available through MCP only and records agent_reported provenance, not independent Git verification. Authenticated GitHub/GitLab source webhooks atomically enqueue durable analysis requests; server workers index their exact commit automatically. Webhook jobs expose source_event_id and use current source consent, not developer login credentials; no automatic OpenAI evaluation. Isolated service-request workspace for user/supervisor roles, shared conversation and evidence, and IT-only task/feature links; requests never enter task workflows."
   },
   "servers": [
@@ -25766,11 +25766,6 @@
               }
             ]
           },
-          "reason": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4000
-          },
           "color": {
             "anyOf": [
               {
@@ -32488,14 +32483,10 @@
           },
           "icon": {
             "$ref": "#/components/schemas/TaskTypeIcon"
-          },
-          "purpose": {
-            "$ref": "#/components/schemas/TaskPurpose"
           }
         },
         "required": [
-          "expected_revision",
-          "reason"
+          "expected_revision"
         ]
       },
       "InstallationLanguage": {

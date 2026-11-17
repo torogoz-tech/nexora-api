@@ -41,11 +41,6 @@
           }
         ]
       },
-      "reason": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 4000
-      },
       "color": {
         "anyOf": [
           {
@@ -60,8 +55,7 @@
       }
     },
     "required": [
-      "expected_revision",
-      "reason"
+      "expected_revision"
     ]
   }
 }

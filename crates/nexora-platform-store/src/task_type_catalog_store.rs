@@ -138,7 +138,6 @@ impl TaskTypeCatalogStore {
         if input.expected_revision < 1 {
             return Err(PlatformError::Validation("expected revision required"));
         }
-        let reason = DomainText::required(&input.reason, 4000)?;
         let name = input.name.as_deref().map(DomainText::name).transpose()?;
         let description = input
             .description
@@ -181,7 +180,7 @@ impl TaskTypeCatalogStore {
         }
         let color = input.color.apply(before.color.clone());
         let description = description.unwrap_or(before.description.clone());
-        let value:Value=tx.query_one("UPDATE task_type_catalog c SET name=COALESCE($2,name),description=$3,color=$4,archived=COALESCE($5,archived),icon=COALESCE($6,icon),purpose=COALESCE($7,purpose),revision=revision+1 WHERE code=$1 RETURNING to_jsonb(c)",&[&code,&name,&description,&color.as_ref().map(HexColor::as_str),&input.archived,&input.icon.map(TaskTypeIcon::as_str),&input.purpose.map(TaskPurpose::as_str)]).map_err(PlatformStore::database_error)?.get(0);
+        let value:Value=tx.query_one("UPDATE task_type_catalog c SET name=COALESCE($2,name),description=$3,color=$4,archived=COALESCE($5,archived),icon=COALESCE($6,icon),revision=revision+1 WHERE code=$1 RETURNING to_jsonb(c)",&[&code,&name,&description,&color.as_ref().map(HexColor::as_str),&input.archived,&input.icon.map(TaskTypeIcon::as_str)]).map_err(PlatformStore::database_error)?.get(0);
         // Metadata is shared; each project's archived flag remains its own selection.
         tx.execute("UPDATE task_types SET name=$2,description=$3,color=$4,revision=revision+1 WHERE code=$1",&[&code,&name.unwrap_or(before.name.clone()),&description,&color.as_ref().map(HexColor::as_str)]).map_err(PlatformStore::database_error)?;
         AuditWriter::append(
@@ -190,7 +189,7 @@ impl TaskTypeCatalogStore {
             Some(ctx.credential_id()),
             "task_type_catalog.changed",
             Some(code),
-            json!({"before":before,"after":value,"reason":reason}),
+            json!({"before":before,"after":value}),
         )?;
         ReceiptWriter::save(&mut tx, receipt.as_ref(), &value)?;
         tx.commit().map_err(PlatformStore::database_error)?;

@@ -149,7 +149,8 @@ fn work_catalog_changes_and_metadata_pages_share_http_and_mcp() {
         page["result"]["structuredContent"]["items"][0]["code"],
         "task"
     );
-    let change = json!({"expected_revision":bug["revision"],"name":"Retired defect","archived":true,"reason":"Retire classification"});
+    let change =
+        json!({"expected_revision":bug["revision"],"name":"Retired defect","archived":true});
     let path = format!("{types}/bug/change");
     let (status, changed) = request(
         "POST",

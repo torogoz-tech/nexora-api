@@ -3,8 +3,6 @@ use serde::{Deserialize, Serialize};
 #[serde(deny_unknown_fields)]
 pub struct CatalogTaskTypeChange {
     pub expected_revision: i64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub purpose: Option<crate::TaskPurpose>,
     pub name: Option<String>,
     pub description: Option<String>,
     #[serde(default, skip_serializing_if = "crate::ColorChange::is_unchanged")]
@@ -12,5 +10,4 @@ pub struct CatalogTaskTypeChange {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<crate::TaskTypeIcon>,
     pub archived: Option<bool>,
-    pub reason: String,
 }

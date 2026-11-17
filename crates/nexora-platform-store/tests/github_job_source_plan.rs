@@ -343,14 +343,7 @@ fn github_source_plan_uses_repository_scoped_token_and_publishes_the_verified_co
     );
     provider.control(json!({}));
     let detail = store
-        .repository_commit_detail(
-            &ctx,
-            &project.id,
-            &repository.id,
-            &plan.commit().to_string(),
-            1,
-            &policy,
-        )
+        .repository_commit_detail(&ctx, &project.id, &repository.id, plan.commit(), 1, &policy)
         .unwrap();
     assert_eq!(detail["files"][0]["path"], "src/example.rs");
     assert!(detail["message"].as_str().unwrap().starts_with("Commit "));

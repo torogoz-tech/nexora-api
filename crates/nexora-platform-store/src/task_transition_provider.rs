@@ -810,61 +810,6 @@ impl TaskTransitionProvider {
 }
 
 impl TaskTransitionProvider {
-    pub(crate) fn release_contains(
-        store: &mut PlatformStore,
-        ctx: &AuthContext,
-        project: &str,
-        repository: &str,
-        release_head: &str,
-        task_head: &str,
-        policy: &GitNetworkPolicy,
-    ) -> Result<(), PlatformError> {
-        if !TaskWorkBranchReport::valid_sha(release_head)
-            || !TaskWorkBranchReport::valid_sha(task_head)
-        {
-            return Err(PlatformError::Validation(
-                "release composition requires full commit hashes",
-            ));
-        }
-        let fact = Self::authority(store, ctx, Some(project), repository)?;
-        let (source, token) = Self::source(store, ctx, Some(project), repository, policy)?;
-        let client = PullRequestClient::new(policy, source.connection.provider);
-        let root = Self::root(&source)?;
-        let compared = if source.connection.provider == GitProvider::Github {
-            client.get(
-                &format!("{root}/compare/{task_head}...{release_head}"),
-                &token,
-            )?
-        } else {
-            client.get(
-                &format!("{root}/repository/merge_base?refs[]={task_head}&refs[]={release_head}"),
-                &token,
-            )?
-        };
-        let ancestor = crate::task_release_composition::TaskReleaseComposition::contains(
-            source.connection.provider,
-            &compared,
-            task_head,
-        );
-        if !ancestor {
-            return Err(PlatformError::Conflict(
-                "selected task source commit is not included in the release head",
-            ));
-        }
-        let current = PullRequestSource::load(store, ctx, project, repository, policy)?;
-        if !source.matches(&current)
-            || fact != Self::authority(store, ctx, Some(project), repository)?
-        {
-            return Err(PlatformError::Conflict(
-                "repository authority changed during release composition verification",
-            ));
-        }
-        store.transition_verified_facts.push(fact);
-        Ok(())
-    }
-}
-
-impl TaskTransitionProvider {
     pub(crate) fn verify_approval(
         store: &mut PlatformStore,
         ctx: &AuthContext,
@@ -1077,7 +1022,10 @@ impl TaskTransitionProvider {
                 "task commit requires a full commit SHA",
             ));
         }
-        Self::release_contains(store, ctx, project, repository, head, commit, policy)?;
+        // A task commit is repository-scoped evidence, not branch-scoped evidence.
+        // The provider metadata lookup below verifies that the full SHA belongs to
+        // this repository; the base comparison still prevents linking a commit
+        // that is already part of the task's base revision.
         let (source, token) = Self::source(store, ctx, Some(project), repository, policy)?;
         let root = Self::root(&source)?;
         let client = PullRequestClient::new(policy, source.connection.provider);
