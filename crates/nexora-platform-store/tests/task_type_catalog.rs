@@ -113,7 +113,6 @@ fn catalog_types_are_available_independently_of_project_selection() {
             "defect_test",
             &CatalogTaskTypeChange {
                 expected_revision: bug.revision,
-                purpose: Some(TaskPurpose::Implementation),
                 name: Some("Defecto".into()),
                 reason: "Rename".into(),
                 description: None,
@@ -125,7 +124,7 @@ fn catalog_types_are_available_independently_of_project_selection() {
         .unwrap();
     assert_eq!(changed.name, "Defecto");
     assert_eq!(changed.icon, TaskTypeIcon::Wrench);
-    assert_eq!(changed.purpose, TaskPurpose::Implementation);
+    assert_eq!(changed.purpose, TaskPurpose::General);
     assert_eq!(
         f.store
             .task_type_page(&f.ctx, &f.project.id, None, 100, false)
@@ -183,8 +182,8 @@ fn catalog_types_are_available_independently_of_project_selection() {
 }
 
 #[test]
-#[ignore = "requires PostgreSQL; manager catalog changes preserve task purpose snapshots"]
-fn manager_can_change_type_purpose_without_reclassifying_existing_tasks() {
+#[ignore = "requires PostgreSQL; manager catalog metadata changes preserve task purpose snapshots"]
+fn manager_cannot_change_type_purpose_with_metadata() {
     let mut f = WorkItemFixture::new();
     let old_task = f.task("Keep existing execution purpose");
     let password =
@@ -223,9 +222,9 @@ fn manager_can_change_type_purpose_without_reclassifying_existing_tasks() {
         .find(|t| t.code == "task")
         .unwrap();
     let changed = f.store.change_catalog_task_type(&manager, "task", &serde_json::from_value(serde_json::json!({
-        "expected_revision": original.revision, "purpose": "implementation", "reason": "Use development workflow for future work"
+        "expected_revision": original.revision, "name": "Implementation task", "reason": "Rename only"
     })).unwrap()).unwrap();
-    assert_eq!(changed.purpose, TaskPurpose::Implementation);
+    assert_eq!(changed.purpose, TaskPurpose::General);
     assert_eq!(
         f.store
             .get_task(&f.ctx, &f.project.id, &old_task.id)
@@ -248,11 +247,7 @@ fn manager_can_change_type_purpose_without_reclassifying_existing_tasks() {
             },
         )
         .unwrap();
-    assert_eq!(new_task.purpose, TaskPurpose::Implementation);
-    let preserved = f.store.change_catalog_task_type(&manager, "task", &serde_json::from_value(serde_json::json!({
-        "expected_revision": changed.revision, "name": "Implementation task", "reason": "Rename only"
-    })).unwrap()).unwrap();
-    assert_eq!(preserved.purpose, TaskPurpose::Implementation);
+    assert_eq!(new_task.purpose, TaskPurpose::General);
     assert!(matches!(
         f.store.change_catalog_task_type(
             &manager,

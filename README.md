@@ -50,7 +50,18 @@ cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
 
 ## Release boundary
 
-This repository is version `0.1.0`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
+This repository is version `0.2.0`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
+
+## Container build
+
+The API image is assembled from a precompiled release artifact. The CI workflow runs the release compilation once, stores the `nexora-api` binary as the `0.2.0` workflow artifact, and the image job builds the runtime container from that artifact without compiling Rust again. On pushes to `main`, the image is published as `ghcr.io/torogoz-tech/nexora-api:0.2.0` using the repository's `NUGET_TOKEN` secret.
+
+For a local build, compile the binary and provide its directory as the named BuildKit context:
+
+```bash
+cargo build --release --locked -p nexora-api
+docker build --build-context api-artifact=target/release -t nexora-api:0.2.0 .
+```
 
 ## License
 

@@ -47,4 +47,4 @@ Clients must distinguish authorization denial, invalid revision, provider reject
 
 ## Public reference status
 
-The source schemas and MCP catalogs are authoritative for `0.1.0`. A generated OpenAPI portal, language SDKs, and a single combined API reference remain release work rather than claims of the current repository.
+The source schemas and MCP catalogs are authoritative for `0.2.0`. A generated OpenAPI portal, language SDKs, and a single combined API reference remain release work rather than claims of the current repository.
