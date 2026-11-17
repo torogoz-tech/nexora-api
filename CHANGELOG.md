@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+- Align the API build runner and runtime on Ubuntu 24.04 to remove the GLIBC compatibility warning.
+- Include Git and its HTTPS transport for automatic repository synchronization.
+- Smoke-test the assembled container on pushes and pull requests before publishing the versioned image from main.
+
 ## 0.2.0
 
 - Prepared the API runtime for the versioned container release.

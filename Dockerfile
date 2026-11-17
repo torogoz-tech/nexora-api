@@ -2,13 +2,14 @@
 
 FROM api-artifact AS compiled-api
 
-FROM debian:bookworm-slim AS runtime
+FROM ubuntu:24.04 AS runtime
 
 RUN groupadd --system nexora \
     && useradd --system --gid nexora --no-create-home nexora \
     && apt-get update \
-    && apt-get install --yes --no-install-recommends ca-certificates curl \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install --yes --no-install-recommends ca-certificates curl git libgcc-s1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && install -d -o nexora -g nexora /var/lib/nexora
 
 COPY --from=compiled-api /nexora-api /usr/local/bin/nexora-api
 
