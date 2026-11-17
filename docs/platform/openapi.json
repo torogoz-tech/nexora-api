@@ -16525,6 +16525,15 @@
         }
       }
     },
+    "/api/v1/settings/member-requests": {
+      "get": {
+        "summary": "List pending identity and member invitation requests",
+        "responses": {
+          "200": { "description": "Pending incorporation requests" },
+          "403": { "description": "The actor cannot manage members" }
+        }
+      }
+    },
     "/api/v1/settings/invitations": {
       "get": {
         "summary": "List invitation metadata (actors:manage)",
@@ -22187,7 +22196,9 @@
                       "status",
                       "setup",
                       "verify",
-                      "skip"
+                      "skip",
+                      "choose_totp",
+                      "choose_passkey"
                     ]
                   },
                   "code": {

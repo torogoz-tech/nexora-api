@@ -44,7 +44,7 @@ impl PersonalMcpKeyStore {
         {
             return Err(PlatformError::Validation("invalid personal MCP key cursor"));
         }
-        let rows=tx.query("SELECT to_jsonb(k)-'digest' FROM api_keys k WHERE actor_id=$1 AND ($2='all' OR ($2='active' AND revoked_at IS NULL AND expires_at>now()) OR ($2='inactive' AND (revoked_at IS NOT NULL OR expires_at<=now()))) AND ($3::text IS NULL OR (created_at,id)<(SELECT created_at,id FROM api_keys WHERE actor_id=$1 AND id=$3)) ORDER BY created_at DESC,id DESC LIMIT $4",&[&ctx.actor_id(),&status,&after,&(i64::from(limit)+1)]).map_err(PlatformStore::database_error)?;
+        let rows=tx.query("SELECT to_jsonb(k)-'digest' FROM api_keys k WHERE actor_id=$1 AND ($2='all' OR ($2='active' AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())) OR ($2='inactive' AND (revoked_at IS NOT NULL OR expires_at IS NOT NULL AND expires_at<=now()))) AND ($3::text IS NULL OR (created_at,id)<(SELECT created_at,id FROM api_keys WHERE actor_id=$1 AND id=$3)) ORDER BY created_at DESC,id DESC LIMIT $4",&[&ctx.actor_id(),&status,&after,&(i64::from(limit)+1)]).map_err(PlatformStore::database_error)?;
         let has_more = rows.len() > limit as usize;
         let items = rows
             .iter()
@@ -83,7 +83,8 @@ impl PersonalMcpKeyStore {
         ctx: &AuthContext,
         input: &PersonalMcpKeyCreate,
     ) -> Result<IssuedApiKey, PlatformError> {
-        if !(3600..=7_776_000).contains(&input.expires_in_seconds) {
+        if input.expires_in_seconds != 0 && !(3600..=7_776_000).contains(&input.expires_in_seconds)
+        {
             return Err(PlatformError::Validation(
                 "personal MCP key lifetime must be 1 hour to 90 days",
             ));
@@ -110,7 +111,7 @@ impl PersonalMcpKeyStore {
                 "credential already issued; its secret cannot be recovered",
             ));
         }
-        let count:i64=tx.query_one("SELECT count(*) FROM api_keys WHERE actor_id=$1 AND personal_mcp AND revoked_at IS NULL AND expires_at>clock_timestamp()",&[&ctx.actor_id()]).map_err(PlatformStore::database_error)?.get(0);
+        let count:i64=tx.query_one("SELECT count(*) FROM api_keys WHERE actor_id=$1 AND personal_mcp AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>clock_timestamp())",&[&ctx.actor_id()]).map_err(PlatformStore::database_error)?.get(0);
         if count >= 20 {
             return Err(PlatformError::Validation(
                 "maximum 20 active personal MCP keys",
@@ -120,7 +121,7 @@ impl PersonalMcpKeyStore {
         let key = format!("nxk_{id}.{}", SecretGenerator::token("secret")?);
         let digest = SecretGenerator::digest(&key);
         let scope = serde_json::to_value(scope).map_err(|_| PlatformError::Storage)?;
-        tx.execute("INSERT INTO api_keys(id,actor_id,name,digest,scope,expires_at,personal_mcp) VALUES($1,$2,$3,$4,$5,clock_timestamp()+$6::bigint*interval '1 second',true)",&[&id,&ctx.actor_id(),&name,&digest,&scope,&input.expires_in_seconds]).map_err(PlatformStore::database_error)?;
+        tx.execute("INSERT INTO api_keys(id,actor_id,name,digest,scope,expires_at,personal_mcp) VALUES($1,$2,$3,$4,$5,CASE WHEN $6::bigint=0 THEN NULL ELSE clock_timestamp()+$6::bigint*interval '1 second' END,true)",&[&id,&ctx.actor_id(),&name,&digest,&scope,&input.expires_in_seconds]).map_err(PlatformStore::database_error)?;
         AuditWriter::append(
             &mut tx,
             Some(ctx.actor_id()),
@@ -201,7 +202,7 @@ impl PersonalMcpKeyStore {
                 && !name.chars().chain(version.chars()).any(char::is_control)
         });
         let (name, version) = client.map_or((None, None), |(n, v)| (Some(n), Some(v)));
-        let updated=store.client.execute("UPDATE api_keys k SET last_mcp_at=clock_timestamp(),mcp_client_name=COALESCE($3,mcp_client_name),mcp_client_version=COALESCE($4,mcp_client_version) WHERE k.id=$1 AND k.actor_id=$2 AND k.revoked_at IS NULL AND k.expires_at>clock_timestamp() AND EXISTS(SELECT 1 FROM actors a WHERE a.id=k.actor_id AND a.active) AND ($3::text IS NOT NULL OR last_mcp_at IS NULL OR last_mcp_at<clock_timestamp()-interval '60 seconds')",&[&ctx.credential_id(),&ctx.actor_id(),&name,&version]).map_err(PlatformStore::database_error)?;
+        let updated=store.client.execute("UPDATE api_keys k SET last_mcp_at=clock_timestamp(),mcp_client_name=COALESCE($3,mcp_client_name),mcp_client_version=COALESCE($4,mcp_client_version) WHERE k.id=$1 AND k.actor_id=$2 AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>clock_timestamp()) AND EXISTS(SELECT 1 FROM actors a WHERE a.id=k.actor_id AND a.active) AND ($3::text IS NOT NULL OR last_mcp_at IS NULL OR last_mcp_at<clock_timestamp()-interval '60 seconds')",&[&ctx.credential_id(),&ctx.actor_id(),&name,&version]).map_err(PlatformStore::database_error)?;
         let _ = updated;
         Ok(())
     }

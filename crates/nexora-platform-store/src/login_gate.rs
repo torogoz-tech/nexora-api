@@ -18,12 +18,18 @@ impl LoginGate {
         let primary_method: String = row.get(4);
         let stage = if row.get::<_, bool>(0) && !row.get::<_, bool>(3) {
             "pending_role"
-        } else if row.get::<_, bool>(1) || primary_method == "passkey" {
+        } else if row.get::<_, bool>(1) {
             "ready"
-        } else if primary_method == "totp" && row.get::<_, bool>(2) {
-            "totp_verify"
-        } else if primary_method == "none" && !row.get::<_, bool>(2) {
-            "totp_enroll"
+        } else if primary_method == "passkey" {
+            "passkey_verify"
+        } else if primary_method == "totp" {
+            if row.get::<_, bool>(2) {
+                "totp_verify"
+            } else {
+                "totp_enroll"
+            }
+        } else if primary_method == "none" {
+            "mfa_select"
         } else {
             "ready"
         };

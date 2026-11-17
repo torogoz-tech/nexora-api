@@ -161,6 +161,11 @@ impl PlatformStore {
                 .map_err(Self::database_error)?;
             }
         }
+        tx.execute(
+            "UPDATE user_security SET pending_role=false,skipped=0 WHERE actor_id=$1",
+            &[&actor],
+        )
+        .map_err(Self::database_error)?;
         let value = Self::read_member_role(&mut tx, actor)?;
         AuditWriter::append(
             &mut tx,

@@ -306,6 +306,10 @@ impl PlatformMigrations {
                 116,
                 include_str!("../migrations/0116_primary_auth_method.sql"),
             ),
+            (
+                117,
+                include_str!("../migrations/0117_permanent_personal_mcp_keys.sql"),
+            ),
         ]
     }
 }

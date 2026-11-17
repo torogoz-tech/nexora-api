@@ -21,7 +21,7 @@ impl PlatformAuthority {
             .ok_or(PlatformError::Unauthorized)?
             .get(0);
         if ctx.method() == AuthMethod::ApiKey {
-            let row = tx.query_typed_opt("SELECT scope FROM api_keys WHERE id=$1 AND actor_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE", &[(&ctx.credential_id(), Type::TEXT),(&ctx.actor_id(), Type::TEXT)]).map_err(PlatformStore::database_error)?.ok_or(PlatformError::Unauthorized)?;
+            let row = tx.query_typed_opt("SELECT scope FROM api_keys WHERE id=$1 AND actor_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>clock_timestamp()) FOR SHARE", &[(&ctx.credential_id(), Type::TEXT),(&ctx.actor_id(), Type::TEXT)]).map_err(PlatformStore::database_error)?.ok_or(PlatformError::Unauthorized)?;
             let scope: KeyScope = PlatformStore::decode(row.get::<_, Value>(0))?;
             scope.validate()?;
             if !scope.allows(capability, project) {

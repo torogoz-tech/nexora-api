@@ -15,7 +15,15 @@ impl PlatformStore {
     ) -> Result<Value, PlatformError> {
         if token.len() > 256
             || code.len() > 6
-            || !["status", "setup", "verify", "skip"].contains(&action)
+            || ![
+                "status",
+                "setup",
+                "verify",
+                "skip",
+                "choose_totp",
+                "choose_passkey",
+            ]
+            .contains(&action)
         {
             return Err(PlatformError::Unauthorized);
         }
@@ -51,13 +59,46 @@ impl PlatformStore {
         let mut result = json!({"stage":stage,"remaining_skips":5-skipped});
         let mut complete = stage == "ready";
         match action {
-            "skip" if stage == "totp_enroll" && skipped < 5 => {
+            "skip" if (stage == "mfa_select" || stage == "totp_enroll") && skipped < 5 => {
                 tx.execute(
                     "UPDATE user_security SET skipped=skipped+1 WHERE actor_id=$1",
                     &[&actor],
                 )
                 .map_err(Self::database_error)?;
                 complete = true;
+            }
+            "choose_totp" if stage == "mfa_select" => {
+                tx.execute(
+                    "UPDATE user_security SET primary_auth_method='totp' WHERE actor_id=$1",
+                    &[&actor],
+                )
+                .map_err(Self::database_error)?;
+                let has_secret = security.get::<_, Option<Value>>(1).is_some();
+                result["stage"] = json!(if has_secret {
+                    "totp_verify"
+                } else {
+                    "totp_enroll"
+                });
+            }
+            "choose_passkey" if stage == "mfa_select" => {
+                let has_passkey: bool = tx
+                    .query_one(
+                        "SELECT EXISTS(SELECT 1 FROM passkey_credentials WHERE actor_id=$1)",
+                        &[&actor],
+                    )
+                    .map_err(Self::database_error)?
+                    .get(0);
+                if !has_passkey {
+                    return Err(PlatformError::Validation(
+                        "security method is not configured",
+                    ));
+                }
+                tx.execute(
+                    "UPDATE user_security SET primary_auth_method='passkey' WHERE actor_id=$1",
+                    &[&actor],
+                )
+                .map_err(Self::database_error)?;
+                result["stage"] = json!("passkey_verify");
             }
             "setup" if stage == "totp_enroll" => {
                 let sealed = if let Some(value) = row.get::<_, Option<Value>>(3) {
