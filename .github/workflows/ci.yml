@@ -29,7 +29,7 @@ jobs:
       - run: cargo run -p nexora-cli --locked -- policy test policies/examples
       - run: cargo run -p nexora-cli --locked -- policy validate policies/architecture/domain-boundary
       - run: cargo run -p nexora-cli --locked -- policy test policies/architecture/domain-boundary
-      - run: python3 scripts/check-language-neutrality.py
+      - run: python3 scripts/validation/check-language-neutrality.py
       - run: cargo run -p nexora-cli --locked -- languages validate languages/lua
       - run: cargo run -p nexora-cli --locked -- languages validate templates/language-pack
       - run: cargo run -p nexora-cli --locked -- policy test policies/architecture/language-neutral-boundary
