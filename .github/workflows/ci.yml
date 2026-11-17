@@ -35,7 +35,7 @@ jobs:
       - run: cargo run -p nexora-cli --locked -- policy test policies/architecture/language-neutral-boundary
       - run: cargo run -p nexora-cli --locked -- corpus validate corpus/suite.yaml
       - run: cargo run -p nexora-cli --locked -- corpus check corpus/suite.yaml
-      - run: python3 -m unittest discover -s scripts -p 'test_benchmark_corpus.py'
+      - run: python3 scripts/benchmarks/test_benchmark_corpus.py
       - run: cargo run -p nexora-cli --locked -- index-session corpus/fixtures/lua/allowed --language lua --passes 3
       - run: cargo run -p nexora-cli --locked -- languages validate templates/semantic-molds/brace_mold
       - run: cargo run -p nexora-cli --locked -- languages validate templates/semantic-molds/keyword_mold
