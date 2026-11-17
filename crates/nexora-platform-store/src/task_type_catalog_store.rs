@@ -138,7 +138,6 @@ impl TaskTypeCatalogStore {
         if input.expected_revision < 1 {
             return Err(PlatformError::Validation("expected revision required"));
         }
-        let reason = DomainText::required(&input.reason, 4000)?;
         let name = input.name.as_deref().map(DomainText::name).transpose()?;
         let description = input
             .description
@@ -190,7 +189,7 @@ impl TaskTypeCatalogStore {
             Some(ctx.credential_id()),
             "task_type_catalog.changed",
             Some(code),
-            json!({"before":before,"after":value,"reason":reason}),
+            json!({"before":before,"after":value}),
         )?;
         ReceiptWriter::save(&mut tx, receipt.as_ref(), &value)?;
         tx.commit().map_err(PlatformStore::database_error)?;

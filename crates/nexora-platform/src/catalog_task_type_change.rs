@@ -10,5 +10,4 @@ pub struct CatalogTaskTypeChange {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<crate::TaskTypeIcon>,
     pub archived: Option<bool>,
-    pub reason: String,
 }

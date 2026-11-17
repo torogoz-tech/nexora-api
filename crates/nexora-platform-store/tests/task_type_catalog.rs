@@ -114,7 +114,6 @@ fn catalog_types_are_available_independently_of_project_selection() {
             &CatalogTaskTypeChange {
                 expected_revision: bug.revision,
                 name: Some("Defecto".into()),
-                reason: "Rename".into(),
                 description: None,
                 archived: None,
                 color: ColorChange::default(),
@@ -221,9 +220,17 @@ fn manager_cannot_change_type_purpose_with_metadata() {
         .into_iter()
         .find(|t| t.code == "task")
         .unwrap();
-    let changed = f.store.change_catalog_task_type(&manager, "task", &serde_json::from_value(serde_json::json!({
-        "expected_revision": original.revision, "name": "Implementation task", "reason": "Rename only"
-    })).unwrap()).unwrap();
+    let changed = f
+        .store
+        .change_catalog_task_type(
+            &manager,
+            "task",
+            &serde_json::from_value(serde_json::json!({
+                "expected_revision": original.revision, "name": "Implementation task"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
     assert_eq!(changed.purpose, TaskPurpose::General);
     assert_eq!(
         f.store
@@ -253,8 +260,8 @@ fn manager_cannot_change_type_purpose_with_metadata() {
             &manager,
             "task",
             &serde_json::from_value(serde_json::json!({
-                "expected_revision": original.revision, "purpose": "general", "reason": "Stale edit"
-            }))
+            "expected_revision": original.revision, "purpose": "general"
+                }))
             .unwrap()
         ),
         Err(PlatformError::Conflict(_))

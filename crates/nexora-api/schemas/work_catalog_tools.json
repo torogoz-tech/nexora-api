@@ -75,7 +75,7 @@
   },
   {
     "name": "nexora_task_type_change",
-    "description": "Rename, describe, archive or restore an existing work type with expected revision and reason. Preserves its code and historical task references. Requires tasks:write.",
+    "description": "Rename, describe, archive or restore an existing work type with an expected revision. Preserves its code and historical task references. Requires tasks:write.",
     "inputSchema": {
       "type": "object",
       "additionalProperties": false,
