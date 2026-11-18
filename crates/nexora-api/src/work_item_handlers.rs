@@ -1,6 +1,7 @@
 use crate::{
     ApiState, api_error::ApiError, mutation_id::MutationId, mutation_response::MutationResponse,
     task_history_query::TaskHistoryQuery,
+    task_transition_mutation_response::TaskTransitionMutationResponse,
 };
 use axum::{
     Extension, Json,
@@ -176,34 +177,29 @@ impl WorkItemHandlers {
         Path((project, id, transition)): Path<(String, String, String)>,
         headers: HeaderMap,
         body: Result<Json<TaskTransitionRequest>, JsonRejection>,
-    ) -> Result<MutationResponse<WorkTask>, ApiError> {
+    ) -> Result<TaskTransitionMutationResponse, ApiError> {
         let Json(parameters) =
             body.map_err(|_| ApiError(PlatformError::Validation("invalid work-item input")))?;
         let request_id = MutationId::required(&headers)?;
-        let policy = state.git_policy();
+        let policy = state.task_workflow_git_policy();
+        let response_task_id = id.clone();
         let canonical = json!({"project_id":project,"task_id":id,"transition_id":transition,"parameters":parameters});
-        let body = state
-            .mutate(
+        let (task, waiting_for_knowledge) = state
+            .task_transition_mutation(
                 ctx,
                 "task.transition",
                 request_id.clone(),
                 canonical,
                 move |store, ctx| {
-                    store.transition_task_with_policy(
-                        ctx,
-                        &project,
-                        &id,
-                        &transition,
-                        &parameters,
-                        &policy,
-                    )
+                    store.transition(ctx, Some(&project), &id, &transition, &parameters, &policy)
                 },
             )
             .await?;
-        Ok(MutationResponse {
-            status: StatusCode::OK,
+        Ok(TaskTransitionMutationResponse {
+            task,
+            task_id: response_task_id,
             request_id,
-            body: Some(body),
+            waiting_for_knowledge,
         })
     }
     pub async fn approval_grant(

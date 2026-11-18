@@ -227,7 +227,7 @@
   },
   {
     "name": "nexora_task_transition",
-    "description": "Execute a transition of the pinned workflow; present the exact human approval when required.",
+    "description": "Execute a transition of the pinned workflow; present the exact human approval when required. On durable AI work, returns accepted=true with status=waiting_knowledge instead of an error; read transition runs to follow progress.",
     "inputSchema": {
       "type": "object",
       "additionalProperties": false,
@@ -466,7 +466,7 @@
   },
   {
     "name": "nexora_task_transition_retry",
-    "description": "Resume a failed transition and reconcile uncertain provider effects; cannot grant human approval.",
+    "description": "Resume a failed transition and reconcile uncertain provider effects; cannot grant human approval. On durable AI work, returns accepted=true with status=waiting_knowledge instead of an error; read transition runs to follow progress.",
     "inputSchema": {
       "type": "object",
       "additionalProperties": false,

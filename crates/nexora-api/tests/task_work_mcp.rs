@@ -253,8 +253,15 @@ fn agent_report_is_scoped_immutable_idempotent_and_separate_from_task_transition
     assert_eq!(advanced["result"]["isError"], false, "{advanced}");
     assert_eq!(advanced["result"]["structuredContent"]["state_id"], "doing");
     assert_eq!(
-        call(&key.key, "nexora_task_transition", transition)["result"]["structuredContent"],
+        call(&key.key, "nexora_task_transition", transition.clone())["result"]["structuredContent"],
         advanced["result"]["structuredContent"]
+    );
+    let mut altered_transition = transition.clone();
+    altered_transition["parameters"]["expected_revision"] = json!(params.expected_revision + 1);
+    assert_eq!(
+        call(&key.key, "nexora_task_transition", altered_transition)["result"]["isError"],
+        true,
+        "a transition request ID cannot be replayed with a different revision"
     );
     assert_eq!(
         call(&key.key, "nexora_task_work_report", report)["result"]["structuredContent"],

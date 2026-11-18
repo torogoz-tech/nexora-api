@@ -5541,6 +5541,58 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Authorized result or exact historical retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkTask"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Transition accepted and waiting for durable knowledge-worker work. The response is not a task resource; inspect transition runs for progress.",
+            "headers": {
+              "idempotency-key": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "x-nexora-transition-status": {
+                "schema": {
+                  "type": "string",
+                  "const": "waiting_knowledge"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "accepted",
+                    "task_id",
+                    "status"
+                  ],
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "const": "waiting_knowledge"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "401": {
             "description": "Invalid or revoked actor credential",
             "content": {
@@ -5597,16 +5649,6 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Authorized result or exact historical retry",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkTask"
                 }
               }
             }
@@ -16532,8 +16574,12 @@
       "get": {
         "summary": "List pending identity and member invitation requests",
         "responses": {
-          "200": { "description": "Pending incorporation requests" },
-          "403": { "description": "The actor cannot manage members" }
+          "200": {
+            "description": "Pending incorporation requests"
+          },
+          "403": {
+            "description": "The actor cannot manage members"
+          }
         }
       }
     },
@@ -19156,6 +19202,58 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Authorized result or exact historical retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkTask"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Transition accepted and waiting for durable knowledge-worker work. The response is not a task resource; inspect transition runs for progress.",
+            "headers": {
+              "idempotency-key": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "x-nexora-transition-status": {
+                "schema": {
+                  "type": "string",
+                  "const": "waiting_knowledge"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "accepted",
+                    "task_id",
+                    "status"
+                  ],
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "const": "waiting_knowledge"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "401": {
             "description": "Invalid or revoked actor credential",
             "content": {
@@ -19212,16 +19310,6 @@
               "application/problem+json": {
                 "schema": {
                   "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Authorized result or exact historical retry",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkTask"
                 }
               }
             }
@@ -22531,7 +22619,13 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["", "low", "medium", "high", "critical"]
+              "enum": [
+                "",
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
             }
           },
           {
@@ -22541,7 +22635,10 @@
             "description": "Alphabetical title order, applied before pagination. Omit to retain creation descending.",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           },
           {

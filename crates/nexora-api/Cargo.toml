@@ -13,6 +13,7 @@ nexora-reasoning = { path = "../nexora-reasoning" }
 nexora-platform.workspace = true
 nexora-platform-store = { path = "../nexora-platform-store" }
 nexora-runtime.workspace = true
+nexora-task-workflow = { git = "https://github.com/torogoz-tech/nexora-job-store.git", tag = "nexora-job-store-v0.4.0-final" }
 nexora-mcp.workspace = true
 nexora-core.workspace = true
 nexora-indexer.workspace = true

@@ -189,7 +189,7 @@ fn task_http_and_mcp_share_workflow_state_receipts_and_history() {
         "POST",
         &format!("{base}/tasks/{id}/transitions/finish"),
         &key.key,
-        Some(parameters),
+        Some(parameters.clone()),
         Some("finish-task"),
     );
     assert_eq!(status, StatusCode::OK);
@@ -197,6 +197,16 @@ fn task_http_and_mcp_share_workflow_state_receipts_and_history() {
         replay["revision"], finished["result"]["structuredContent"]["revision"],
         "REST/MCP use the same canonical receipt input"
     );
+    let mut altered_parameters = parameters.clone();
+    altered_parameters["expected_revision"] = json!(revision.as_i64().unwrap() + 1);
+    let (status, altered_replay) = request(
+        "POST",
+        &format!("{base}/tasks/{id}/transitions/finish"),
+        &key.key,
+        Some(altered_parameters),
+        Some("finish-task"),
+    );
+    assert_eq!(status, StatusCode::CONFLICT, "{altered_replay}");
     let (_, history) = rpc(
         "nexora_task_history",
         json!({"project_id":project.id,"task_id":id,"limit":50}),

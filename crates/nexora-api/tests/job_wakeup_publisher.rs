@@ -8,9 +8,10 @@ use nexora_api::{ANALYSIS_QUEUE, RabbitMqJobWakeupPublisher};
 use nexora_platform::{JobKind, JobWakeup};
 
 #[tokio::test]
+#[ignore = "requires RabbitMQ; run against the test server to avoid a broker service in GitHub Actions"]
 async fn publishes_a_confirmed_persistent_analysis_wakeup() {
     let uri = std::env::var("NEXORA_TEST_RABBITMQ_URL")
-        .expect("NEXORA_TEST_RABBITMQ_URL must point to the CI RabbitMQ service");
+        .expect("NEXORA_TEST_RABBITMQ_URL must point to a reachable RabbitMQ test broker");
     let publisher = RabbitMqJobWakeupPublisher::connect(&uri)
         .await
         .expect("publisher should connect and declare durable topology");

@@ -1,8 +1,10 @@
 use crate::api_error::ApiError;
 use crate::store_pool::StorePool;
+use crate::task_workflow_pool::TaskWorkflowPool;
 use nexora_platform::PlatformError;
 use nexora_platform_store::PlatformStore;
 use nexora_runtime::DatabaseConnections;
+use nexora_task_workflow::{GitNetworkPolicy as TaskWorkflowGitNetworkPolicy, TaskWorkflowStore};
 use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
 use tokio::sync::Semaphore;
@@ -14,11 +16,13 @@ pub struct ApiState {
     reasoning: Option<crate::ReasoningSettings>,
     reasoning_permits: Arc<Semaphore>,
     git_policy: Arc<nexora_platform_store::GitNetworkPolicy>,
+    task_workflow_git_policy: Arc<TaskWorkflowGitNetworkPolicy>,
     identity_policy: Arc<nexora_platform_store::OidcNetworkPolicy>,
     trusted_proxies: Arc<Vec<IpAddr>>,
     config: Arc<DatabaseConnections>,
     namespace: Arc<String>,
     pool: Arc<StorePool>,
+    task_workflow_pool: Arc<TaskWorkflowPool>,
     permits: Arc<Semaphore>,
     job_wakeup_sender: Option<tokio::sync::mpsc::Sender<()>>,
 }
@@ -65,22 +69,35 @@ impl ApiState {
         }
         let connect_config = config.clone();
         let connect_namespace = namespace.clone();
-        let store = tokio::task::spawn_blocking(move || {
-            PlatformStore::connect(&connect_config, &connect_namespace)
+        let workflow_config = config.clone();
+        let workflow_namespace = namespace.clone();
+        let (store, task_workflow_store) = tokio::task::spawn_blocking(move || {
+            Ok::<_, PlatformError>((
+                PlatformStore::connect(&connect_config, &connect_namespace)?,
+                TaskWorkflowStore::connect(&workflow_config, &workflow_namespace)?,
+            ))
         })
         .await
         .map_err(|_| PlatformError::Unavailable)??;
+        let task_workflow_git_policy = TaskWorkflowGitNetworkPolicy {
+            gitlab_origin: git_policy.gitlab_origin.clone(),
+            callback_origin: git_policy.callback_origin.clone(),
+            github_origin: git_policy.github_origin.clone(),
+            github_api_origin: git_policy.github_api_origin.clone(),
+        };
         Ok(Self {
             public_live_permits: Arc::new(Semaphore::new(64)),
             live_permits: Arc::new(Semaphore::new(64)),
             reasoning: None,
             reasoning_permits: Arc::new(Semaphore::new(1)),
             git_policy: Arc::new(git_policy),
+            task_workflow_git_policy: Arc::new(task_workflow_git_policy),
             identity_policy: Arc::new(policy),
             trusted_proxies: Arc::new(Vec::new()),
             config: Arc::new(config),
             namespace: Arc::new(namespace),
             pool: Arc::new(StorePool::new(store)),
+            task_workflow_pool: Arc::new(TaskWorkflowPool::new(task_workflow_store)),
             permits: Arc::new(Semaphore::new(workers)),
             job_wakeup_sender: None,
         })
@@ -158,6 +175,9 @@ impl ApiState {
     pub(crate) fn git_policy(&self) -> nexora_platform_store::GitNetworkPolicy {
         (*self.git_policy).clone()
     }
+    pub(crate) fn task_workflow_git_policy(&self) -> TaskWorkflowGitNetworkPolicy {
+        (*self.task_workflow_git_policy).clone()
+    }
     pub(crate) fn identity_policy(&self) -> nexora_platform_store::OidcNetworkPolicy {
         (*self.identity_policy).clone()
     }
@@ -213,6 +233,74 @@ impl ApiState {
         .await
         .map_err(|_| ApiError(PlatformError::Unavailable))?
         .map_err(ApiError)
+    }
+
+    pub(crate) async fn run_task_workflow<T, F>(&self, action: F) -> Result<T, ApiError>
+    where
+        T: Send + 'static,
+        F: FnOnce(&mut TaskWorkflowStore) -> Result<T, PlatformError> + Send + 'static,
+    {
+        let permit = tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            self.permits.clone().acquire_owned(),
+        )
+        .await
+        .map_err(|_| ApiError(PlatformError::Unavailable))?
+        .map_err(|_| ApiError(PlatformError::Unavailable))?;
+        let config = self.config.clone();
+        let namespace = self.namespace.clone();
+        let pool = self.task_workflow_pool.clone();
+        tokio::task::spawn_blocking(move || {
+            let _permit = permit;
+            let mut store = match pool.take()? {
+                Some(store) => store,
+                None => TaskWorkflowStore::connect(config.as_ref(), &namespace)?,
+            };
+            let result = action(&mut store);
+            if !matches!(&result, Err(PlatformError::Storage)) {
+                pool.put(store)?;
+            }
+            result
+        })
+        .await
+        .map_err(|_| ApiError(PlatformError::Unavailable))?
+        .map_err(ApiError)
+    }
+
+    pub(crate) async fn task_transition_mutation<F>(
+        &self,
+        ctx: nexora_platform::AuthContext,
+        operation: &'static str,
+        request_id: String,
+        input: serde_json::Value,
+        action: F,
+    ) -> Result<(Option<nexora_platform::WorkTask>, bool), ApiError>
+    where
+        F: FnOnce(
+                &mut TaskWorkflowStore,
+                &nexora_platform::AuthContext,
+            ) -> Result<nexora_platform::WorkTask, PlatformError>
+            + Send
+            + 'static,
+    {
+        let result = self
+            .run_task_workflow(move |store| {
+                store.request(&ctx, operation, &request_id, &input, |store| {
+                    action(store, &ctx)
+                })
+            })
+            .await;
+        match result {
+            Ok(task) => {
+                self.signal_job_wakeup();
+                Ok((Some(task), false))
+            }
+            Err(ApiError(PlatformError::Conflict("waiting for knowledge worker"))) => {
+                self.signal_job_wakeup();
+                Ok((None, true))
+            }
+            Err(error) => Err(error),
+        }
     }
     pub(crate) async fn mutate<T, F>(
         &self,

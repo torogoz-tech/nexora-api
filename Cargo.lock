@@ -884,7 +884,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
 dependencies = [
  "quote",
- "syn 2.0.119",
+ "syn 3.0.9",
 ]
 
 [[package]]
@@ -2206,6 +2206,21 @@ dependencies = [
 
 [[package]]
 name = "jsonwebtoken"
+version = "9.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a87cc7a48537badeae96744432de36f4be2b4a34a05a5ef32e9dd8a1c169dde"
+dependencies = [
+ "base64 0.22.1",
+ "js-sys",
+ "pem",
+ "ring",
+ "serde",
+ "serde_json",
+ "simple_asn1",
+]
+
+[[package]]
+name = "jsonwebtoken"
 version = "11.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e75fe14a82d81e5f5af639997db37d8b96045938a7ac6ab18cdbe1c7467e05e1"
@@ -2473,6 +2488,7 @@ dependencies = [
  "nexora-reasoning",
  "nexora-runtime",
  "nexora-source",
+ "nexora-task-workflow",
  "postgres",
  "serde",
  "serde_json",
@@ -2487,7 +2503,7 @@ dependencies = [
 [[package]]
 name = "nexora-ast"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -2517,7 +2533,7 @@ dependencies = [
 [[package]]
 name = "nexora-core"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-platform-contracts.git?tag=0.4.0#0d9e8ccdaffe82b892486805296ddab55a2aaef8"
+source = "git+https://github.com/torogoz-tech/nexora-platform-contracts.git?tag=0.4.0-final#50198fb935542caa6fac7a31077bc03a6e0b3860"
 dependencies = [
  "serde",
  "thiserror 2.0.21",
@@ -2542,12 +2558,23 @@ dependencies = [
 [[package]]
 name = "nexora-database-connections"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=933f34f11a863402d0f032fdf2fc6d19b41c11cf#933f34f11a863402d0f032fdf2fc6d19b41c11cf"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?tag=nexora-job-store-v0.4.0-final#c37cd3e2600edaf5281b9a1b78d3526fdde5b9de"
 dependencies = [
  "nexora-core",
  "postgres",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "nexora-git-policy"
+version = "0.4.0"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?tag=nexora-job-store-v0.4.0-final#c37cd3e2600edaf5281b9a1b78d3526fdde5b9de"
+dependencies = [
+ "nexora-platform",
+ "serde",
+ "serde_json",
+ "url",
 ]
 
 [[package]]
@@ -2570,7 +2597,7 @@ dependencies = [
 [[package]]
 name = "nexora-graph"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-ast",
  "nexora-core",
@@ -2584,7 +2611,7 @@ dependencies = [
 [[package]]
 name = "nexora-indexer"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-ast",
  "nexora-core",
@@ -2604,7 +2631,7 @@ dependencies = [
 [[package]]
 name = "nexora-language"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "regex",
@@ -2618,7 +2645,7 @@ dependencies = [
 [[package]]
 name = "nexora-lexer"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -2645,7 +2672,7 @@ dependencies = [
 [[package]]
 name = "nexora-parser"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -2656,7 +2683,7 @@ dependencies = [
 [[package]]
 name = "nexora-platform"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-platform-contracts.git?tag=0.4.0#0d9e8ccdaffe82b892486805296ddab55a2aaef8"
+source = "git+https://github.com/torogoz-tech/nexora-platform-contracts.git?tag=0.4.0-final#50198fb935542caa6fac7a31077bc03a6e0b3860"
 dependencies = [
  "email_address",
  "scraper",
@@ -2678,7 +2705,7 @@ dependencies = [
  "getrandom 0.3.4",
  "hkdf",
  "hmac 0.12.1",
- "jsonwebtoken",
+ "jsonwebtoken 11.1.0",
  "nexora-core",
  "nexora-indexer",
  "nexora-language",
@@ -2720,7 +2747,7 @@ dependencies = [
 [[package]]
 name = "nexora-retrieval"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2732,7 +2759,7 @@ dependencies = [
 [[package]]
 name = "nexora-runtime"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=933f34f11a863402d0f032fdf2fc6d19b41c11cf#933f34f11a863402d0f032fdf2fc6d19b41c11cf"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?tag=nexora-job-store-v0.4.0-final#c37cd3e2600edaf5281b9a1b78d3526fdde5b9de"
 dependencies = [
  "base64 0.22.1",
  "flate2",
@@ -2752,7 +2779,7 @@ dependencies = [
 [[package]]
 name = "nexora-source"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "base64 0.22.1",
  "libc",
@@ -2764,7 +2791,7 @@ dependencies = [
 [[package]]
 name = "nexora-storage"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2774,11 +2801,35 @@ dependencies = [
 [[package]]
 name = "nexora-symbols"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0#63604ecbadb2b5fad2de57bb77210d1c16320406"
+source = "git+https://github.com/torogoz-tech/nexora-analysis-engine.git?tag=0.4.0-final#7fafbfb26be83f29c4a3e9c6d976f2ba472fced8"
 dependencies = [
  "nexora-ast",
  "nexora-core",
  "serde",
+]
+
+[[package]]
+name = "nexora-task-workflow"
+version = "0.4.0"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?tag=nexora-job-store-v0.4.0-final#c37cd3e2600edaf5281b9a1b78d3526fdde5b9de"
+dependencies = [
+ "aes-gcm",
+ "getrandom 0.3.4",
+ "hkdf",
+ "hmac 0.12.1",
+ "jsonwebtoken 9.3.1",
+ "nexora-database-connections",
+ "nexora-git-policy",
+ "nexora-platform",
+ "postgres",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "subtle",
+ "time",
+ "ureq",
+ "url",
+ "zeroize",
 ]
 
 [[package]]

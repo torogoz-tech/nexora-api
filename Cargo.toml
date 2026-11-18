@@ -17,16 +17,16 @@ sha2 = "0.10"
 clap = { version = "4", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-nexora-core = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
-nexora-platform = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
-nexora-language = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
-nexora-graph = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
-nexora-storage = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
-nexora-indexer = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
-nexora-retrieval = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
-nexora-source = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-core = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0-final" }
+nexora-platform = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0-final" }
+nexora-language = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
+nexora-graph = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
+nexora-storage = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
+nexora-indexer = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
+nexora-retrieval = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
+nexora-source = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0-final" }
 nexora-mcp = { path = "crates/nexora-mcp" }
 nexora-governance = { path = "crates/nexora-governance" }
 nexora-corpus = { path = "crates/nexora-corpus" }
 
-nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", rev = "933f34f11a863402d0f032fdf2fc6d19b41c11cf" }
+nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", tag = "nexora-job-store-v0.4.0-final" }
