@@ -1,12 +1,13 @@
 use crate::{
-    ApiState, api_error::ApiError, mutation_id::MutationId, mutation_response::MutationResponse,
+    ApiState, api_error::ApiError, mutation_id::MutationId,
+    task_transition_mutation_response::TaskTransitionMutationResponse,
 };
 use axum::{
     Extension, Json,
     extract::{Path, State},
-    http::{HeaderMap, StatusCode},
+    http::HeaderMap,
 };
-use nexora_platform::{AuthContext, WorkTask};
+use nexora_platform::AuthContext;
 use serde_json::{Value, json};
 pub(crate) struct TaskTransitionRunHandlers;
 impl TaskTransitionRunHandlers {
@@ -27,7 +28,7 @@ impl TaskTransitionRunHandlers {
         Path(id): Path<String>,
     ) -> Result<Json<Value>, ApiError> {
         state
-            .run(move |store| store.task_transition_runs(&ctx, &id))
+            .run_task_workflow(move |store| store.task_transition_runs(&ctx, &id))
             .await
             .map(Json)
     }
@@ -36,11 +37,12 @@ impl TaskTransitionRunHandlers {
         Extension(ctx): Extension<AuthContext>,
         Path((id, run)): Path<(String, String)>,
         headers: HeaderMap,
-    ) -> Result<MutationResponse<WorkTask>, ApiError> {
+    ) -> Result<TaskTransitionMutationResponse, ApiError> {
         let request_id = MutationId::required(&headers)?;
-        let policy = state.git_policy();
-        let result = state
-            .mutate(
+        let policy = state.task_workflow_git_policy();
+        let response_task_id = id.clone();
+        let (task, waiting_for_knowledge) = state
+            .task_transition_mutation(
                 ctx,
                 "task.transition_retry",
                 request_id.clone(),
@@ -48,10 +50,11 @@ impl TaskTransitionRunHandlers {
                 move |store, ctx| store.retry_task_transition(ctx, &id, &run, &policy),
             )
             .await?;
-        Ok(MutationResponse {
-            status: StatusCode::OK,
+        Ok(TaskTransitionMutationResponse {
+            task,
+            task_id: response_task_id,
             request_id,
-            body: Some(result),
+            waiting_for_knowledge,
         })
     }
     pub async fn branch(
@@ -59,9 +62,9 @@ impl TaskTransitionRunHandlers {
         Extension(ctx): Extension<AuthContext>,
         Path((id, repository, branch)): Path<(String, String, String)>,
     ) -> Result<Json<Value>, ApiError> {
-        let policy = state.git_policy();
+        let policy = state.task_workflow_git_policy();
         state
-            .run(move |store| {
+            .run_task_workflow(move |store| {
                 store.task_transition_branch_fact(&ctx, &id, &repository, &branch, &policy)
             })
             .await

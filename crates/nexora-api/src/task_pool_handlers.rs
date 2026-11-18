@@ -1,5 +1,6 @@
 use crate::{
     ApiState, api_error::ApiError, mutation_id::MutationId, mutation_response::MutationResponse,
+    task_transition_mutation_response::TaskTransitionMutationResponse,
 };
 use axum::{
     Extension, Json,
@@ -190,28 +191,28 @@ impl TaskPoolHandlers {
         Path((id, transition)): Path<(String, String)>,
         headers: HeaderMap,
         body: Result<Json<TaskTransitionRequest>, JsonRejection>,
-    ) -> Result<MutationResponse<WorkTask>, ApiError> {
+    ) -> Result<TaskTransitionMutationResponse, ApiError> {
         let Json(input) =
             body.map_err(|_| ApiError(PlatformError::Validation("invalid task pool input")))?;
         let request_id = MutationId::required(&headers)?;
-        let policy = state.git_policy();
+        let policy = state.task_workflow_git_policy();
+        let response_task_id = id.clone();
         let canonical =
             json!({"project_id":null,"task_id":id,"transition_id":transition,"parameters":input});
-        let body = state
-            .mutate(
+        let (task, waiting_for_knowledge) = state
+            .task_transition_mutation(
                 ctx,
                 "task.transition",
                 request_id.clone(),
                 canonical,
-                move |store, ctx| {
-                    store.transition_pool_task_with_policy(ctx, &id, &transition, &input, &policy)
-                },
+                move |store, ctx| store.transition(ctx, None, &id, &transition, &input, &policy),
             )
             .await?;
-        Ok(MutationResponse {
-            status: StatusCode::OK,
+        Ok(TaskTransitionMutationResponse {
+            task,
+            task_id: response_task_id,
             request_id,
-            body: Some(body),
+            waiting_for_knowledge,
         })
     }
     pub async fn comment_add(

@@ -22,12 +22,19 @@ impl WorkItemMcpTools {
             "nexora_task_transition_runs" => {
                 let input: McpTaskGet = serde_json::from_value(args).map_err(invalid)?;
                 state
-                    .run(move |store| {
-                        store.verify_task_project(
+                    .run_task_workflow(move |store| {
+                        let project = store.pool_task_scope(
                             &ctx,
                             &input.task_id,
-                            input.project_id.as_deref(),
+                            nexora_platform::Capability::TasksRead,
                         )?;
+                        if input
+                            .project_id
+                            .as_deref()
+                            .is_some_and(|expected| Some(expected) != project.as_deref())
+                        {
+                            return Err(PlatformError::NotFound);
+                        }
                         store.task_transition_runs(&ctx, &input.task_id)
                     })
                     .await
@@ -35,29 +42,41 @@ impl WorkItemMcpTools {
             "nexora_task_transition_retry" => {
                 let input: crate::mcp_task_transition_retry::McpTaskTransitionRetry =
                     serde_json::from_value(args).map_err(invalid)?;
-                let policy = state.git_policy();
+                let policy = state.task_workflow_git_policy();
+                let project_id = input.project_id.clone();
+                let response_task_id = input.task_id.clone();
+                let request_id = input.request_id.clone();
                 state
-                    .mutate(
+                    .task_transition_mutation(
                         ctx,
                         "task.transition_retry",
                         input.request_id,
                         json!({"task_id":input.task_id,"run_id":input.run_id}),
                         move |store, ctx| {
-                            store.verify_task_project(
+                            let actual_project = store.pool_task_scope(
                                 ctx,
                                 &input.task_id,
-                                input.project_id.as_deref(),
+                                nexora_platform::Capability::TasksTransition,
                             )?;
-                            serde_json::to_value(store.retry_task_transition(
-                                ctx,
-                                &input.task_id,
-                                &input.run_id,
-                                &policy,
-                            )?)
-                            .map_err(|_| PlatformError::Storage)
+                            if project_id
+                                .as_deref()
+                                .is_some_and(|expected| Some(expected) != actual_project.as_deref())
+                            {
+                                return Err(PlatformError::NotFound);
+                            }
+                            store.retry_task_transition(ctx, &input.task_id, &input.run_id, &policy)
                         },
                     )
                     .await
+                    .map(|(task, waiting_for_knowledge)| {
+                        crate::task_transition_mutation_response::TaskTransitionMutationResponse {
+                            task,
+                            task_id: response_task_id,
+                            request_id,
+                            waiting_for_knowledge,
+                        }
+                        .mcp_content()
+                    })
             }
             "nexora_task_approval_get" => {
                 let input: McpTaskApprovalGet = serde_json::from_value(args).map_err(invalid)?;
@@ -212,31 +231,37 @@ impl WorkItemMcpTools {
             }
             "nexora_task_transition" => {
                 let input: McpTaskTransition = serde_json::from_value(args).map_err(invalid)?;
-                let policy = state.git_policy();
+                let policy = state.task_workflow_git_policy();
                 let canonical = json!({"project_id":input.project_id,"task_id":input.task_id,"transition_id":input.transition_id,"parameters":input.parameters});
+                let response_task_id = input.task_id.clone();
+                let request_id = input.request_id.clone();
                 state
-                    .mutate(
+                    .task_transition_mutation(
                         ctx,
                         "task.transition",
                         input.request_id,
                         canonical,
                         move |store, ctx| {
-                            store.verify_task_project(
+                            store.transition(
                                 ctx,
-                                &input.task_id,
                                 input.project_id.as_deref(),
-                            )?;
-                            serde_json::to_value(store.transition_pool_task_with_policy(
-                                ctx,
                                 &input.task_id,
                                 &input.transition_id,
                                 &input.parameters,
                                 &policy,
-                            )?)
-                            .map_err(|_| PlatformError::Storage)
+                            )
                         },
                     )
                     .await
+                    .map(|(task, waiting_for_knowledge)| {
+                        crate::task_transition_mutation_response::TaskTransitionMutationResponse {
+                            task,
+                            task_id: response_task_id,
+                            request_id,
+                            waiting_for_knowledge,
+                        }
+                        .mcp_content()
+                    })
             }
             "nexora_task_get" => {
                 let input: McpTaskGet = serde_json::from_value(args).map_err(invalid)?;

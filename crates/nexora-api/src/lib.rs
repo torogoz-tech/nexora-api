@@ -62,6 +62,8 @@ mod bootstrap_password;
 pub use bootstrap_password::*;
 
 mod store_pool;
+mod task_transition_mutation_response;
+mod task_workflow_pool;
 
 mod mutation_id;
 mod mutation_response;

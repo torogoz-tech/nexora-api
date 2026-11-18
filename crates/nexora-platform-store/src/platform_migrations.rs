@@ -318,6 +318,10 @@ impl PlatformMigrations {
                 119,
                 include_str!("../migrations/0119_authentication_limits_and_session_expiry.sql"),
             ),
+            (
+                120,
+                include_str!("../migrations/0120_task_knowledge_workflow.sql"),
+            ),
         ]
     }
 }
