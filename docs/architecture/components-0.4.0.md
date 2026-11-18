@@ -57,6 +57,7 @@ The design deliberately has no transactional outbox table. The API commits the j
 
 ## Persistence and trust boundaries
 
+- `connections.json` accepts loopback PostgreSQL hosts by default. Kubernetes or other non-local deployments must set `allow_remote_host: true` explicitly and provide a syntactically validated DNS hostname or IP. Operators must route that name to an approved private database endpoint and restrict access with network policy; the current PostgreSQL connector does not configure TLS.
 - PostgreSQL owns job state, domain records, authorization scope, idempotency, leases, and final results.
 - RabbitMQ transports wake-up IDs only. Queue durability, message persistence, publisher confirms, consumer acknowledgements, bounded prefetch, and dead-letter routing are required.
 - Each worker receives only the database permissions and secrets it needs. It does not trust message fields for authorization or scope; it reloads the job and related ownership from PostgreSQL.

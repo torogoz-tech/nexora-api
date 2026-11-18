@@ -52,3 +52,29 @@ fn malformed_configuration_is_rejected_without_reading_credentials() {
     unknown["unrecognized"] = serde_json::json!(true);
     assert!(serde_json::from_value::<DatabaseConnections>(unknown).is_err());
 }
+
+#[test]
+fn remote_database_hosts_require_explicit_opt_in_and_valid_dns_or_ip() {
+    use nexora_runtime::DatabaseConnections;
+
+    let mut value = serde_json::json!({
+        "schema_version": 1,
+        "host": "postgres.database.svc.cluster.local",
+        "postgres_port": 5432,
+        "redis_port": 6379,
+        "neo4j_http_port": 7474,
+        "postgres_user": "nexora",
+        "postgres_database": "nexora",
+        "secrets_directory": "/run/secrets/nexora"
+    });
+    let config: DatabaseConnections = serde_json::from_value(value.clone()).unwrap();
+    assert!(config.validate().is_err());
+
+    value["allow_remote_host"] = serde_json::json!(true);
+    let config: DatabaseConnections = serde_json::from_value(value.clone()).unwrap();
+    config.validate().unwrap();
+
+    value["host"] = serde_json::json!("postgres..database");
+    let config: DatabaseConnections = serde_json::from_value(value).unwrap();
+    assert!(config.validate().is_err());
+}

@@ -2,6 +2,7 @@
 
 ## 0.4.0
 
+- Allow database connections to use a validated private DNS name or IP only when `allow_remote_host` is explicitly enabled; existing configurations remain loopback-only by default.
 - Added the versioned RabbitMQ job wake-up contract and durable publisher topology while keeping PostgreSQL as the job source of truth.
 - Added PostgreSQL recovery scans for repository, release, knowledge, daily-analysis, transition, and email work, with coalesced mutation signals and broker reconnect recovery.
 - Changed the repository worker to recover pending analysis at startup, consume RabbitMQ wake-ups, drain eligible PostgreSQL jobs, and acknowledge only after processing.
