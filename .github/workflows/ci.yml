@@ -56,22 +56,7 @@ jobs:
       - run: cargo run -p nexora-cli --locked -- languages validate languages/css
   integration:
     runs-on: ubuntu-latest
-    services:
-      rabbitmq:
-        image: rabbitmq:4-management-alpine
-        env:
-          RABBITMQ_DEFAULT_USER: nexora_test
-          RABBITMQ_DEFAULT_PASS: nexora_test_only
-          RABBITMQ_DEFAULT_VHOST: nexora_test
-        ports:
-          - 5672:5672
-        options: >-
-          --health-cmd "rabbitmq-diagnostics -q ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
-      NEXORA_TEST_RABBITMQ_URL: amqp://nexora_test:nexora_test_only@localhost:5672/nexora_test
       CARGO_BUILD_JOBS: 2
       CARGO_PROFILE_TEST_DEBUG: 0
     steps:
