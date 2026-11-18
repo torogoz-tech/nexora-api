@@ -10,7 +10,7 @@ nexora-indexer.workspace = true
 nexora-core.workspace = true
 nexora-platform.workspace = true
 nexora-runtime.workspace = true
-nexora-reasoning = { path = "../nexora-reasoning" }
+nexora-reasoning = { path = "../nexora-reasoning", default-features = false }
 nexora-source.workspace = true
 nexora-retrieval.workspace = true
 serde.workspace = true
