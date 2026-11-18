@@ -17,9 +17,7 @@ fn removing_and_rebinding_same_commit_restores_identity_with_fresh_evidence_revi
     sql.execute("INSERT INTO git_connections(id,provider,host,owner_actor_id,remote_account_id,remote_login,status,config_revision,tokens,expires_at) VALUES('binding-connection','gitlab','fixture.local',$1,'1','fixture','active',1,'{}',now()+interval '1 hour')",&[&f.work.ctx.actor_id()]).unwrap();
     sql.execute("INSERT INTO project_repositories(id,project_id,provider,host,requested_full_name,remote_id,remote_full_name,connection_id,authorization_status) VALUES('repo_binding',$1,'gitlab','fixture.local','fixture/binding','1','fixture/binding','binding-connection','authorized')",&[&project]).unwrap();
     sql.execute("INSERT INTO git_connection_projects(connection_id,project_id,granted_by) VALUES('binding-connection',$1,$2)",&[&project,&f.work.ctx.actor_id()]).unwrap();
-    let base = "1".repeat(40);
     let head = "2".repeat(40);
-    sql.execute("INSERT INTO task_repository_branches(task_id,repository_id,branch_name,base_branch,base_sha,head_sha,evidence) VALUES($1,'repo_binding','feature/binding','develop',$2,$3,'{\"provenance\":\"provider_verified\"}')",&[&task.id,&base,&head]).unwrap();
     let authority = {
         let mut tx = f.work.store.client.transaction().unwrap();
         let authority =
@@ -43,8 +41,6 @@ fn removing_and_rebinding_same_commit_restores_identity_with_fresh_evidence_revi
             &task.id,
             task.revision,
             "repo_binding",
-            &head,
-            &base,
             &head,
             &evidence,
         )
@@ -72,8 +68,6 @@ fn removing_and_rebinding_same_commit_restores_identity_with_fresh_evidence_revi
             current.revision - 1,
             "repo_binding",
             &head,
-            &base,
-            &head,
             &evidence
         ),
         Err(PlatformError::Conflict(_))
@@ -87,8 +81,6 @@ fn removing_and_rebinding_same_commit_restores_identity_with_fresh_evidence_revi
             &task.id,
             current.revision,
             "repo_binding",
-            &head,
-            &base,
             &head,
             &evidence,
         )

@@ -64,19 +64,13 @@ impl PlatformStore {
             .project_id
             .ok_or(PlatformError::Validation("task commits require a project"))?;
         if tx.query_one("SELECT EXISTS(SELECT 1 FROM task_commit_links WHERE task_id=$1 AND repository_id=$2 AND commit_sha=$3 AND removed_at IS NULL)",&[&id,&repository,&commit]).map_err(Self::database_error)?.get::<_,bool>(0){return Err(PlatformError::Conflict("commit is already linked to this task"));}
-        let row=tx.query_opt("SELECT base_sha,head_sha FROM task_repository_branches WHERE task_id=$1 AND repository_id=$2",&[&id,&repository]).map_err(Self::database_error)?.ok_or(PlatformError::Conflict("verify the task repository branch before linking commits"))?;
-        let base: String = row.get(0);
-        let head: String = row.get(1);
         tx.commit().map_err(Self::database_error)?;
         self.transition_verified_facts.clear();
-        let verification = TaskTransitionProvider::release_commit(
-            self, ctx, &project, repository, &base, &head, commit, policy,
-        );
+        let verification =
+            TaskTransitionProvider::release_commit(self, ctx, &project, repository, commit, policy);
         self.transition_verified_facts.clear();
         let evidence = verification?;
-        self.write_verified_task_commit(
-            ctx, &project, id, revision, repository, commit, &base, &head, &evidence,
-        )
+        self.write_verified_task_commit(ctx, &project, id, revision, repository, commit, &evidence)
     }
 }
 impl PlatformStore {
