@@ -56,6 +56,7 @@ impl ServiceRequestHandlers {
         let type_id = q.get("type_id").cloned().unwrap_or_default();
         let product_id = q.get("product_id").cloned().unwrap_or_default();
         let criticality = q.get("criticality").cloned().unwrap_or_default();
+        let order = q.get("order").cloned();
         let page = q
             .get("page")
             .map(|v| v.parse::<i64>())
@@ -64,7 +65,7 @@ impl ServiceRequestHandlers {
             .unwrap_or(1);
         Ok(Json(
             s.run(move |store| {
-                store.service_requests_product_filtered_with_criticality(
+                store.service_requests_ordered_with_criticality(
                     &ctx,
                     &search,
                     &status,
@@ -72,6 +73,7 @@ impl ServiceRequestHandlers {
                     &product_id,
                     &criticality,
                     page,
+                    order.as_deref(),
                 )
             })
             .await?,

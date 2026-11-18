@@ -45,6 +45,29 @@ impl PlatformStore {
         criticality: &str,
         page: i64,
     ) -> Result<Value, PlatformError> {
+        self.service_requests_ordered_with_criticality(
+            ctx,
+            search,
+            status,
+            type_id,
+            product_id,
+            criticality,
+            page,
+            None,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub fn service_requests_ordered_with_criticality(
+        &mut self,
+        ctx: &AuthContext,
+        search: &str,
+        status: &str,
+        type_id: &str,
+        product_id: &str,
+        criticality: &str,
+        page: i64,
+        order: Option<&str>,
+    ) -> Result<Value, PlatformError> {
         if page < 1
             || search.len() > 300
             || type_id.len() > 120
@@ -52,6 +75,7 @@ impl PlatformStore {
             || criticality.len() > 20
             || !matches!(status, "" | "new" | "in_progress" | "completed")
             || !matches!(criticality, "" | "low" | "medium" | "high" | "critical")
+            || !matches!(order, None | Some("asc") | Some("desc"))
         {
             return Err(PlatformError::Validation("invalid request filter"));
         }
@@ -62,7 +86,7 @@ impl PlatformStore {
             .checked_mul(20)
             .ok_or(PlatformError::Validation("invalid page"))?;
         let count:i64=tx.query_one("SELECT count(*) FROM service_requests r WHERE ($1 OR requester_id=$2) AND ($3='' OR status=$3) AND (strpos(lower(title),lower($4))>0 OR number::text=$4) AND ($5='' OR r.type_id=$5) AND ($6='' OR r.product_id=$6) AND ($7='' OR r.criticality=$7)",&[&all,&ctx.actor_id(),&status,&search,&type_id,&product_id,&criticality]).map_err(Self::database_error)?.get(0);
-        let items:Vec<Value>=tx.query("SELECT to_jsonb(r)||jsonb_build_object('sla',request_sla_projection(r.sla_snapshot,r.first_attention_at,r.resolved_at),'requester_name',a.name,'type_name',t.name,'type_icon',t.icon,'type_color',t.color,'product_name',(SELECT name FROM products p WHERE p.id=r.product_id)) FROM service_requests r JOIN actors a ON a.id=r.requester_id JOIN service_request_types t ON t.id=r.type_id WHERE ($1 OR requester_id=$2) AND ($3='' OR status=$3) AND (strpos(lower(title),lower($4))>0 OR number::text=$4) AND ($5='' OR r.type_id=$5) AND ($6='' OR r.product_id=$6) AND ($7='' OR r.criticality=$7) ORDER BY r.created_at DESC,r.id LIMIT 20 OFFSET $8",&[&all,&ctx.actor_id(),&status,&search,&type_id,&product_id,&criticality,&offset]).map_err(Self::database_error)?.iter().map(|r|r.get(0)).collect();
+        let items:Vec<Value>=tx.query("SELECT to_jsonb(r)||jsonb_build_object('sla',request_sla_projection(r.sla_snapshot,r.first_attention_at,r.resolved_at),'requester_name',a.name,'type_name',t.name,'type_icon',t.icon,'type_color',t.color,'product_name',(SELECT name FROM products p WHERE p.id=r.product_id)) FROM service_requests r JOIN actors a ON a.id=r.requester_id JOIN service_request_types t ON t.id=r.type_id WHERE ($1 OR requester_id=$2) AND ($3='' OR status=$3) AND (strpos(lower(title),lower($4))>0 OR number::text=$4) AND ($5='' OR r.type_id=$5) AND ($6='' OR r.product_id=$6) AND ($7='' OR r.criticality=$7) ORDER BY CASE WHEN $8='asc' THEN lower(r.title) END ASC NULLS LAST,CASE WHEN $8='desc' THEN lower(r.title) END DESC NULLS LAST,CASE WHEN $8 IS NULL THEN r.created_at END DESC,r.id LIMIT 20 OFFSET $9",&[&all,&ctx.actor_id(),&status,&search,&type_id,&product_id,&criticality,&order,&offset]).map_err(Self::database_error)?.iter().map(|r|r.get(0)).collect();
         tx.commit().map_err(Self::database_error)?;
         Ok(json!({"items":items,"total":count,"page":page,"can_manage":Policy::internal(&role)}))
     }
