@@ -1,5 +1,10 @@
-use lapin::{Connection, ConnectionProperties};
-use nexora_api::{ANALYSIS_QUEUE, RabbitMqJobWakeupConsumer, RabbitMqJobWakeupPublisher};
+use futures_util::StreamExt;
+use lapin::{
+    Connection, ConnectionProperties,
+    options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions},
+    types::FieldTable,
+};
+use nexora_api::{ANALYSIS_QUEUE, RabbitMqJobWakeupPublisher};
 use nexora_platform::{JobKind, JobWakeup};
 
 #[tokio::test]
@@ -22,9 +27,19 @@ async fn publishes_a_confirmed_persistent_analysis_wakeup() {
         .queue_purge(ANALYSIS_QUEUE.into(), Default::default())
         .await
         .expect("queue should be empty before publishing the fixture");
-    let mut consumer = RabbitMqJobWakeupConsumer::connect(&uri, JobKind::RepositoryIndex)
+    channel
+        .basic_qos(1, BasicQosOptions::default())
         .await
-        .expect("analysis consumer should subscribe to its durable queue");
+        .expect("consumer should limit unacknowledged wake-ups");
+    let mut consumer = channel
+        .basic_consume(
+            ANALYSIS_QUEUE.into(),
+            "".into(),
+            BasicConsumeOptions::default(),
+            FieldTable::default(),
+        )
+        .await
+        .expect("test consumer should subscribe to the analysis queue");
 
     publisher
         .publish(&wakeup)
@@ -34,26 +49,35 @@ async fn publishes_a_confirmed_persistent_analysis_wakeup() {
     let delivery = consumer
         .next()
         .await
-        .expect("consumer should receive a publication")
-        .expect("consumer stream should remain open");
+        .expect("consumer stream should remain open")
+        .expect("consumer should receive a publication");
 
-    assert_eq!(delivery.wakeup(), &wakeup);
-    assert!(delivery.is_persistent());
+    assert_eq!(
+        serde_json::from_slice::<JobWakeup>(&delivery.data).unwrap(),
+        wakeup
+    );
+    assert_eq!(*delivery.properties.delivery_mode(), Some(2));
     delivery
-        .retry()
+        .nack(BasicNackOptions {
+            requeue: true,
+            ..BasicNackOptions::default()
+        })
         .await
         .expect("transient processing failures should requeue the durable wake-up");
 
     let redelivered = consumer
         .next()
         .await
-        .expect("consumer should receive a requeued publication")
-        .expect("consumer stream should remain open after requeue");
+        .expect("consumer stream should remain open after requeue")
+        .expect("consumer should receive a requeued publication");
 
-    assert_eq!(redelivered.wakeup(), &wakeup);
-    assert!(redelivered.is_persistent());
+    assert_eq!(
+        serde_json::from_slice::<JobWakeup>(&redelivered.data).unwrap(),
+        wakeup
+    );
+    assert_eq!(*redelivered.properties.delivery_mode(), Some(2));
     redelivered
-        .ack()
+        .ack(BasicAckOptions::default())
         .await
         .expect("requeued test delivery should be acknowledged");
     channel.close(200, "test complete".into()).await.unwrap();

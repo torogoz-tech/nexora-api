@@ -6,7 +6,6 @@ license.workspace = true
 
 [dependencies]
 futures-util = "0.3"
-futures-lite = "2"
 tower-http = { version = "0.7.1", features = ["cors"] }
 sha2.workspace = true
 base64 = "0.22"
@@ -31,8 +30,7 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal
 zeroize = "1"
 
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
-lettre = { version = "0.11", default-features = false, features = ["builder", "smtp-transport", "rustls", "ring", "webpki-roots"] }
-html2text = "0.17.4"
+lettre = { version = "0.11", default-features = false, features = ["builder"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

@@ -43,25 +43,6 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
             let headers = McpHeaders::read(&api_key_file)?;
             println!("{}", headers.as_str());
         }
-        ApiCommand::Worker {
-            settings,
-            git_policy,
-            once,
-        } => {
-            let config = DatabaseConnections::load(&args.connections)?;
-            nexora_api::RepositoryWorkerHost::run(config, args.schema, settings, git_policy, once)
-                .await?;
-        }
-        ApiCommand::Notifications => {
-            let rabbitmq_uri = std::env::var("NEXORA_RABBITMQ_URL")
-                .map_err(|_| "NEXORA_RABBITMQ_URL is required for notification worker execution")?;
-            if rabbitmq_uri.trim().is_empty() {
-                return Err("NEXORA_RABBITMQ_URL cannot be empty".into());
-            }
-            let config = DatabaseConnections::load(&args.connections)?;
-            let state = ApiState::new(config, args.schema, 4).await?;
-            nexora_api::EmailNotificationWorker::run(state, rabbitmq_uri).await?;
-        }
         ApiCommand::Migrate => {
             let config = DatabaseConnections::load(&args.connections)?;
             tokio::task::spawn_blocking(move || {
@@ -141,9 +122,7 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                     .layer(cors)
                     .into_make_service_with_connect_info::<std::net::SocketAddr>(),
             )
-            .with_graceful_shutdown(async {
-                let _ = tokio::signal::ctrl_c().await;
-            })
+            .with_graceful_shutdown(shutdown_signal())
             .await?;
             if let Some((_, task)) = dispatcher {
                 task.abort();
@@ -151,4 +130,22 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     Ok(())
+}
+
+async fn shutdown_signal() {
+    #[cfg(unix)]
+    {
+        let mut terminate =
+            tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+                .expect("register SIGTERM handler");
+        tokio::select! {
+            _ = tokio::signal::ctrl_c() => {}
+            _ = terminate.recv() => {}
+        }
+    }
+
+    #[cfg(not(unix))]
+    {
+        let _ = tokio::signal::ctrl_c().await;
+    }
 }

@@ -4,16 +4,16 @@ FROM api-artifact AS compiled-api
 
 FROM ubuntu:24.04 AS runtime
 
-RUN groupadd --system nexora \
-    && useradd --system --gid nexora --no-create-home nexora \
+RUN groupadd --system --gid 10001 nexora \
+    && useradd --system --uid 10001 --gid 10001 --no-create-home nexora \
     && apt-get update \
-    && apt-get install --yes --no-install-recommends ca-certificates curl git libgcc-s1 \
+    && apt-get install --yes --no-install-recommends ca-certificates curl libgcc-s1 \
     && rm -rf /var/lib/apt/lists/* \
     && install -d -o nexora -g nexora /var/lib/nexora
 
 COPY --from=compiled-api /nexora-api /usr/local/bin/nexora-api
 
-USER nexora
+USER 10001:10001
 WORKDIR /var/lib/nexora
 EXPOSE 18080
 

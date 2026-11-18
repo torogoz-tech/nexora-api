@@ -117,18 +117,15 @@ jobs:
       - run: chmod +x image-context/nexora-api
       - name: Build runtime image
         run: docker build --build-context api-artifact=image-context --tag nexora-api:ci .
-      - name: Smoke-test runtime and Git
+      - name: Smoke-test runtime
         run: |
           docker run --rm nexora-api:ci --help > /tmp/nexora-help.txt 2> /tmp/nexora-runtime-errors.txt
           grep -q 'Nexora self-hosted platform API' /tmp/nexora-help.txt
-          docker run --rm nexora-api:ci notifications --help > /tmp/nexora-notifications-help.txt
-          grep -q 'Recover and deliver queued email notifications through RabbitMQ' /tmp/nexora-notifications-help.txt
           test ! -s /tmp/nexora-runtime-errors.txt || { cat /tmp/nexora-runtime-errors.txt >&2; exit 1; }
           docker run --rm --entrypoint /bin/sh nexora-api:ci -ec '
             test "$(id -u)" -ne 0
             test -w /var/lib/nexora
-            git --version
-            test -x "$(git --exec-path)/git-remote-https"
+            test -x /usr/local/bin/nexora-api
           '
       - name: Publish image to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

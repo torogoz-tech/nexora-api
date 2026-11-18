@@ -14,19 +14,6 @@ pub enum ApiCommand {
         #[arg(long)]
         api_key_file: PathBuf,
     },
-    /// Process registered repository synchronization jobs without executing repository code.
-    Worker {
-        /// Operator-owned profiles and private working directory.
-        #[arg(long)]
-        settings: PathBuf,
-        #[arg(long)]
-        git_policy: Option<PathBuf>,
-        /// Process at most one job and exit; otherwise keep consuming the queue.
-        #[arg(long)]
-        once: bool,
-    },
-    /// Recover and deliver queued email notifications through RabbitMQ.
-    Notifications,
     /// Apply versioned platform migrations; does not modify engine snapshots.
     Migrate,
     /// Initialize this installation once, without predefined credentials.
