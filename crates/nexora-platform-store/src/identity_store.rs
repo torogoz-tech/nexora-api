@@ -33,7 +33,7 @@ impl<'a> IdentityStore<'a> {
             .store
             .client
             .query_one(
-                "INSERT INTO authentication_attempt_limits(key_digest,window_started_at,attempts) VALUES($1,clock_timestamp(),1) ON CONFLICT(key_digest) DO UPDATE SET window_started_at=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN clock_timestamp() ELSE authentication_attempt_limits.window_started_at END,attempts=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN 1 ELSE authentication_attempt_limits.attempts+1 END RETURNING attempts",
+                "INSERT INTO authentication_attempt_limits(key_digest,window_started_at,attempts) VALUES($1,clock_timestamp(),1) ON CONFLICT(key_digest) DO UPDATE SET window_started_at=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-make_interval(secs => $2::double precision) THEN clock_timestamp() ELSE authentication_attempt_limits.window_started_at END,attempts=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-make_interval(secs => $2::double precision) THEN 1 ELSE authentication_attempt_limits.attempts+1 END RETURNING attempts",
                 &[&digest, &window_seconds],
             )
             .map_err(PlatformStore::database_error)?
