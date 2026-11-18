@@ -15,6 +15,16 @@ use nexora_platform::*;
 use serde_json::{Value, json};
 pub(crate) struct OidcHandlers;
 impl OidcHandlers {
+    fn callback_failure(status: StatusCode) -> Response {
+        let body = r#"<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceso · Nexora</title><style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#08090b;color:#f4f4f5;font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px}.card{width:min(100%,440px);padding:36px;border:1px solid #292b30;border-radius:24px;background:linear-gradient(145deg,#141518,#0c0d0f);box-shadow:0 24px 80px #0008}.brand{display:flex;align-items:center;gap:12px;margin-bottom:36px}.mark{width:42px;height:42px;border:1px solid #45474d;border-radius:14px;background:#24262a;display:grid;place-items:center;font-weight:700;letter-spacing:-.08em}.brand span{font-weight:650}.icon{width:52px;height:52px;border:1px solid #73393c;border-radius:18px;color:#ff9298;background:#351d20;display:grid;place-items:center;font-size:25px}h1{font-size:22px;line-height:1.25;margin:20px 0 8px}p{color:#a1a1aa;margin:0 0 26px}.button{display:inline-flex;justify-content:center;align-items:center;min-height:44px;padding:0 18px;border-radius:14px;background:#e4e4e7;color:#171719;text-decoration:none;font-weight:650}.hint{margin-top:24px!important;margin-bottom:0;font-size:12px;color:#71717a}@media(prefers-reduced-motion:no-preference){.card{animation:appear .35s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}</style></head><body><main class="card"><div class="brand"><div class="mark" aria-hidden="true">N</div><span>Nexora</span></div><div class="icon" aria-hidden="true">!</div><h1>No se pudo completar el acceso</h1><p>El enlace de inicio de sesión expiró, ya fue utilizado o no pertenece a esta ventana. Regresa a Nexora e inicia sesión de nuevo.</p><a class="button" href="/login">Volver al inicio de sesión</a><p class="hint">Puedes cerrar esta ventana después de regresar a la aplicación.</p></main></body></html>"#;
+        let mut response = (status, axum::response::Html(body)).into_response();
+        response
+            .headers_mut()
+            .insert("cache-control", HeaderValue::from_static("no-store"));
+        response
+    }
+
     pub async fn providers(
         State(state): State<ApiState>,
         Extension(ctx): Extension<AuthContext>,
@@ -223,19 +233,19 @@ impl OidcHandlers {
         query: Result<Query<OidcCallbackQuery>, QueryRejection>,
     ) -> Response {
         let Ok(Query(input)) = query else {
-            return ApiError(PlatformError::Unauthorized).into_response();
+            return Self::callback_failure(StatusCode::UNAUTHORIZED);
         };
         let Some(state_token) = input.state else {
-            return ApiError(PlatformError::Unauthorized).into_response();
+            return Self::callback_failure(StatusCode::UNAUTHORIZED);
         };
         let Some((id, _)) = state_token.split_once('.') else {
-            return ApiError(PlatformError::Unauthorized).into_response();
+            return Self::callback_failure(StatusCode::UNAUTHORIZED);
         };
         if id.len() != 36
             || !id.starts_with("oas_")
             || !id[4..].bytes().all(|b| b.is_ascii_hexdigit())
         {
-            return ApiError(PlatformError::Unauthorized).into_response();
+            return Self::callback_failure(StatusCode::UNAUTHORIZED);
         }
         let cookie_name = format!("nexora_oidc_{id}");
         let matches: Vec<_> = headers
@@ -283,7 +293,10 @@ impl OidcHandlers {
                     Err(error) => error.into_response(),
                 }
             }
-            Err(error) => error.into_response(),
+            Err(error) => {
+                let response = error.into_response();
+                Self::callback_failure(response.status())
+            }
         };
         if let Ok(value) = HeaderValue::from_str(&format!(
             "{cookie_name}=; HttpOnly; SameSite=Lax; Path=/api/v1/auth/oidc/callback; Max-Age=0"

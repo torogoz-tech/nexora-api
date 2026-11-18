@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Added a branded OIDC callback error page for invalid or expired authorization links.
+
 ## 0.2.1
 
 - Align the API build runner and runtime on Ubuntu 24.04 to remove the GLIBC compatibility warning.
