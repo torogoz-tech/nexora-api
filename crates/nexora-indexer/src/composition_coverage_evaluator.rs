@@ -47,7 +47,6 @@ impl CompositionCoverageEvaluator {
         let mut order: Vec<_> = (0..units.len()).collect();
         order.sort_by_key(|i| units[*i].span.end.offset - units[*i].span.start.offset);
         for index in order {
-            budget.checkpoint()?;
             let profile = &profiles[&units[index].language.0];
             let roles = profile
                 .language
@@ -119,7 +118,6 @@ impl CompositionCoverageEvaluator {
             let mut changed = boundary_changed[index];
             for i in region_order {
                 for component in [C::Content, C::Header] {
-                    budget.checkpoint()?;
                     let record = &regions[i];
                     let Some((content_index, role, link)) = record.component(component) else {
                         continue;

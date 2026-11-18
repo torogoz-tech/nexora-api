@@ -375,6 +375,14 @@ fn invalid_encoding_is_recorded_without_aborting_or_reusing_old_file_graph() {
     assert!(!result.index.snapshot.sources.contains_key("Legacy.cs"));
     assert_eq!(result.selection["status"], "partial");
     assert_eq!(result.selection["skipped_files"][0]["path"], "Legacy.cs");
+    assert_eq!(
+        result.selection["skipped_files"][0]["analysis_status"],
+        "unknown"
+    );
+    assert_eq!(
+        result.selection["unknown_files"],
+        serde_json::json!(["Legacy.cs"])
+    );
     assert_eq!(result.selection["skipped_files"][0]["profile_id"], "cs");
     assert_eq!(
         result.selection["profiles"][0]["files"],

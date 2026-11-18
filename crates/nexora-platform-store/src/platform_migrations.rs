@@ -314,6 +314,10 @@ impl PlatformMigrations {
                 118,
                 include_str!("../migrations/0118_session_mfa_stages.sql"),
             ),
+            (
+                119,
+                include_str!("../migrations/0119_authentication_limits_and_session_expiry.sql"),
+            ),
         ]
     }
 }

@@ -1,7 +1,7 @@
 use crate::{
-    ApiState, api_error::ApiError, create_actor_request::CreateActorRequest,
-    create_user_request::CreateUserRequest, login_request::LoginRequest, mutation_id::MutationId,
-    mutation_response::MutationResponse,
+    ApiState, api_error::ApiError, api_middleware::ClientAddress,
+    create_actor_request::CreateActorRequest, create_user_request::CreateUserRequest,
+    login_request::LoginRequest, mutation_id::MutationId, mutation_response::MutationResponse,
 };
 use axum::{
     Extension, Json,
@@ -15,13 +15,17 @@ impl IdentityHandlers {
     pub async fn login(
         State(state): State<ApiState>,
         headers: HeaderMap,
+        Extension(peer): Extension<ClientAddress>,
         body: Result<Json<LoginRequest>, JsonRejection>,
     ) -> Result<axum::response::Response, ApiError> {
         let Json(input) =
             body.map_err(|_| ApiError(PlatformError::Validation("invalid login request")))?;
         crate::browser_session::BrowserSession::origin(&headers)?;
+        let peer = peer.0;
         let session = state
-            .run(move |store| store.login(&input.username, &input.password))
+            .run(move |store| {
+                store.login_from_peer(&input.username, &input.password, peer.as_deref())
+            })
             .await?;
         crate::browser_session::BrowserSession::issued(session, &headers)
     }

@@ -257,6 +257,9 @@
           "409": {
             "description": "Conflicting operation"
           },
+          "429": {
+            "description": "Authentication attempt limit exceeded"
+          },
           "422": {
             "description": "Invalid request"
           }

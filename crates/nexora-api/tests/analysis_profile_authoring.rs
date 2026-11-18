@@ -155,7 +155,7 @@ fn developer_can_author_validate_and_share_without_administrative_access() {
         malformed["models"][0]["lexer"]["tokens"][0]["pattern"] = json!("");
         let (_, invalid) = call(&app,&key.key,"nexora_analysis_profile_validate",json!({"package":malformed})).await;
         assert_eq!(invalid["result"]["structuredContent"]["valid"], false);
-        assert!(invalid["result"]["structuredContent"]["errors"][0].as_str().unwrap().len()>0);
+        assert!(!invalid["result"]["structuredContent"]["errors"][0].as_str().unwrap().is_empty());
         let (_, oversized) = call(&app,&key.key,"nexora_analysis_profile_package",json!({"key":"large","version":"1.0.0","name":"x".repeat(270_000),"language_id":"lua","models":pack.models})).await;
         assert_eq!(oversized["result"]["isError"], true);
         let denied = app.clone().oneshot(Request::post("/api/v1/analysis-profiles")

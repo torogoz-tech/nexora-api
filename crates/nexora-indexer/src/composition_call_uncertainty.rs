@@ -47,7 +47,6 @@ impl CompositionCallUncertainty {
         }
         let mut remaining = 100_000usize;
         for edge in graph.edges.iter_mut().filter(|e| e.kind == EdgeKind::Calls) {
-            budget.checkpoint()?;
             if remaining == 0 {
                 return Err(NexoraError::Limit("composed call inspection budget".into()));
             }

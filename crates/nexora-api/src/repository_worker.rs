@@ -104,6 +104,7 @@ impl RepositoryWorker {
                 RepositoryJobFailure::SourceAccessDenied
             }
             PlatformError::Unavailable => RepositoryJobFailure::SourceUnavailable,
+            PlatformError::TooManyRequests => RepositoryJobFailure::SourceAccessDenied,
             PlatformError::Storage => RepositoryJobFailure::StorageUnavailable,
             PlatformError::Conflict(_) | PlatformError::Validation(_) => {
                 RepositoryJobFailure::SourceInvalid

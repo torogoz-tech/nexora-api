@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 #[path = "support/feature_map_fixture.rs"]
 mod feature_map_fixture;
 use feature_map_fixture::FeatureMapFixture;

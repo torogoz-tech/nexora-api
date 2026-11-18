@@ -54,14 +54,17 @@ impl LexicalRegionScanner {
                 .map(|h| Self::transitions(&h.children, &mut cache))
                 .transpose()?
                 .unwrap_or_default();
+            let token_rules: Vec<_> = rules
+                .iter()
+                .filter(|rule| definition.token_rules.contains(&rule.kind))
+                .cloned()
+                .collect();
+            let token_rule_set = crate::lexer::compile_rule_set(&token_rules)?;
             modes.insert(
                 name.clone(),
                 CompiledLexicalRegion {
-                    token_rules: rules
-                        .iter()
-                        .filter(|rule| definition.token_rules.contains(&rule.kind))
-                        .cloned()
-                        .collect(),
+                    token_rules,
+                    token_rule_set,
                     definition: definition.clone(),
                     children: Self::transitions(&definition.children, &mut cache)?,
                     header_children,
@@ -434,6 +437,7 @@ impl LexicalRegionScanner {
                 let previous = frame.previous.as_ref().map(|t| t.context(source));
                 let (rule, length) = crate::token_rule_selector::TokenRuleSelector::select(
                     &spec.token_rules,
+                    &spec.token_rule_set,
                     rest,
                     position.offset,
                     previous,

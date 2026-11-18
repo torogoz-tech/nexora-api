@@ -208,7 +208,7 @@ fn work_blocks_and_task_logs_share_the_same_approved_overtime_budget() {
 #[test]
 #[ignore = "requires PostgreSQL"]
 fn availability_clips_calendar_time_to_workdays_and_excludes_holidays() {
-    let mut f = TaskPoolFixture::new(false);
+    let f = TaskPoolFixture::new(false);
     let mut sql = test_sql::connect(&f.work.config, &f.work.namespace);
     sql.batch_execute("UPDATE labor_calendar_settings SET work_start='08:00',work_end='17:00',break_minutes=60,daily_minutes=480,workdays=ARRAY[1,2,3,4,5]").unwrap();
     sql.execute("INSERT INTO team_calendar_activities(id,created_by,title,description,location,start_date,end_date,all_day,start_time,end_time) VALUES('off-hours',$1,'Evening','','','2026-11-09','2026-11-09',false,'18:00','20:00')",&[&f.manager.actor_id()]).unwrap();

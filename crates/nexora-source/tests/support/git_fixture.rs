@@ -1,3 +1,6 @@
+// Consumers include only the fixture operations needed by their scenario.
+#![allow(dead_code)]
+
 use super::test_directory::TestDirectory;
 use std::{
     io::Write,

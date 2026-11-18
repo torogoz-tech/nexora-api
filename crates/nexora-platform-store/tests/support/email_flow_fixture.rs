@@ -1,3 +1,6 @@
+// Email-flow fixture variants are shared across tests with different coverage.
+#![allow(dead_code)]
+
 #[path = "work_item_fixture.rs"]
 mod work_item_fixture;
 use nexora_platform::*;

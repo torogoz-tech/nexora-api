@@ -2,6 +2,11 @@
 
 ## 0.3.0
 
+- Bound source analysis and cross-language composition by deterministic work budgets; repository analysis now records unsupported or skipped files as `UNKNOWN` while returning a partial snapshot.
+- Precompiled lexer rule sets to reduce per-token regular-expression checks, and added graph integrity integration coverage.
+- Added persistent account and peer throttling for password login, explicit Argon2id parameters with opportunistic rehashing, and equalized password checks for SSO-only and unknown accounts.
+- Bound browser sessions to a 30-minute idle timeout and an eight-hour absolute lifetime.
+- Validate passkey request origins against the configured OIDC origin allowlist; added repeatable `--trusted-proxy` configuration for client address resolution.
 - Added a branded OIDC callback error page for invalid or expired authorization links.
 
 ## 0.2.1

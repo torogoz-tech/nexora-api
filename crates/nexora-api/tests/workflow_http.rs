@@ -97,7 +97,7 @@ fn workflow_http_and_mcp_publish_immutable_versions_without_project_scope() {
     let input = json!({"name":"Delivery","purpose":"Explicit governing workflow","graph":graph});
     let (status, created) = request(
         "POST",
-        &base,
+        base,
         access_token,
         Some(input.clone()),
         Some("create-workflow"),
@@ -105,7 +105,7 @@ fn workflow_http_and_mcp_publish_immutable_versions_without_project_scope() {
     assert_eq!(status, StatusCode::CREATED);
     let (_, replayed) = request(
         "POST",
-        &base,
+        base,
         access_token,
         Some(input),
         Some("create-workflow"),

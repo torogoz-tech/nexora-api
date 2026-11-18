@@ -102,7 +102,7 @@ impl PlatformStore {
             &[&ceremony_id],
         )
         .map_err(Self::database_error)?;
-        tx.execute("UPDATE sessions SET access_stage='ready',digest=$2,expires_at=now()+interval '8 hours' WHERE id=$1", &[&session_id, &SecretGenerator::digest(&new_token)]).map_err(Self::database_error)?;
+        tx.execute("UPDATE sessions SET access_stage='ready',digest=$2,expires_at=LEAST(clock_timestamp()+interval '30 minutes',absolute_expires_at),last_activity_at=clock_timestamp() WHERE id=$1", &[&session_id, &SecretGenerator::digest(&new_token)]).map_err(Self::database_error)?;
         AuditWriter::append(
             &mut tx,
             Some(&actor),
@@ -371,7 +371,7 @@ impl PlatformStore {
             &[&ceremony_id],
         )
         .map_err(Self::database_error)?;
-        let affected = tx.execute("INSERT INTO sessions(id,actor_id,digest,expires_at,access_stage) VALUES($1,$2,$3,clock_timestamp()+interval '8 hours','ready')", &[&id, &actor, &digest]).map_err(Self::database_error)?;
+        let affected = tx.execute("INSERT INTO sessions(id,actor_id,digest,expires_at,access_stage) VALUES($1,$2,$3,clock_timestamp()+interval '30 minutes','ready')", &[&id, &actor, &digest]).map_err(Self::database_error)?;
         if affected != 1 {
             return Err(PlatformError::Unauthorized);
         }

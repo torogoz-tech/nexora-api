@@ -39,7 +39,7 @@ impl<'a> AuthenticationStore<'a> {
         let expiry = if method == AuthMethod::ApiKey {
             "(expires_at IS NULL OR expires_at>now())"
         } else {
-            "expires_at>now()"
+            "expires_at>now() AND absolute_expires_at>now()"
         };
         let row = self
             .store
@@ -55,6 +55,12 @@ impl<'a> AuthenticationStore<'a> {
         let stored: Vec<u8> = row.get(0);
         if !bool::from(stored.ct_eq(&digest)) {
             return Err(PlatformError::Unauthorized);
+        }
+        if method == AuthMethod::Session {
+            self.store.client.execute_typed(
+                "UPDATE sessions SET expires_at=LEAST(clock_timestamp()+interval '30 minutes',absolute_expires_at),last_activity_at=clock_timestamp() WHERE id=$1 AND digest=$2 AND access_stage='ready' AND revoked_at IS NULL AND expires_at>clock_timestamp() AND absolute_expires_at>clock_timestamp() AND last_activity_at<clock_timestamp()-interval '60 seconds'",
+                &[(&id, Type::TEXT), (&digest, Type::BYTEA)],
+            ).map_err(PlatformStore::database_error)?;
         }
         let context = self.load(method, id)?;
         if method == AuthMethod::ApiKey {
@@ -77,7 +83,7 @@ impl<'a> AuthenticationStore<'a> {
         let query = if method == AuthMethod::ApiKey {
             "SELECT a.id,a.kind,k.scope FROM api_keys k JOIN actors a ON a.id=k.actor_id WHERE k.id=$1 AND a.active AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now())"
         } else {
-            "SELECT a.id,a.kind,NULL::jsonb FROM sessions s JOIN actors a ON a.id=s.actor_id JOIN users u ON u.actor_id=a.id WHERE s.access_stage='ready' AND s.id=$1 AND a.active AND a.kind='human' AND s.revoked_at IS NULL AND s.expires_at>now()"
+            "SELECT a.id,a.kind,NULL::jsonb FROM sessions s JOIN actors a ON a.id=s.actor_id JOIN users u ON u.actor_id=a.id WHERE s.access_stage='ready' AND s.id=$1 AND a.active AND a.kind='human' AND s.revoked_at IS NULL AND s.expires_at>now() AND s.absolute_expires_at>now()"
         };
         let row = self
             .store

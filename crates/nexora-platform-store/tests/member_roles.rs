@@ -241,7 +241,7 @@ fn technical_lead_permissions_and_positions_are_live_and_scoped() {
     let attenuated = f.store.effective_permissions(&api).unwrap();
     assert_eq!(attenuated["grants"].as_array().unwrap().len(), 1);
     assert_eq!(attenuated["grants"][0]["capability"], "tasks:read");
-    assert_eq!(f.store.feature_catalog(&api, &f.project.id).is_err(), true);
+    assert!(f.store.feature_catalog(&api, &f.project.id).is_err());
     f.store
         .change_member_role(
             &f.ctx,

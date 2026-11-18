@@ -58,7 +58,7 @@ fn composed_model_dependencies_and_unknown_fields_cannot_be_omitted() {
         .retain(|model| model.manifest.id.0 == "region_carrier");
     let invalid = AnalysisProfileAuthoring::validate(serde_json::to_value(&pack).unwrap());
     assert_eq!(invalid["valid"], false);
-    assert!(invalid["errors"][0].as_str().unwrap().len() > 0);
+    assert!(!invalid["errors"][0].as_str().unwrap().is_empty());
     let bad = AnalysisProfileAuthoring::validate(
         json!({"format":"nexora.analysis-profile","directory":"/etc/nexora"}),
     );
