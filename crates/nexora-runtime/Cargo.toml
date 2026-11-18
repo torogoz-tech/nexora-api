@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 nexora-core.workspace = true
+nexora-database-connections.workspace = true
 nexora-graph.workspace = true
 nexora-storage.workspace = true
 nexora-indexer.workspace = true

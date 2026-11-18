@@ -1,6 +1,5 @@
 //! Concrete local database adapters, separate from the analysis core.
-mod database_connections;
-pub use database_connections::*;
+pub use nexora_database_connections::DatabaseConnections;
 mod bounded_json;
 mod cache_retention;
 mod connection_secrets;
