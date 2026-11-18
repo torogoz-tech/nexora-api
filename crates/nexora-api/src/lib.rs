@@ -378,13 +378,11 @@ mod password_recovery_request;
 mod public_email_access_handlers;
 
 mod developer_rating_handlers;
-mod developer_rating_worker;
 mod installation_timezone_handlers;
 mod labor_calendar_handlers;
 mod member_role_handlers;
 mod overtime_evidence_handlers;
 mod overtime_handlers;
-pub use developer_rating_worker::DeveloperRatingWorker;
 
 mod feature_handlers;
 mod feature_mcp_catalog;
@@ -506,9 +504,6 @@ mod repository_commit_handlers;
 mod in_app_notification_handlers;
 
 mod daily_developer_analysis_handlers;
-mod daily_developer_analysis_worker;
-
-mod knowledge_synthesis_worker;
 
 mod knowledge_contribution_handlers;
 mod knowledge_contribution_mcp;

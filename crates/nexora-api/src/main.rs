@@ -135,7 +135,6 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
             let cors = nexora_api::ApiCors::layer(&cors_origin)?;
             let listener = tokio::net::TcpListener::bind(bind).await?;
             eprintln!("nexora-api listening on {}", listener.local_addr()?);
-            let rating_worker = nexora_api::DeveloperRatingWorker::start(state.clone());
             axum::serve(
                 listener,
                 ApiServer::router(state)
@@ -146,7 +145,6 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                 let _ = tokio::signal::ctrl_c().await;
             })
             .await?;
-            rating_worker.abort();
             if let Some((_, task)) = dispatcher {
                 task.abort();
             }
