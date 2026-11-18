@@ -1,11 +1,11 @@
 #![cfg(any(target_os = "linux", target_os = "macos"))]
-#[path = "../../nexora-source/tests/support/git_fixture.rs"]
+#[path = "support/git_fixture.rs"]
 mod git_fixture;
 #[path = "support/github_source_fixture.rs"]
 mod github_source_fixture;
 #[path = "support/gitlab_source_fixture.rs"]
 mod gitlab_source_fixture;
-#[path = "../../nexora-source/tests/support/test_directory.rs"]
+#[path = "support/test_directory.rs"]
 mod test_directory;
 use nexora_platform::*;
 use nexora_platform_store::{

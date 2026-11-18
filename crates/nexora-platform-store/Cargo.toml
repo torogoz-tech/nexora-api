@@ -11,7 +11,7 @@ nexora-core.workspace = true
 nexora-platform = { path = "../nexora-platform" }
 nexora-runtime.workspace = true
 nexora-reasoning = { path = "../nexora-reasoning" }
-nexora-source = { path = "../nexora-source" }
+nexora-source.workspace = true
 nexora-retrieval.workspace = true
 serde.workspace = true
 serde_json.workspace = true

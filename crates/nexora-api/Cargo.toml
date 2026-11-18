@@ -17,7 +17,7 @@ nexora-mcp.workspace = true
 nexora-core.workspace = true
 nexora-indexer.workspace = true
 nexora-language.workspace = true
-nexora-source = { path = "../nexora-source" }
+nexora-source.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 clap.workspace = true

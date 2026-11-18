@@ -1,9 +1,9 @@
 #![cfg(any(target_os = "linux", target_os = "macos"))]
-#[path = "../../nexora-source/tests/support/git_fixture.rs"]
+#[path = "support/git_fixture.rs"]
 mod git_fixture;
 #[path = "support/github_source_fixture.rs"]
 mod github_source_fixture;
-#[path = "../../nexora-source/tests/support/test_directory.rs"]
+#[path = "support/test_directory.rs"]
 mod test_directory;
 use git_fixture::GitFixture;
 use github_source_fixture::GithubSourceFixture;
