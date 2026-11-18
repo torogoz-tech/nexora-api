@@ -29,4 +29,4 @@ nexora-mcp = { path = "crates/nexora-mcp" }
 nexora-governance = { path = "crates/nexora-governance" }
 nexora-corpus = { path = "crates/nexora-corpus" }
 
-nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", rev = "bc8404db8e3c4daacee6627a6da6bad49915ed9d" }
+nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", rev = "2c96d6e74841ef04506e94bee0ea90d86aaf04ca" }
