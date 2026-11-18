@@ -958,6 +958,16 @@ impl PlatformStore {
     ) -> Result<crate::RepositoryJobLease, PlatformError> {
         crate::repository_job_lease_store::RepositoryJobLeaseStore::new(self).renew(lease, seconds)
     }
+    pub fn pending_repository_jobs_for_wakeup(
+        &mut self,
+    ) -> Result<Vec<RepositoryJob>, PlatformError> {
+        crate::repository_job_pending_wakeups::RepositoryJobPendingWakeups::list(self)
+    }
+    pub fn pending_job_wakeups(
+        &mut self,
+    ) -> Result<Vec<nexora_platform::JobWakeup>, PlatformError> {
+        crate::pending_job_wakeups::PendingJobWakeups::list(self)
+    }
     pub fn enqueue_repository_job(
         &mut self,
         ctx: &AuthContext,

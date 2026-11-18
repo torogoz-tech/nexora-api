@@ -25,6 +25,8 @@ pub enum ApiCommand {
         #[arg(long)]
         once: bool,
     },
+    /// Recover and deliver queued email notifications through RabbitMQ.
+    Notifications,
     /// Apply versioned platform migrations; does not modify engine snapshots.
     Migrate,
     /// Initialize this installation once, without predefined credentials.

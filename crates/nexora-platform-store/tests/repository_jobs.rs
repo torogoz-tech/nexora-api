@@ -1,6 +1,6 @@
 use nexora_platform::{
-    GitProvider, PlatformError, RepositoryJobChange, RepositoryJobKind, RepositoryJobRequest,
-    RepositoryJobState, RepositoryRegistration,
+    GitProvider, JobKind, PlatformError, RepositoryJobChange, RepositoryJobKind,
+    RepositoryJobRequest, RepositoryJobState, RepositoryRegistration,
 };
 use nexora_platform_store::{PlatformStore, SecretGenerator};
 use nexora_runtime::DatabaseConnections;
@@ -99,6 +99,14 @@ fn jobs_survive_restart_and_replay_without_repeating_or_crossing_project_boundar
     assert_eq!(job.revision, 1);
     assert_eq!(job.repository_id, repository.id);
     assert_eq!(job.requested_by, ctx.actor_id());
+    let pending = store.pending_repository_jobs_for_wakeup().unwrap();
+    assert!(pending.iter().any(|candidate| candidate.id == job.id));
+    let wakeups = store.pending_job_wakeups().unwrap();
+    assert!(
+        wakeups.iter().any(|wakeup| {
+            wakeup.job_id() == job.id && wakeup.kind() == JobKind::RepositorySync
+        })
+    );
     assert!(matches!(
         store.repository_job(&ctx, &other.id, &job.id),
         Err(PlatformError::NotFound)

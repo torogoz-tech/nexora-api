@@ -17,7 +17,7 @@ Nexora's architecture and initial implementation are led by [Abner Velasco](http
 - Local MCP stdio services and platform MCP catalogs.
 - Authenticated platform APIs for projects, repositories, knowledge, documents, tasks, workflows, approvals, Git integrations, and releases.
 
-The repository does not contain the web interface or independently maintained language profiles. See the common Nexora documentation and the profile repositories for those boundaries.
+The repository does not contain the web interface or independently maintained language profiles. See the common Nexora documentation and the profile repositories for those boundaries. The notification worker has its own process command, but the worker source and executable are still built from this repository pending the 0.4.0 repository extraction.
 
 ## Three ways to run it
 
@@ -32,6 +32,12 @@ cargo check --workspace --locked
 cargo test --workspace --locked
 cargo run -p nexora-cli -- languages list
 cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
+```
+
+The notification worker runs as a separate process and consumes the notification queue. Set `NEXORA_RABBITMQ_URL` in its environment before starting it:
+
+```bash
+NEXORA_RABBITMQ_URL="$NEXORA_RABBITMQ_URL" cargo run -p nexora-api -- --connections .nexora/local/connections.json --schema nexora_platform notifications
 ```
 
 ## Read the implementation guide
@@ -50,19 +56,19 @@ cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
 
 ## Release boundary
 
-This repository is version `0.3.0`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
+This repository is version `0.4.0`, under the ecosystem policy documented in the common Nexora repository. The engine's support is profile- and fixture-specific. A graph enum, schema capability, or API route is not by itself evidence of complete support for every possible source construct. The repository documents those boundaries deliberately.
 
 ## Container build
 
-The API image is assembled from a precompiled release artifact. The runtime container receives the `0.3.0` release binary and does not compile Rust in the runtime image.
+The API image is assembled from a precompiled release artifact. The runtime container receives the `0.4.0` release binary and does not compile Rust in the runtime image.
 
-CI compiles on Ubuntu 24.04 and the runtime uses Ubuntu 24.04 to keep the GNU C library compatible. Git and its HTTPS transport are included for the repository worker. CI tests the assembled image on pushes and pull requests; only main publishes to GHCR. The API and worker run as separate containers using the same image.
+The build and runtime use Ubuntu 24.04 to keep the GNU C library compatible. Git and its HTTPS transport are included for repository operations. The 0.4.0 component rollout gives API, MCP, and each worker an independently built image and repository; its cutover is tracked in [the component architecture](docs/architecture/components-0.4.0.md).
 
 For a local build, compile the binary and provide its directory as the named BuildKit context:
 
 ```bash
 cargo build --release --locked -p nexora-api
-docker build --build-context api-artifact=target/release -t nexora-api:0.3.0 .
+docker build --build-context api-artifact=target/release -t nexora-api:0.4.0 .
 ```
 
 ## License

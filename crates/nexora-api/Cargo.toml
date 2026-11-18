@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 futures-util = "0.3"
+futures-lite = "2"
 tower-http = { version = "0.7.1", features = ["cors"] }
 sha2.workspace = true
 base64 = "0.22"
@@ -22,6 +23,9 @@ serde.workspace = true
 serde_json.workspace = true
 clap.workspace = true
 axum = "0.8"
+# Select ring through the transport crate to avoid Lapin's default AWS-LC native build.
+lapin = { version = "4.12.3", default-features = false, features = ["rustls--ring", "tokio"] }
+amq-protocol-tcp = { version = "=10.7.0", default-features = false, features = ["rustls-common", "rustls--ring", "tokio"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal", "sync", "time"] }
 
 zeroize = "1"

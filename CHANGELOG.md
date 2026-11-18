@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0
+
+- Added the versioned RabbitMQ job wake-up contract and durable publisher topology while keeping PostgreSQL as the job source of truth.
+- Added PostgreSQL recovery scans for repository, release, knowledge, daily-analysis, transition, and email work, with coalesced mutation signals and broker reconnect recovery.
+- Changed the repository worker to recover pending analysis at startup, consume RabbitMQ wake-ups, drain eligible PostgreSQL jobs, and acknowledge only after processing.
+- Removed email delivery from API server startup and added a dedicated notification-worker command with PostgreSQL recovery on startup and broker reconnect.
+- Updated API artifact and OpenAPI release metadata to `0.4.0`.
+
 ## 0.3.0
 
 - Added global ascending and descending alphabetical ordering to service-request listings before pagination.

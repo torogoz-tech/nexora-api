@@ -56,6 +56,9 @@ impl RepositoryWorker {
             &self.settings.git_binary,
             &self.settings.source_root,
         )?;
+        self.run_analysis_once()
+    }
+    pub fn run_analysis_once(&mut self) -> Result<Option<RepositoryWorkerOutcome>, PlatformError> {
         let Some(lease) = self.store.claim_repository_job(&self.settings.id, 300)? else {
             return Ok(None);
         };

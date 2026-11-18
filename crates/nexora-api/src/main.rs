@@ -52,6 +52,16 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
             nexora_api::RepositoryWorkerHost::run(config, args.schema, settings, git_policy, once)
                 .await?;
         }
+        ApiCommand::Notifications => {
+            let rabbitmq_uri = std::env::var("NEXORA_RABBITMQ_URL")
+                .map_err(|_| "NEXORA_RABBITMQ_URL is required for notification worker execution")?;
+            if rabbitmq_uri.trim().is_empty() {
+                return Err("NEXORA_RABBITMQ_URL cannot be empty".into());
+            }
+            let config = DatabaseConnections::load(&args.connections)?;
+            let state = ApiState::new(config, args.schema, 4).await?;
+            nexora_api::EmailNotificationWorker::run(state, rabbitmq_uri).await?;
+        }
         ApiCommand::Migrate => {
             let config = DatabaseConnections::load(&args.connections)?;
             tokio::task::spawn_blocking(move || {
@@ -105,10 +115,26 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                 .await?
                 .with_reasoning(reasoning)
                 .with_trusted_proxies(trusted_proxy);
+            let dispatcher = std::env::var("NEXORA_RABBITMQ_URL")
+                .ok()
+                .filter(|uri| !uri.trim().is_empty())
+                .map(|uri| {
+                    let (sender, task) =
+                        nexora_api::RabbitMqJobWakeupDispatcher::start(state.clone(), uri);
+                    (sender, task)
+                });
+            let state = match &dispatcher {
+                Some((sender, _)) => state.with_job_wakeup_sender(sender.clone()),
+                None => {
+                    eprintln!(
+                        "nexora-api: NEXORA_RABBITMQ_URL is unset; repository jobs will require worker startup recovery"
+                    );
+                    state
+                }
+            };
             let cors = nexora_api::ApiCors::layer(&cors_origin)?;
             let listener = tokio::net::TcpListener::bind(bind).await?;
             eprintln!("nexora-api listening on {}", listener.local_addr()?);
-            let email_worker = nexora_api::EmailNotificationWorker::start(state.clone());
             let rating_worker = nexora_api::DeveloperRatingWorker::start(state.clone());
             axum::serve(
                 listener,
@@ -120,8 +146,10 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                 let _ = tokio::signal::ctrl_c().await;
             })
             .await?;
-            email_worker.abort();
             rating_worker.abort();
+            if let Some((_, task)) = dispatcher {
+                task.abort();
+            }
         }
     }
     Ok(())

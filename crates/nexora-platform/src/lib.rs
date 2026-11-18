@@ -74,6 +74,13 @@ mod repository_job_change;
 pub use repository_job_change::*;
 mod repository_job_kind;
 pub use repository_job_kind::*;
+mod job_kind;
+#[cfg(test)]
+mod job_wakeup_tests;
+pub use job_kind::*;
+mod job_wakeup;
+pub use job_wakeup::*;
+mod job_wakeup_wire;
 mod repository_job_request;
 pub use repository_job_request::*;
 mod repository_job_state;

@@ -20,6 +20,7 @@ pub struct ApiState {
     namespace: Arc<String>,
     pool: Arc<StorePool>,
     permits: Arc<Semaphore>,
+    job_wakeup_sender: Option<tokio::sync::mpsc::Sender<()>>,
 }
 impl ApiState {
     pub async fn new(
@@ -81,7 +82,17 @@ impl ApiState {
             namespace: Arc::new(namespace),
             pool: Arc::new(StorePool::new(store)),
             permits: Arc::new(Semaphore::new(workers)),
+            job_wakeup_sender: None,
         })
+    }
+    pub fn with_job_wakeup_sender(mut self, sender: tokio::sync::mpsc::Sender<()>) -> Self {
+        self.job_wakeup_sender = Some(sender);
+        self
+    }
+    pub(crate) fn signal_job_wakeup(&self) {
+        if let Some(sender) = &self.job_wakeup_sender {
+            let _ = sender.try_send(());
+        }
     }
     pub fn with_reasoning(mut self, settings: Option<crate::ReasoningSettings>) -> Self {
         self.reasoning = settings;
@@ -217,11 +228,16 @@ impl ApiState {
             + Send
             + 'static,
     {
-        self.run(move |store| {
-            store.request(&ctx, operation, &request_id, &input, |store| {
-                action(store, &ctx)
+        let result = self
+            .run(move |store| {
+                store.request(&ctx, operation, &request_id, &input, |store| {
+                    action(store, &ctx)
+                })
             })
-        })
-        .await
+            .await;
+        if result.is_ok() {
+            self.signal_job_wakeup();
+        }
+        result
     }
 }
