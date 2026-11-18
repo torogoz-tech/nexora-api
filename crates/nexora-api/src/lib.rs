@@ -21,27 +21,19 @@ mod mcp_workflow_publish;
 mod mcp_workflow_query;
 mod mcp_workflow_version_query;
 mod mcp_workflow_versions_query;
+mod rabbitmq_job_wakeup_publisher;
 mod repository_code_handlers;
 mod repository_code_request;
 #[cfg(test)]
 mod repository_code_response_tests;
-mod repository_worker;
-mod repository_worker_host;
 mod workflow_handlers;
 mod workflow_list_query;
 mod workflow_mcp_catalog;
 mod workflow_mcp_tools;
 mod workflow_versions_query;
-pub use repository_worker_host::*;
-mod repository_worker_directory;
-mod repository_worker_heartbeat;
-mod repository_worker_outcome;
-pub use repository_worker::*;
-pub use repository_worker_outcome::*;
-mod repository_worker_profile;
-mod repository_worker_settings;
-pub use repository_worker_profile::*;
-pub use repository_worker_settings::*;
+pub use rabbitmq_job_wakeup_publisher::*;
+mod rabbitmq_job_wakeup_dispatcher;
+pub use rabbitmq_job_wakeup_dispatcher::*;
 mod api_state;
 mod repository_job_handlers;
 pub use api_state::*;
@@ -346,11 +338,9 @@ mod installation_preferences_events;
 mod organization_logo;
 mod organization_logo_input;
 
-mod email_notification_worker;
 mod smtp_mailer;
 mod smtp_test_handlers;
 mod smtp_test_input;
-pub use email_notification_worker::EmailNotificationWorker;
 
 mod organization_settings_handlers;
 
@@ -370,13 +360,11 @@ mod password_recovery_request;
 mod public_email_access_handlers;
 
 mod developer_rating_handlers;
-mod developer_rating_worker;
 mod installation_timezone_handlers;
 mod labor_calendar_handlers;
 mod member_role_handlers;
 mod overtime_evidence_handlers;
 mod overtime_handlers;
-pub use developer_rating_worker::DeveloperRatingWorker;
 
 mod feature_handlers;
 mod feature_mcp_catalog;
@@ -435,8 +423,6 @@ mod analysis_profile_authoring_mcp_tools;
 mod mcp_analysis_model_guide_get;
 mod mcp_analysis_profile_package;
 mod mcp_analysis_profile_validate;
-
-mod repository_worker_analysis_profiles;
 
 mod repository_analysis_profile_mcp_tools;
 
@@ -498,9 +484,6 @@ mod repository_commit_handlers;
 mod in_app_notification_handlers;
 
 mod daily_developer_analysis_handlers;
-mod daily_developer_analysis_worker;
-
-mod knowledge_synthesis_worker;
 
 mod knowledge_contribution_handlers;
 mod knowledge_contribution_mcp;

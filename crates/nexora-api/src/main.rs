@@ -43,15 +43,6 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
             let headers = McpHeaders::read(&api_key_file)?;
             println!("{}", headers.as_str());
         }
-        ApiCommand::Worker {
-            settings,
-            git_policy,
-            once,
-        } => {
-            let config = DatabaseConnections::load(&args.connections)?;
-            nexora_api::RepositoryWorkerHost::run(config, args.schema, settings, git_policy, once)
-                .await?;
-        }
         ApiCommand::Migrate => {
             let config = DatabaseConnections::load(&args.connections)?;
             tokio::task::spawn_blocking(move || {
@@ -105,24 +96,56 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                 .await?
                 .with_reasoning(reasoning)
                 .with_trusted_proxies(trusted_proxy);
+            let dispatcher = std::env::var("NEXORA_RABBITMQ_URL")
+                .ok()
+                .filter(|uri| !uri.trim().is_empty())
+                .map(|uri| {
+                    let (sender, task) =
+                        nexora_api::RabbitMqJobWakeupDispatcher::start(state.clone(), uri);
+                    (sender, task)
+                });
+            let state = match &dispatcher {
+                Some((sender, _)) => state.with_job_wakeup_sender(sender.clone()),
+                None => {
+                    eprintln!(
+                        "nexora-api: NEXORA_RABBITMQ_URL is unset; repository jobs will require worker startup recovery"
+                    );
+                    state
+                }
+            };
             let cors = nexora_api::ApiCors::layer(&cors_origin)?;
             let listener = tokio::net::TcpListener::bind(bind).await?;
             eprintln!("nexora-api listening on {}", listener.local_addr()?);
-            let email_worker = nexora_api::EmailNotificationWorker::start(state.clone());
-            let rating_worker = nexora_api::DeveloperRatingWorker::start(state.clone());
             axum::serve(
                 listener,
                 ApiServer::router(state)
                     .layer(cors)
                     .into_make_service_with_connect_info::<std::net::SocketAddr>(),
             )
-            .with_graceful_shutdown(async {
-                let _ = tokio::signal::ctrl_c().await;
-            })
+            .with_graceful_shutdown(shutdown_signal())
             .await?;
-            email_worker.abort();
-            rating_worker.abort();
+            if let Some((_, task)) = dispatcher {
+                task.abort();
+            }
         }
     }
     Ok(())
+}
+
+async fn shutdown_signal() {
+    #[cfg(unix)]
+    {
+        let mut terminate =
+            tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+                .expect("register SIGTERM handler");
+        tokio::select! {
+            _ = tokio::signal::ctrl_c() => {}
+            _ = terminate.recv() => {}
+        }
+    }
+
+    #[cfg(not(unix))]
+    {
+        let _ = tokio::signal::ctrl_c().await;
+    }
 }

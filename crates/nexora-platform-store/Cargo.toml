@@ -8,10 +8,10 @@ license.workspace = true
 nexora-language.workspace = true
 nexora-indexer.workspace = true
 nexora-core.workspace = true
-nexora-platform = { path = "../nexora-platform" }
+nexora-platform.workspace = true
 nexora-runtime.workspace = true
-nexora-reasoning = { path = "../nexora-reasoning" }
-nexora-source = { path = "../nexora-source" }
+nexora-reasoning = { path = "../nexora-reasoning", default-features = false }
+nexora-source.workspace = true
 nexora-retrieval.workspace = true
 serde.workspace = true
 serde_json.workspace = true

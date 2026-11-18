@@ -3,7 +3,7 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.package]
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
 license = "MIT"
 
@@ -13,23 +13,20 @@ serde_json = "1"
 serde_yaml_ng = "0.10"
 thiserror = "2"
 regex = "1"
-regex-syntax = "0.8"
 sha2 = "0.10"
 clap = { version = "4", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-nexora-core = { path = "crates/nexora-core" }
-nexora-language = { path = "crates/nexora-language" }
-nexora-lexer = { path = "crates/nexora-lexer" }
-nexora-parser = { path = "crates/nexora-parser" }
-nexora-ast = { path = "crates/nexora-ast" }
-nexora-symbols = { path = "crates/nexora-symbols" }
-nexora-graph = { path = "crates/nexora-graph" }
-nexora-storage = { path = "crates/nexora-storage" }
-nexora-indexer = { path = "crates/nexora-indexer" }
-nexora-retrieval = { path = "crates/nexora-retrieval" }
+nexora-core = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
+nexora-platform = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
+nexora-language = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-graph = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-storage = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-indexer = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-retrieval = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
+nexora-source = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
 nexora-mcp = { path = "crates/nexora-mcp" }
 nexora-governance = { path = "crates/nexora-governance" }
 nexora-corpus = { path = "crates/nexora-corpus" }
 
-nexora-runtime = { path = "crates/nexora-runtime" }
+nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", rev = "933f34f11a863402d0f032fdf2fc6d19b41c11cf" }

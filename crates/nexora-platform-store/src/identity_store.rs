@@ -21,6 +21,7 @@ impl<'a> IdentityStore<'a> {
         if key.is_empty() || key.len() > 512 || limit <= 0 || window_seconds <= 0 {
             return Err(PlatformError::Validation("invalid authentication limit"));
         }
+        let window_seconds = window_seconds as f64;
         self.store
             .client
             .execute(
@@ -29,16 +30,16 @@ impl<'a> IdentityStore<'a> {
             )
             .map_err(PlatformStore::database_error)?;
         let digest = SecretGenerator::digest(&format!("authentication-attempt:{key}"));
-        let attempts: i64 = self
+        let attempts: i32 = self
             .store
             .client
             .query_one(
-                "INSERT INTO authentication_attempt_limits(key_digest,window_started_at,attempts) VALUES($1,clock_timestamp(),1) ON CONFLICT(key_digest) DO UPDATE SET window_started_at=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN clock_timestamp() ELSE authentication_attempt_limits.window_started_at END,attempts=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN 1 ELSE authentication_attempt_limits.attempts+1 END RETURNING attempts",
+                "INSERT INTO authentication_attempt_limits(key_digest,window_started_at,attempts) VALUES($1,clock_timestamp(),1) ON CONFLICT(key_digest) DO UPDATE SET window_started_at=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-make_interval(secs => $2::double precision) THEN clock_timestamp() ELSE authentication_attempt_limits.window_started_at END,attempts=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-make_interval(secs => $2::double precision) THEN 1 ELSE authentication_attempt_limits.attempts+1 END RETURNING attempts",
                 &[&digest, &window_seconds],
             )
             .map_err(PlatformStore::database_error)?
             .get(0);
-        if attempts > limit {
+        if i64::from(attempts) > limit {
             return Err(PlatformError::TooManyRequests);
         }
         Ok(())

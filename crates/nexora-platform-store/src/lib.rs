@@ -33,6 +33,8 @@ mod repository_job_lease_store;
 mod repository_job_publication_store;
 mod repository_job_source_plan;
 pub use repository_job_source_plan::*;
+mod pending_job_wakeups;
+mod repository_job_pending_wakeups;
 mod repository_job_source_plan_store;
 mod repository_job_source_request;
 mod repository_job_store;

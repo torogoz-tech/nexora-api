@@ -34,7 +34,7 @@ impl ReasoningSession {
             .filter(|d| !d.is_zero())
             .ok_or(ReasoningError::Budget)
     }
-    #[cfg(test)]
+    #[cfg(all(test, feature = "repository-tools"))]
     pub(crate) fn with_budget(mut self, budget: Duration) -> Self {
         self.budget = budget;
         self
