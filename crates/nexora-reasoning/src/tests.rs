@@ -30,6 +30,7 @@ fn insufficient_evidence_requires_an_explicit_gap() {
     report.validate(&request(), &[]).unwrap();
 }
 #[test]
+#[cfg(feature = "repository-tools")]
 fn bounded_loop_preserves_reasoning_and_binds_evidence() {
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -100,6 +101,7 @@ fn bounded_loop_preserves_reasoning_and_binds_evidence() {
     task.join().unwrap();
 }
 #[test]
+#[cfg(feature = "repository-tools")]
 fn contribution_conclusions_require_actual_comparison_evidence() {
     let mut input = request();
     input.purpose = "contribution_review".into();
@@ -119,6 +121,7 @@ fn contribution_conclusions_require_actual_comparison_evidence() {
     report.validate(&input, &evidence).unwrap();
 }
 #[test]
+#[cfg(feature = "repository-tools")]
 fn comparison_arguments_cannot_change_authority_or_expand_the_window() {
     assert!(
         ComparisonQuery::parse(json!({"path":"payment.rs","start_line":1,"line_count":80})).is_ok()
@@ -133,6 +136,7 @@ fn comparison_arguments_cannot_change_authority_or_expand_the_window() {
 }
 
 #[test]
+#[cfg(feature = "repository-tools")]
 fn an_unrelated_comparison_does_not_support_a_contribution_conclusion() {
     let mut input = request();
     input.purpose = "contribution_review".into();

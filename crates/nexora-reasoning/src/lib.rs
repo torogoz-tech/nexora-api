@@ -23,9 +23,9 @@ pub use registered_repository::RegisteredRepository;
 pub use secret_file::SecretFile;
 #[cfg(test)]
 mod http_fixture;
-#[cfg(test)]
+#[cfg(all(test, feature = "repository-tools"))]
 mod repository_tests;
-#[cfg(test)]
+#[cfg(all(test, feature = "repository-tools"))]
 mod response_tests;
 #[cfg(test)]
 mod tests;
@@ -34,7 +34,7 @@ mod comparison_tool;
 pub use comparison_tool::ComparisonTool;
 mod comparison_query;
 pub use comparison_query::ComparisonQuery;
-#[cfg(test)]
+#[cfg(all(test, feature = "repository-tools"))]
 mod comparison_tests;
 
 mod analysis_attachment;
