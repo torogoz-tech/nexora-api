@@ -6,6 +6,7 @@ mod error;
 mod evidence;
 mod openai_client;
 mod reasoning_session;
+#[cfg(feature = "repository-tools")]
 mod registered_repository;
 mod report_schema;
 mod secret_file;
@@ -17,6 +18,7 @@ pub use error::ReasoningError;
 pub use evidence::Evidence;
 pub use openai_client::OpenAiClient;
 pub use reasoning_session::ReasoningSession;
+#[cfg(feature = "repository-tools")]
 pub use registered_repository::RegisteredRepository;
 pub use secret_file::SecretFile;
 #[cfg(test)]

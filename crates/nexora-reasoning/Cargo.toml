@@ -4,6 +4,15 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+default = ["repository-tools"]
+repository-tools = ["dep:nexora-mcp"]
+
+[[bin]]
+name = "nexora-reasoning"
+path = "src/main.rs"
+required-features = ["repository-tools"]
+
 [dependencies]
 base64 = "0.22"
 serde.workspace = true
@@ -11,7 +20,7 @@ serde_json.workspace = true
 thiserror.workspace = true
 sha2.workspace = true
 clap.workspace = true
-nexora-mcp.workspace = true
+nexora-mcp = { workspace = true, optional = true }
 ureq = { version = "3", features = ["json"] }
 zeroize = "1"
 
