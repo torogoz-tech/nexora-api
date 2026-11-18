@@ -501,6 +501,10 @@ impl ApiServer {
             .merge(secured)
             .fallback(|| async { ApiError(PlatformError::NotFound) })
             .layer(DefaultBodyLimit::max(1_048_576))
+            .layer(middleware::from_fn_with_state(
+                state.clone(),
+                ApiMiddleware::client_address,
+            ))
             .layer(middleware::from_fn(ApiMiddleware::request_id))
             .with_state(state)
     }

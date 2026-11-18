@@ -1,13 +1,36 @@
 use crate::{ApiState, api_error::ApiError};
 use axum::{
-    extract::{Request, State},
+    extract::{ConnectInfo, Request, State},
     middleware::Next,
     response::Response,
 };
 use nexora_platform::PlatformError;
 use nexora_platform_store::SecretGenerator;
+use std::net::SocketAddr;
+
+#[derive(Clone)]
+pub(crate) struct ClientAddress(pub Option<String>);
+
 pub(crate) struct ApiMiddleware;
 impl ApiMiddleware {
+    pub async fn client_address(
+        State(state): State<ApiState>,
+        mut request: Request,
+        next: Next,
+    ) -> Response {
+        let peer = request
+            .extensions()
+            .get::<ConnectInfo<SocketAddr>>()
+            .map(|ConnectInfo(address)| *address);
+        let forwarded = request
+            .headers()
+            .get("x-forwarded-for")
+            .and_then(|value| value.to_str().ok());
+        let address = state.client_address(peer, forwarded);
+        request.extensions_mut().insert(ClientAddress(address));
+        next.run(request).await
+    }
+
     pub async fn authenticate(
         State(state): State<ApiState>,
         mut request: Request,

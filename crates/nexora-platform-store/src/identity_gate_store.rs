@@ -160,7 +160,7 @@ impl PlatformStore {
         }
         if complete {
             let new_token = format!("nxs_{id}.{}", SecretGenerator::token("secret")?);
-            tx.execute("UPDATE sessions SET access_stage='ready',setup_secret=NULL,digest=$2,expires_at=now()+interval '8 hours' WHERE id=$1",&[&id,&SecretGenerator::digest(&new_token)]).map_err(Self::database_error)?;
+            tx.execute("UPDATE sessions SET access_stage='ready',setup_secret=NULL,digest=$2,expires_at=LEAST(clock_timestamp()+interval '30 minutes',absolute_expires_at),last_activity_at=clock_timestamp() WHERE id=$1",&[&id,&SecretGenerator::digest(&new_token)]).map_err(Self::database_error)?;
             result = json!({"stage":"ready","access_token":new_token,"token_type":"Bearer","expires_in":28800,"actor_id":actor});
         }
         if action != "status" || complete {

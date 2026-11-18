@@ -176,7 +176,7 @@ impl<'a> OidcAuthorizationStore<'a> {
                 )?;
             }
         }
-        let actor:Option<String>=tx.query_opt("INSERT INTO sessions(id,actor_id,digest,expires_at,authentication_provider_id) SELECT $1,a.id,$2,now()+interval '8 hours',p.id FROM oidc_providers p JOIN oidc_identities i ON i.provider_id=p.id AND i.issuer=p.issuer JOIN users u ON u.actor_id=i.actor_id JOIN actors a ON a.id=u.actor_id WHERE p.id=$3 AND p.enabled AND p.revision=$4 AND i.subject=$5 AND p.issuer=$6 AND a.active AND a.kind='human' RETURNING actor_id",&[&session_id,&SecretGenerator::digest(&token),&provider.id,&revision,&subject,&provider.issuer]).map_err(PlatformStore::database_error)?.map(|r|r.get(0));
+        let actor:Option<String>=tx.query_opt("INSERT INTO sessions(id,actor_id,digest,expires_at,authentication_provider_id) SELECT $1,a.id,$2,clock_timestamp()+interval '30 minutes',p.id FROM oidc_providers p JOIN oidc_identities i ON i.provider_id=p.id AND i.issuer=p.issuer JOIN users u ON u.actor_id=i.actor_id JOIN actors a ON a.id=u.actor_id WHERE p.id=$3 AND p.enabled AND p.revision=$4 AND i.subject=$5 AND p.issuer=$6 AND a.active AND a.kind='human' RETURNING actor_id",&[&session_id,&SecretGenerator::digest(&token),&provider.id,&revision,&subject,&provider.issuer]).map_err(PlatformStore::database_error)?.map(|r|r.get(0));
         let actor = actor.ok_or(PlatformError::Unauthorized)?;
         if let Some(email) = &identity.email {
             tx.execute("UPDATE oidc_identities SET contact_email=$3,contact_email_verified=$4 WHERE provider_id=$1 AND actor_id=$2 AND subject=$5",&[&provider.id,&actor,email,&identity.email_verified,&subject]).map_err(PlatformStore::database_error)?;

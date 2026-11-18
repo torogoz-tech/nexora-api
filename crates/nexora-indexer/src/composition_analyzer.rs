@@ -157,7 +157,6 @@ impl CompositionAnalyzer {
         let mut interpretations = Vec::new();
         let mut cursor = 0;
         while cursor < units.len() {
-            budget.checkpoint()?;
             let unit = &units[cursor];
             let profile = &self.profiles[&unit.language.0];
             // Discover from projected nodes, so every link has a real graph endpoint.
@@ -260,7 +259,6 @@ impl CompositionAnalyzer {
             &self.profiles,
             &mut budget,
         )?;
-        budget.checkpoint()?;
         let complete = units.iter().all(|u| u.status == RegionStatus::Parsed)
             && interpretations
                 .iter()
@@ -296,7 +294,6 @@ impl CompositionAnalyzer {
             &self.profiles,
             &mut budget,
         )?;
-        budget.checkpoint()?;
         Ok(CompositionResult {
             graph,
             schema_version: 7,

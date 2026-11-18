@@ -54,7 +54,6 @@ impl CompositionCallResolver {
                 .enumerate()
                 .filter(|(_, e)| e.kind == EdgeKind::Calls)
             {
-                budget.checkpoint()?;
                 let Some(origin) = edge
                     .evidence
                     .syntax_unit

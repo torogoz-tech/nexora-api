@@ -7,6 +7,7 @@ pub(crate) struct TokenRuleSelector;
 impl TokenRuleSelector {
     pub fn select<'a>(
         rules: &'a [CompiledTokenRule],
+        candidates: &regex::RegexSet,
         input: &str,
         offset: usize,
         previous: Option<TokenContext<'_>>,
@@ -14,7 +15,8 @@ impl TokenRuleSelector {
         mut budget: Option<&mut LexicalRegionBudget>,
     ) -> Result<(&'a CompiledTokenRule, usize), NexoraError> {
         let mut best: Option<(&CompiledTokenRule, usize, bool)> = None;
-        for rule in rules {
+        for index in candidates.matches(input).iter() {
+            let rule = &rules[index];
             if let Some(budget) = budget.as_mut() {
                 budget.spend()?;
             }

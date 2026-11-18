@@ -12,7 +12,13 @@ impl PlatformStore {
             .strip_prefix("nxs_")
             .and_then(|v| v.split_once('.'))
             .ok_or(PlatformError::Unauthorized)?;
-        let row = self.client.query_opt("SELECT s.actor_id,a.name,s.access_stage,ceil(extract(epoch FROM s.expires_at-now()))::bigint,s.digest FROM sessions s JOIN actors a ON a.id=s.actor_id JOIN users u ON u.actor_id=a.id WHERE s.id=$1 AND s.revoked_at IS NULL AND s.expires_at>now() AND a.active AND (s.access_stage='ready' OR s.created_at>now()-interval '15 minutes') AND (s.authentication_provider_id IS NULL OR EXISTS(SELECT 1 FROM oidc_providers p WHERE p.id=s.authentication_provider_id AND p.enabled))", &[&id]).map_err(Self::database_error)?.ok_or(PlatformError::Unauthorized)?;
+        self.client
+            .execute(
+                "UPDATE sessions SET expires_at=LEAST(clock_timestamp()+interval '30 minutes',absolute_expires_at),last_activity_at=clock_timestamp() WHERE id=$1 AND digest=$2 AND access_stage='ready' AND revoked_at IS NULL AND expires_at>clock_timestamp() AND absolute_expires_at>clock_timestamp() AND last_activity_at<clock_timestamp()-interval '60 seconds'",
+                &[&id, &SecretGenerator::digest(token)],
+            )
+            .map_err(Self::database_error)?;
+        let row = self.client.query_opt("SELECT s.actor_id,a.name,s.access_stage,ceil(extract(epoch FROM s.expires_at-now()))::bigint,s.digest FROM sessions s JOIN actors a ON a.id=s.actor_id JOIN users u ON u.actor_id=a.id WHERE s.id=$1 AND s.revoked_at IS NULL AND s.expires_at>now() AND s.absolute_expires_at>now() AND a.active AND (s.access_stage='ready' OR s.created_at>now()-interval '15 minutes') AND (s.authentication_provider_id IS NULL OR EXISTS(SELECT 1 FROM oidc_providers p WHERE p.id=s.authentication_provider_id AND p.enabled))", &[&id]).map_err(Self::database_error)?.ok_or(PlatformError::Unauthorized)?;
         if !bool::from(
             row.get::<_, Vec<u8>>(4)
                 .ct_eq(&SecretGenerator::digest(token)),

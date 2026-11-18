@@ -79,6 +79,7 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
         }
         ApiCommand::Serve {
             cors_origin,
+            trusted_proxy,
             reasoning_settings,
             bind,
             workers,
@@ -102,17 +103,23 @@ async fn run(args: ApiArguments) -> Result<(), Box<dyn std::error::Error>> {
                 .transpose()?;
             let state = ApiState::with_policies(config, args.schema, workers, policy, git_policy)
                 .await?
-                .with_reasoning(reasoning);
+                .with_reasoning(reasoning)
+                .with_trusted_proxies(trusted_proxy);
             let cors = nexora_api::ApiCors::layer(&cors_origin)?;
             let listener = tokio::net::TcpListener::bind(bind).await?;
             eprintln!("nexora-api listening on {}", listener.local_addr()?);
             let email_worker = nexora_api::EmailNotificationWorker::start(state.clone());
             let rating_worker = nexora_api::DeveloperRatingWorker::start(state.clone());
-            axum::serve(listener, ApiServer::router(state).layer(cors))
-                .with_graceful_shutdown(async {
-                    let _ = tokio::signal::ctrl_c().await;
-                })
-                .await?;
+            axum::serve(
+                listener,
+                ApiServer::router(state)
+                    .layer(cors)
+                    .into_make_service_with_connect_info::<std::net::SocketAddr>(),
+            )
+            .with_graceful_shutdown(async {
+                let _ = tokio::signal::ctrl_c().await;
+            })
+            .await?;
             email_worker.abort();
             rating_worker.abort();
         }

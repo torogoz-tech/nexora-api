@@ -44,6 +44,9 @@ pub enum ApiCommand {
         /// Exact HTTPS frontend origin; repeat for additional authorized browser origins.
         #[arg(long)]
         cors_origin: Vec<String>,
+        /// Exact reverse-proxy IP addresses trusted to set X-Forwarded-For; repeat as needed.
+        #[arg(long)]
+        trusted_proxy: Vec<std::net::IpAddr>,
         /// Explicit operator configuration for native OpenAI reasoning.
         #[arg(long)]
         reasoning_settings: Option<PathBuf>,

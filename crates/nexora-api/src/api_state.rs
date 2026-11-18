@@ -3,6 +3,7 @@ use crate::store_pool::StorePool;
 use nexora_platform::PlatformError;
 use nexora_platform_store::PlatformStore;
 use nexora_runtime::DatabaseConnections;
+use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 /// Reuses connections only; no business or authorization results are cached in RAM.
@@ -14,6 +15,7 @@ pub struct ApiState {
     reasoning_permits: Arc<Semaphore>,
     git_policy: Arc<nexora_platform_store::GitNetworkPolicy>,
     identity_policy: Arc<nexora_platform_store::OidcNetworkPolicy>,
+    trusted_proxies: Arc<Vec<IpAddr>>,
     config: Arc<DatabaseConnections>,
     namespace: Arc<String>,
     pool: Arc<StorePool>,
@@ -74,6 +76,7 @@ impl ApiState {
             reasoning_permits: Arc::new(Semaphore::new(1)),
             git_policy: Arc::new(git_policy),
             identity_policy: Arc::new(policy),
+            trusted_proxies: Arc::new(Vec::new()),
             config: Arc::new(config),
             namespace: Arc::new(namespace),
             pool: Arc::new(StorePool::new(store)),
@@ -83,6 +86,39 @@ impl ApiState {
     pub fn with_reasoning(mut self, settings: Option<crate::ReasoningSettings>) -> Self {
         self.reasoning = settings;
         self
+    }
+    pub fn with_trusted_proxies(mut self, proxies: Vec<IpAddr>) -> Self {
+        self.trusted_proxies = Arc::new(proxies);
+        self
+    }
+    pub(crate) fn client_address(
+        &self,
+        peer: Option<SocketAddr>,
+        forwarded_for: Option<&str>,
+    ) -> Option<String> {
+        let peer = peer?.ip();
+        if !self.trusted_proxies.contains(&peer) {
+            return Some(peer.to_string());
+        }
+        let Some(forwarded_for) = forwarded_for else {
+            return Some(peer.to_string());
+        };
+        let forwarded = forwarded_for
+            .split(',')
+            .map(str::trim)
+            .map(str::parse::<IpAddr>)
+            .collect::<Result<Vec<_>, _>>()
+            .ok()
+            .filter(|addresses| !addresses.is_empty() && addresses.len() <= 16);
+        let Some(forwarded) = forwarded else {
+            return Some(peer.to_string());
+        };
+        forwarded
+            .iter()
+            .rev()
+            .chain(std::iter::once(&peer))
+            .find(|address| !self.trusted_proxies.contains(address))
+            .map(ToString::to_string)
     }
     pub(crate) fn reasoning_context(
         &self,

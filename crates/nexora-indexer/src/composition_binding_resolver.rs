@@ -129,7 +129,6 @@ impl CompositionBindingResolver {
         let mut touched = BTreeSet::new();
         let mut remaining = 100_000;
         for request in requests {
-            budget.checkpoint()?;
             let edge = &mut graph.edges[request.edge_index];
             if old_symbols.contains(&edge.target) {
                 touched.insert(edge.target.clone());

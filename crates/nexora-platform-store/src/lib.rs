@@ -556,8 +556,6 @@ mod task_release_publication;
 
 mod task_provider_merge;
 
-mod task_release_composition;
-
 #[cfg(test)]
 extern crate self as nexora_platform_store;
 

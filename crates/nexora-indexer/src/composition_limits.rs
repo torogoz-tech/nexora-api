@@ -6,7 +6,6 @@ pub struct CompositionLimits {
     pub max_tokens: usize,
     pub max_nodes: usize,
     pub max_parser_steps: usize,
-    pub max_millis: usize,
 }
 impl Default for CompositionLimits {
     fn default() -> Self {
@@ -16,7 +15,6 @@ impl Default for CompositionLimits {
             max_tokens: 200_000,
             max_nodes: 200_000,
             max_parser_steps: 64_000_000,
-            max_millis: 5_000,
         }
     }
 }
@@ -29,7 +27,6 @@ impl CompositionLimits {
             (self.max_tokens, ceiling.max_tokens),
             (self.max_nodes, ceiling.max_nodes),
             (self.max_parser_steps, ceiling.max_parser_steps),
-            (self.max_millis, ceiling.max_millis),
         ]
         .iter()
         .any(|(value, max)| *value == 0 || value > max)

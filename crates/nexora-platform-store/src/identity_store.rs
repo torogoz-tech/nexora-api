@@ -12,6 +12,49 @@ impl<'a> IdentityStore<'a> {
     pub fn new(store: &'a mut PlatformStore) -> Self {
         Self { store }
     }
+    pub fn consume_authentication_attempt(
+        &mut self,
+        key: &str,
+        limit: i64,
+        window_seconds: i64,
+    ) -> Result<(), PlatformError> {
+        if key.is_empty() || key.len() > 512 || limit <= 0 || window_seconds <= 0 {
+            return Err(PlatformError::Validation("invalid authentication limit"));
+        }
+        self.store
+            .client
+            .execute(
+                "DELETE FROM authentication_attempt_limits WHERE window_started_at<clock_timestamp()-interval '1 day'",
+                &[],
+            )
+            .map_err(PlatformStore::database_error)?;
+        let digest = SecretGenerator::digest(&format!("authentication-attempt:{key}"));
+        let attempts: i64 = self
+            .store
+            .client
+            .query_one(
+                "INSERT INTO authentication_attempt_limits(key_digest,window_started_at,attempts) VALUES($1,clock_timestamp(),1) ON CONFLICT(key_digest) DO UPDATE SET window_started_at=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN clock_timestamp() ELSE authentication_attempt_limits.window_started_at END,attempts=CASE WHEN authentication_attempt_limits.window_started_at<=clock_timestamp()-($2*interval '1 second') THEN 1 ELSE authentication_attempt_limits.attempts+1 END RETURNING attempts",
+                &[&digest, &window_seconds],
+            )
+            .map_err(PlatformStore::database_error)?
+            .get(0);
+        if attempts > limit {
+            return Err(PlatformError::TooManyRequests);
+        }
+        Ok(())
+    }
+
+    fn clear_authentication_attempt(&mut self, key: &str) -> Result<(), PlatformError> {
+        let digest = SecretGenerator::digest(&format!("authentication-attempt:{key}"));
+        self.store
+            .client
+            .execute(
+                "DELETE FROM authentication_attempt_limits WHERE key_digest=$1",
+                &[&digest],
+            )
+            .map_err(PlatformStore::database_error)?;
+        Ok(())
+    }
     pub fn bootstrap(
         &mut self,
         organization: &str,
@@ -108,10 +151,23 @@ impl<'a> IdentityStore<'a> {
         username: &str,
         password: &str,
     ) -> Result<IssuedSession, PlatformError> {
+        self.login_from_peer(username, password, None)
+    }
+
+    pub fn login_from_peer(
+        &mut self,
+        username: &str,
+        password: &str,
+        peer: Option<&str>,
+    ) -> Result<IssuedSession, PlatformError> {
         if !self.store.authentication_policy()?.local_enabled {
             return Err(PlatformError::Unauthorized);
         }
         let username = DomainText::username(username).map_err(|_| PlatformError::Unauthorized)?;
+        self.consume_authentication_attempt(&format!("login:account:{username}"), 10, 900)?;
+        if let Some(peer) = peer {
+            self.consume_authentication_attempt(&format!("login:peer:{peer}"), 60, 900)?;
+        }
         if password.len() > 1024 {
             return Err(PlatformError::Unauthorized);
         }
@@ -125,8 +181,16 @@ impl<'a> IdentityStore<'a> {
             .as_ref()
             .is_none_or(|h| !PasswordCredential::verify(password, h))
         {
+            if hash.is_none() {
+                let _ = PasswordCredential::hash(&SecretGenerator::token("dummy")?)?;
+            }
             return Err(PlatformError::Unauthorized);
         }
+        let upgraded_hash = hash
+            .as_deref()
+            .filter(|stored| PasswordCredential::needs_rehash(stored))
+            .map(|_| PasswordCredential::hash(password))
+            .transpose()?;
         let actor: String = row.get(0);
         let id = SecretGenerator::id("ses")?;
         let token = format!("nxs_{id}.{}", SecretGenerator::token("secret")?);
@@ -159,7 +223,14 @@ impl<'a> IdentityStore<'a> {
         if current.get::<_, Option<String>>(0) != hash {
             return Err(PlatformError::Unauthorized);
         }
-        let affected=tx.execute("INSERT INTO sessions(id,actor_id,digest,expires_at) SELECT $1,id,$3,now()+interval '8 hours' FROM actors WHERE id=$2 AND active AND kind='human' AND EXISTS(SELECT 1 FROM authentication_policy WHERE singleton AND local_enabled)",&[&id,&actor,&digest]).map_err(PlatformStore::database_error)?;
+        if let Some(upgraded_hash) = upgraded_hash {
+            tx.execute(
+                "UPDATE users SET password_hash=$2 WHERE actor_id=$1",
+                &[&actor, &upgraded_hash],
+            )
+            .map_err(PlatformStore::database_error)?;
+        }
+        let affected=tx.execute("INSERT INTO sessions(id,actor_id,digest,expires_at) SELECT $1,id,$3,clock_timestamp()+interval '30 minutes' FROM actors WHERE id=$2 AND active AND kind='human' AND EXISTS(SELECT 1 FROM authentication_policy WHERE singleton AND local_enabled)",&[&id,&actor,&digest]).map_err(PlatformStore::database_error)?;
         if affected != 1 {
             return Err(PlatformError::Unauthorized);
         }
@@ -173,6 +244,10 @@ impl<'a> IdentityStore<'a> {
         )?;
         let next_step = crate::login_gate::LoginGate::apply(&mut tx, &actor, &id)?;
         tx.commit().map_err(PlatformStore::database_error)?;
+        self.clear_authentication_attempt(&format!("login:account:{username}"))?;
+        if let Some(peer) = peer {
+            self.clear_authentication_attempt(&format!("login:peer:{peer}"))?;
+        }
         Ok(IssuedSession {
             access_token: token,
             token_type: "Bearer".into(),

@@ -1254,6 +1254,22 @@ impl PlatformStore {
     ) -> Result<IssuedSession, PlatformError> {
         IdentityStore::new(self).login(username, password)
     }
+    pub fn login_from_peer(
+        &mut self,
+        username: &str,
+        password: &str,
+        peer: Option<&str>,
+    ) -> Result<IssuedSession, PlatformError> {
+        IdentityStore::new(self).login_from_peer(username, password, peer)
+    }
+    pub fn consume_authentication_attempt(
+        &mut self,
+        key: &str,
+        limit: i64,
+        window_seconds: i64,
+    ) -> Result<(), PlatformError> {
+        IdentityStore::new(self).consume_authentication_attempt(key, limit, window_seconds)
+    }
     pub fn logout(&mut self, token: &str) -> Result<(), PlatformError> {
         IdentityStore::new(self).logout(token)
     }

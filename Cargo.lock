@@ -1903,7 +1903,7 @@ checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "nexora-api"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "axum",
  "base64 0.22.1",
@@ -1937,7 +1937,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-ast"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -1947,7 +1947,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-cli"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "clap",
  "nexora-core",
@@ -1966,7 +1966,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-core"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "serde",
  "thiserror 2.0.21",
@@ -1974,7 +1974,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-corpus"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-governance",
@@ -1990,7 +1990,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-governance"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2007,7 +2007,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-graph"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-ast",
  "nexora-core",
@@ -2020,7 +2020,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-indexer"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-ast",
  "nexora-core",
@@ -2039,7 +2039,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-language"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "regex",
@@ -2052,7 +2052,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-lexer"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -2062,7 +2062,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-mcp"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2078,7 +2078,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-parser"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-language",
@@ -2090,7 +2090,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-platform"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "email_address",
  "scraper",
@@ -2103,7 +2103,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-platform-store"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "aes-gcm",
  "argon2",
@@ -2137,7 +2137,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-reasoning"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "base64 0.22.1",
  "clap",
@@ -2153,7 +2153,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-retrieval"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2166,7 +2166,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-runtime"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "base64 0.22.1",
  "flate2",
@@ -2185,7 +2185,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-source"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "base64 0.22.1",
  "libc",
@@ -2197,7 +2197,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-storage"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-core",
  "nexora-graph",
@@ -2206,7 +2206,7 @@ dependencies = [
 
 [[package]]
 name = "nexora-symbols"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "nexora-ast",
  "nexora-core",

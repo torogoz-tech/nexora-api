@@ -71,7 +71,6 @@ impl MultiProfileIndexer {
                     "pinned profile checksum mismatch".into(),
                 ));
             }
-            Self::check_time(started, Duration::ZERO)?;
             let root = candidate
                 .package
                 .models
@@ -116,12 +115,6 @@ impl MultiProfileIndexer {
             // A stable ascending ID breaks equal version/import-time ties.
             .then_with(|| previous.id.cmp(&candidate.id))
             .is_gt()
-    }
-    fn check_time(started: Instant, preparation: Duration) -> Result<(), NexoraError> {
-        if started.elapsed().saturating_add(preparation) >= Duration::from_secs(30) {
-            return Err(NexoraError::Limit("repository analysis > 30s".into()));
-        }
-        Ok(())
     }
     pub fn index_repository_external<S: SnapshotStore>(
         &self,
@@ -251,7 +244,7 @@ impl MultiProfileIndexer {
                     ) => {
                         let reason = error.to_string();
                         skipped_files.push(
-                            json!({"path":relative,"profile_id":candidate.id,"reason":reason}),
+                            json!({"path":relative,"profile_id":candidate.id,"analysis_status":"unknown","reason":reason}),
                         );
                         profile_diagnostics.push(nexora_core::AnalysisDiagnostic {
                             stage: "source_read".into(),
@@ -276,7 +269,7 @@ impl MultiProfileIndexer {
                     crate::SourceReadOutcome::Skipped {
                         reason, checksum, ..
                     } => {
-                        skipped_files.push(json!({"path":relative,"profile_id":candidate.id,"reason":reason,"checksum":checksum}));
+                        skipped_files.push(json!({"path":relative,"profile_id":candidate.id,"analysis_status":"unknown","reason":reason,"checksum":checksum}));
                         profile_diagnostics.push(nexora_core::AnalysisDiagnostic {
                             stage: "source_encoding".into(),
                             path: Some(relative.clone()),
@@ -319,7 +312,7 @@ impl MultiProfileIndexer {
                             | NexoraError::InvalidPath(_)),
                         ) => {
                             let reason = error.to_string();
-                            skipped_files.push(json!({"path":relative,"profile_id":candidate.id,"reason":reason,"checksum":raw_checksum}));
+                            skipped_files.push(json!({"path":relative,"profile_id":candidate.id,"analysis_status":"unknown","reason":reason,"checksum":raw_checksum}));
                             profile_diagnostics.push(nexora_core::AnalysisDiagnostic {
                                 stage: "file_analysis".into(),
                                 path: Some(relative.clone()),
@@ -370,7 +363,16 @@ impl MultiProfileIndexer {
         } else {
             "partial"
         };
-        let selection = json!({ "policy":policy, "status":status, "profiles":report_profiles, "uncovered_files":uncovered, "excluded_files":[], "excluded_directories":excluded_directories, "skipped_files":skipped_files, "decoded_files":decoded_files });
+        let unknown_files: BTreeSet<_> = skipped_files
+            .iter()
+            .filter_map(|file| {
+                file.get("path")
+                    .and_then(serde_json::Value::as_str)
+                    .map(str::to_owned)
+            })
+            .chain(uncovered.iter().cloned())
+            .collect();
+        let selection = json!({ "policy":policy, "status":status, "profiles":report_profiles, "uncovered_files":uncovered, "unknown_files":unknown_files, "excluded_files":[], "excluded_directories":excluded_directories, "skipped_files":skipped_files, "decoded_files":decoded_files });
         let selection_bytes = serde_json::to_vec(&selection)
             .map_err(|e| NexoraError::Configuration(e.to_string()))?;
         let configuration = format!("{:x}", configuration.finalize());

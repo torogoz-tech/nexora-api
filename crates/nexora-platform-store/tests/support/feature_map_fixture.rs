@@ -1,3 +1,6 @@
+// Shared fixture variants are intentionally consumed by different integration tests.
+#![allow(dead_code)]
+
 #[path = "work_item_fixture.rs"]
 mod work_item_fixture;
 use nexora_platform::*;

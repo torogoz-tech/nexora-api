@@ -11,7 +11,7 @@ impl Parser {
         Self { grammar }
     }
     pub fn parse(&self, tokens: &[Token]) -> ConcreteSyntaxTree {
-        self.parse_measured(tokens, usize::MAX).tree
+        self.parse_measured(tokens, self.grammar.max_steps).tree
     }
     /// Uses only the selected context, never the root grammar or its file scope.
     /// Token indices belong to this input stream, while source positions may be absolute.
@@ -22,7 +22,7 @@ impl Parser {
         origin: nexora_core::SourcePosition,
     ) -> Result<ConcreteSyntaxTree, nexora_core::NexoraError> {
         Ok(self
-            .parse_in_context_measured(tokens, context, origin, usize::MAX)?
+            .parse_in_context_measured(tokens, context, origin, self.grammar.max_steps)?
             .tree)
     }
     pub fn parse_measured(&self, tokens: &[Token], max_steps: usize) -> crate::MeasuredParse {

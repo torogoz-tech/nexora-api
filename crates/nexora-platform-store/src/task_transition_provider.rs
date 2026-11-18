@@ -1012,8 +1012,6 @@ impl TaskTransitionProvider {
         ctx: &AuthContext,
         project: &str,
         repository: &str,
-        base: &str,
-        head: &str,
         commit: &str,
         policy: &GitNetworkPolicy,
     ) -> Result<Value, PlatformError> {
@@ -1023,29 +1021,10 @@ impl TaskTransitionProvider {
             ));
         }
         // A task commit is repository-scoped evidence, not branch-scoped evidence.
-        // The provider metadata lookup below verifies that the full SHA belongs to
-        // this repository; the base comparison still prevents linking a commit
-        // that is already part of the task's base revision.
+        // Provider metadata verifies the full SHA against the selected repository.
         let (source, token) = Self::source(store, ctx, Some(project), repository, policy)?;
         let root = Self::root(&source)?;
         let client = PullRequestClient::new(policy, source.connection.provider);
-        let merged = if source.connection.provider == GitProvider::Github {
-            client.get(&format!("{root}/compare/{commit}...{base}"), &token)?
-        } else {
-            client.get(
-                &format!("{root}/repository/merge_base?refs[]={commit}&refs[]={base}"),
-                &token,
-            )?
-        };
-        if crate::task_release_composition::TaskReleaseComposition::contains(
-            source.connection.provider,
-            &merged,
-            commit,
-        ) {
-            return Err(PlatformError::Validation(
-                "commit already belongs to the task base; select only task changes",
-            ));
-        }
         let metadata = client.get(
             &if source.connection.provider == GitProvider::Github {
                 format!("{root}/commits/{commit}")
@@ -1053,7 +1032,12 @@ impl TaskTransitionProvider {
                 format!("{root}/repository/commits/{commit}")
             },
             &token,
-        )?;
+        ).map_err(|error| match error {
+            PlatformError::NotFound => PlatformError::Validation(
+                "commit SHA was not found in the selected repository; verify the repository and full SHA",
+            ),
+            other => other,
+        })?;
         let actual = if source.connection.provider == GitProvider::Github {
             metadata["sha"].as_str()
         } else {
@@ -1072,13 +1056,11 @@ impl TaskTransitionProvider {
         .ok_or(PlatformError::Unavailable)?;
         if parents.len() != 1 {
             return Err(PlatformError::Validation(
-                "select individual non-merge task commits for release composition",
+                "merge commits cannot be linked; select an individual commit with one parent",
             ));
         }
         let fact = Self::authority(store, ctx, Some(project), repository)?;
-        Ok(
-            json!({"commit_sha":commit,"base_sha":base,"source_head_sha":head,"provenance":"provider_verified","authority":fact}),
-        )
+        Ok(json!({"commit_sha":commit,"provenance":"provider_verified","authority":fact}))
     }
     pub(crate) fn release_transport(
         store: &mut PlatformStore,

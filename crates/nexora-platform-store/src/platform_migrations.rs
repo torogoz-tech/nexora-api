@@ -310,6 +310,14 @@ impl PlatformMigrations {
                 117,
                 include_str!("../migrations/0117_permanent_personal_mcp_keys.sql"),
             ),
+            (
+                118,
+                include_str!("../migrations/0118_session_mfa_stages.sql"),
+            ),
+            (
+                119,
+                include_str!("../migrations/0119_authentication_limits_and_session_expiry.sql"),
+            ),
         ]
     }
 }

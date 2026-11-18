@@ -257,6 +257,9 @@
           "409": {
             "description": "Conflicting operation"
           },
+          "429": {
+            "description": "Authentication attempt limit exceeded"
+          },
           "422": {
             "description": "Invalid request"
           }
@@ -22461,7 +22464,7 @@
           "Service requests"
         ],
         "summary": "List authorized service requests",
-        "description": "User: own requests. Supervisor and IT: all requests. Filter before pagination; 20 rows per page, creation descending. Search matches title substring or exact request number.",
+        "description": "User: own requests. Supervisor and IT: all requests. Filter before pagination; 20 rows per page. Results default to creation descending; the optional order parameter sorts titles globally before pagination. Search matches title substring or exact request number.",
         "security": [
           {
             "ActorCredential": []
@@ -22513,6 +22516,34 @@
           }
         },
         "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          {
+            "name": "criticality",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["", "low", "medium", "high", "critical"]
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Alphabetical title order, applied before pagination. Omit to retain creation descending.",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
           {
             "name": "type_id",
             "in": "query",

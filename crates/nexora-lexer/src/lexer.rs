@@ -3,7 +3,8 @@ use nexora_core::{NexoraError, SourcePosition, SourceSpan};
 use nexora_language::LexerDefinition;
 pub struct Lexer {
     rules: Vec<CompiledTokenRule>,
-    entry_contexts: std::collections::BTreeMap<String, Vec<CompiledTokenRule>>,
+    rule_set: regex::RegexSet,
+    entry_contexts: std::collections::BTreeMap<String, (Vec<CompiledTokenRule>, regex::RegexSet)>,
     identifier_kind: String,
     keywords: Vec<String>,
     keyword_after_exclusions: Vec<nexora_language::TokenSelector>,
@@ -51,19 +52,21 @@ impl Lexer {
             .entry_contexts
             .iter()
             .map(|(name, kinds)| {
-                (
-                    name.clone(),
-                    rules
-                        .iter()
-                        .filter(|rule| kinds.contains(&rule.kind))
-                        .cloned()
-                        .collect(),
-                )
+                let context_rules: Vec<_> = rules
+                    .iter()
+                    .filter(|rule| kinds.contains(&rule.kind))
+                    .cloned()
+                    .collect();
+                let rule_set = compile_rule_set(&context_rules)?;
+                Ok((name.clone(), (context_rules, rule_set)))
             })
-            .collect();
+            .collect::<Result<std::collections::BTreeMap<_, _>, NexoraError>>()?;
+        let rules: Vec<_> = rules.into_iter().filter(|rule| rule.root).collect();
+        let rule_set = compile_rule_set(&rules)?;
         Ok(Self {
             entry_contexts,
-            rules: rules.into_iter().filter(|rule| rule.root).collect(),
+            rules,
+            rule_set,
             regions,
             keyword_after_exclusions: definition.keyword_after_exclusions.clone(),
             max_region_steps: definition.max_region_steps,
@@ -123,13 +126,16 @@ impl Lexer {
         let position = index.position(range.start)?;
         self.tokenize_from(index.source(), range, position, self.rules_for(context)?)
     }
-    fn rules_for(&self, context: Option<&str>) -> Result<&[CompiledTokenRule], NexoraError> {
+    fn rules_for(
+        &self,
+        context: Option<&str>,
+    ) -> Result<(&[CompiledTokenRule], &regex::RegexSet), NexoraError> {
         match context {
-            None => Ok(&self.rules),
+            None => Ok((&self.rules, &self.rule_set)),
             Some(name) => self
                 .entry_contexts
                 .get(name)
-                .map(Vec::as_slice)
+                .map(|(rules, rule_set)| (rules.as_slice(), rule_set))
                 .ok_or_else(|| {
                     NexoraError::Configuration(format!("unknown lexical entry context {name}"))
                 }),
@@ -140,7 +146,7 @@ impl Lexer {
         source: &str,
         range: std::ops::Range<usize>,
         mut position: SourcePosition,
-        rules: &[CompiledTokenRule],
+        rules: (&[CompiledTokenRule], &regex::RegexSet),
     ) -> Result<Vec<Token>, NexoraError> {
         if source.get(range.clone()).is_none() {
             return Err(NexoraError::Configuration(
@@ -150,15 +156,13 @@ impl Lexer {
         let source = &source[..range.end];
         let mut tokens: Vec<Token> = Vec::new();
         let mut previous: Option<usize> = None;
-        let started = std::time::Instant::now();
         let mut region_budget = crate::lexical_region_budget::LexicalRegionBudget {
             steps: self.max_region_steps,
             nodes: self.max_region_nodes,
-            started,
         };
         while position.offset < source.len() {
-            if tokens.len() >= 200_000 || started.elapsed().as_secs() >= 5 {
-                return Err(NexoraError::Limit("lexer token/time budget".into()));
+            if tokens.len() >= 200_000 {
+                return Err(NexoraError::Limit("lexer token budget".into()));
             }
             let remaining = &source[position.offset..];
             let context = previous.map(|index| crate::token_context::TokenContext {
@@ -166,7 +170,8 @@ impl Lexer {
                 text: tokens[index].text.as_str(),
             });
             let (rule, length) = crate::token_rule_selector::TokenRuleSelector::select(
-                rules,
+                rules.0,
+                rules.1,
                 remaining,
                 position.offset,
                 context,
@@ -218,4 +223,13 @@ impl Lexer {
         }
         Ok(tokens)
     }
+}
+
+pub(crate) fn compile_rule_set(
+    rules: &[CompiledTokenRule],
+) -> Result<regex::RegexSet, NexoraError> {
+    regex::RegexSetBuilder::new(rules.iter().map(|rule| rule.regex.as_str()))
+        .size_limit(1_000_000)
+        .build()
+        .map_err(|error| NexoraError::Configuration(error.to_string()))
 }

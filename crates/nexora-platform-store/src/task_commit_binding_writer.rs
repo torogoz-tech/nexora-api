@@ -15,8 +15,6 @@ impl PlatformStore {
         revision: i64,
         repository: &str,
         commit: &str,
-        base: &str,
-        head: &str,
         evidence: &Value,
     ) -> Result<Value, PlatformError> {
         if evidence["provenance"] != "provider_verified" {
@@ -51,12 +49,6 @@ impl PlatformStore {
         if current != evidence["authority"] {
             return Err(PlatformError::Conflict(
                 "repository authority changed during commit binding",
-            ));
-        }
-        let row=tx.query_one("SELECT base_sha,head_sha FROM task_repository_branches WHERE task_id=$1 AND repository_id=$2 FOR SHARE",&[&id,&repository]).map_err(Self::database_error)?;
-        if row.get::<_, String>(0) != base || row.get::<_, String>(1) != head {
-            return Err(PlatformError::Conflict(
-                "task branch changed during commit verification",
             ));
         }
         if tx.query_one("SELECT EXISTS(SELECT 1 FROM task_commit_links WHERE task_id=$1 AND repository_id=$2 AND commit_sha=$3 AND removed_at IS NULL)",&[&id,&repository,&commit]).map_err(Self::database_error)?.get::<_,bool>(0){return Err(PlatformError::Conflict("commit is already linked to this task"));}

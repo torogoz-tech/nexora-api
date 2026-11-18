@@ -14,4 +14,6 @@ pub enum PlatformError {
     Storage,
     #[error("platform capacity unavailable")]
     Unavailable,
+    #[error("too many authentication attempts; try again later")]
+    TooManyRequests,
 }

@@ -2,7 +2,6 @@ use crate::CompositionLimits;
 use nexora_core::NexoraError;
 pub(crate) struct CompositionBudget {
     limits: CompositionLimits,
-    started: std::time::Instant,
     units: usize,
     bytes: usize,
     steps: usize,
@@ -13,7 +12,6 @@ impl CompositionBudget {
     pub fn new(limits: CompositionLimits) -> Self {
         Self {
             limits,
-            started: std::time::Instant::now(),
             units: 0,
             bytes: 0,
             steps: 0,
@@ -21,14 +19,7 @@ impl CompositionBudget {
             nodes: 0,
         }
     }
-    pub fn checkpoint(&self) -> Result<(), NexoraError> {
-        if self.started.elapsed().as_millis() >= self.limits.max_millis as u128 {
-            return Err(NexoraError::Limit("composition time budget".into()));
-        }
-        Ok(())
-    }
     pub fn account_bytes(&mut self, bytes: usize) -> Result<(), NexoraError> {
-        self.checkpoint()?;
         self.bytes = self.bytes.saturating_add(bytes);
         if self.bytes > self.limits.max_work_bytes {
             return Err(NexoraError::Limit("composition work bytes budget".into()));
@@ -36,7 +27,6 @@ impl CompositionBudget {
         Ok(())
     }
     pub fn admit(&mut self, bytes: usize) -> Result<(), NexoraError> {
-        self.checkpoint()?;
         self.units = self.units.saturating_add(1);
         if self.units > self.limits.max_units {
             return Err(NexoraError::Limit("composition units budget".into()));
@@ -47,7 +37,6 @@ impl CompositionBudget {
         self.limits.max_parser_steps.saturating_sub(self.steps)
     }
     pub fn account_parser_steps(&mut self, steps: usize) -> Result<(), NexoraError> {
-        self.checkpoint()?;
         self.steps = self.steps.saturating_add(steps);
         if self.steps > self.limits.max_parser_steps {
             return Err(NexoraError::Limit(
@@ -57,7 +46,6 @@ impl CompositionBudget {
         Ok(())
     }
     pub fn account(&mut self, tokens: usize, nodes: usize) -> Result<(), NexoraError> {
-        self.checkpoint()?;
         self.tokens = self.tokens.saturating_add(tokens);
         self.nodes = self.nodes.saturating_add(nodes);
         if self.tokens > self.limits.max_tokens || self.nodes > self.limits.max_nodes {
