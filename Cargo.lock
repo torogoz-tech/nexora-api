@@ -2542,7 +2542,7 @@ dependencies = [
 [[package]]
 name = "nexora-database-connections"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=1cedd26f9af3798d3d7475cc3190ac961726f7fe#1cedd26f9af3798d3d7475cc3190ac961726f7fe"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=bc8404db8e3c4daacee6627a6da6bad49915ed9d#bc8404db8e3c4daacee6627a6da6bad49915ed9d"
 dependencies = [
  "nexora-core",
  "postgres",
@@ -2732,7 +2732,7 @@ dependencies = [
 [[package]]
 name = "nexora-runtime"
 version = "0.4.0"
-source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=1cedd26f9af3798d3d7475cc3190ac961726f7fe#1cedd26f9af3798d3d7475cc3190ac961726f7fe"
+source = "git+https://github.com/torogoz-tech/nexora-job-store.git?rev=bc8404db8e3c4daacee6627a6da6bad49915ed9d#bc8404db8e3c4daacee6627a6da6bad49915ed9d"
 dependencies = [
  "base64 0.22.1",
  "flate2",
