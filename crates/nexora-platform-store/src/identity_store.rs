@@ -21,6 +21,7 @@ impl<'a> IdentityStore<'a> {
         if key.is_empty() || key.len() > 512 || limit <= 0 || window_seconds <= 0 {
             return Err(PlatformError::Validation("invalid authentication limit"));
         }
+        let window_seconds = window_seconds as f64;
         self.store
             .client
             .execute(
