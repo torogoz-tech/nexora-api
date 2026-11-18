@@ -30,7 +30,7 @@ impl<'a> IdentityStore<'a> {
             )
             .map_err(PlatformStore::database_error)?;
         let digest = SecretGenerator::digest(&format!("authentication-attempt:{key}"));
-        let attempts: i64 = self
+        let attempts: i32 = self
             .store
             .client
             .query_one(
@@ -39,7 +39,7 @@ impl<'a> IdentityStore<'a> {
             )
             .map_err(PlatformStore::database_error)?
             .get(0);
-        if attempts > limit {
+        if i64::from(attempts) > limit {
             return Err(PlatformError::TooManyRequests);
         }
         Ok(())
