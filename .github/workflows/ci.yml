@@ -63,7 +63,7 @@ jobs:
             ${{ runner.os }}-cargo-
       - run: cargo test --workspace --tests --locked
   build-artifact:
-    needs: [quality, integration]
+    needs: [quality, integration, session-stage-migration]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -121,3 +121,9 @@ jobs:
           echo "$GHCR_TOKEN" | docker login ghcr.io --username "${GITHUB_ACTOR}" --password-stdin
           docker tag nexora-api:ci "ghcr.io/${GITHUB_REPOSITORY}:0.2.1"
           docker push "ghcr.io/${GITHUB_REPOSITORY}:0.2.1"
+  session-stage-migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test upgrading the historical MFA session constraint
+        run: bash scripts/validation/test-session-stage-migration.sh
