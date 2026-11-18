@@ -19,7 +19,6 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 nexora-core = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
 nexora-platform = { git = "https://github.com/torogoz-tech/nexora-platform-contracts.git", tag = "0.4.0" }
-nexora-database-connections = { git = "https://github.com/torogoz-tech/nexora-job-store.git", tag = "0.4.0" }
 nexora-language = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
 nexora-graph = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
 nexora-storage = { git = "https://github.com/torogoz-tech/nexora-analysis-engine.git", tag = "0.4.0" }
@@ -30,4 +29,4 @@ nexora-mcp = { path = "crates/nexora-mcp" }
 nexora-governance = { path = "crates/nexora-governance" }
 nexora-corpus = { path = "crates/nexora-corpus" }
 
-nexora-runtime = { path = "crates/nexora-runtime" }
+nexora-runtime = { git = "https://github.com/torogoz-tech/nexora-job-store.git", rev = "1cedd26f9af3798d3d7475cc3190ac961726f7fe" }
