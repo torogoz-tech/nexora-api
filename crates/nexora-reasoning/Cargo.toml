@@ -15,4 +15,4 @@ nexora-mcp.workspace = true
 ureq = { version = "3", features = ["json"] }
 zeroize = "1"
 
-nexora-platform = { path = "../nexora-platform" }
+nexora-platform.workspace = true
