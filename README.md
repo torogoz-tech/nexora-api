@@ -17,7 +17,7 @@ Nexora's architecture and initial implementation are led by [Abner Velasco](http
 - Local MCP stdio services and platform MCP catalogs.
 - Authenticated platform APIs for projects, repositories, knowledge, documents, tasks, workflows, approvals, Git integrations, and releases.
 
-The repository does not contain the web interface or independently maintained language profiles. See the common Nexora documentation and the profile repositories for those boundaries. The notification worker has its own process command, but the worker source and executable are still built from this repository pending the 0.4.0 repository extraction.
+The repository does not contain the web interface, independently maintained language profiles, or the notification worker. See the common Nexora documentation, the profile repositories, and the dedicated [notification worker repository](https://github.com/torogoz-tech/nexora-notification-worker) for those boundaries.
 
 ## Three ways to run it
 
@@ -34,11 +34,7 @@ cargo run -p nexora-cli -- languages list
 cargo run -p nexora-cli -- analyze tests/fixtures/javascript/declarations.js
 ```
 
-The notification worker runs as a separate process and consumes the notification queue. Set `NEXORA_RABBITMQ_URL` in its environment before starting it:
-
-```bash
-NEXORA_RABBITMQ_URL="$NEXORA_RABBITMQ_URL" cargo run -p nexora-api -- --connections .nexora/local/connections.json --schema nexora_platform notifications
-```
+The notification worker is built and released independently from this repository. Its repository documents its runtime configuration and queue behavior.
 
 ## Read the implementation guide
 
