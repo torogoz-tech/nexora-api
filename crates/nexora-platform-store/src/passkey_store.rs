@@ -106,7 +106,7 @@ impl PlatformStore {
         AuditWriter::append(
             &mut tx,
             Some(&actor),
-            Some(&session_id),
+            Some(session_id),
             "identity.gate_passkey",
             Some(&actor),
             json!({"method":"passkey"}),
